@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+type: software
+title: "FONDA workflow-run publisher for VIVO"
+authors:
+  - family-names: Kati
+    given-names: Yagmur
+repository-code: "https://github.com/YagmurKati/fonda-vivo-run-publisher"
+url: "https://github.com/YagmurKati/fonda-vivo-run-publisher"
+license: MIT
+abstract: >-
+  Collects and publishes metadata of finished scientific workflow runs to
+  FONDA VIVO, including execution provenance, resource use, energy measurements,
+  carbon estimates, and links to workflows, researchers, data, and infrastructure.
+keywords:
+  - FONDA
+  - VIVO
+  - scientific workflows
+  - metadata
+  - provenance
