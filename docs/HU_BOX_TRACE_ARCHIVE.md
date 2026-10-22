@@ -51,8 +51,8 @@ Complete these before starting:
 Run all commands from the repository root:
 
 ```bash
-git clone https://github.com/YagmurKati/fonda-kubernetes-vivo-publisher.git
-cd fonda-kubernetes-vivo-publisher
+git clone https://github.com/YagmurKati/fonda-vivo-run-publisher.git
+cd fonda-vivo-run-publisher
 ```
 
 For an existing checkout, preserve your private `config/*.env` files and update

@@ -54,8 +54,8 @@ Use a directory on Lustre; the home directory quota is small.
 ```bash
 export WORK=/lustre/GROUP/USER/fonda
 mkdir -p "$WORK" && cd "$WORK"
-git clone https://github.com/YagmurKati/fonda-kubernetes-vivo-publisher.git
-cd fonda-kubernetes-vivo-publisher
+git clone https://github.com/YagmurKati/fonda-vivo-run-publisher.git
+cd fonda-vivo-run-publisher
 ```
 
 ## 5. Load Python and test

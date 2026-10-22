@@ -59,8 +59,8 @@ Use a directory with enough space; home directories are often small.
 ```bash
 export WORK=/path/to/your/work/directory
 mkdir -p "$WORK" && cd "$WORK"
-git clone https://github.com/YagmurKati/fonda-kubernetes-vivo-publisher.git
-cd fonda-kubernetes-vivo-publisher
+git clone https://github.com/YagmurKati/fonda-vivo-run-publisher.git
+cd fonda-vivo-run-publisher
 ```
 
 ### 2. Run the first check

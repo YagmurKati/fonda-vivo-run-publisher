@@ -50,8 +50,8 @@ sent to VIVO.
 ### 1. Download this repository
 
 ```bash
-git clone https://github.com/YagmurKati/fonda-kubernetes-vivo-publisher.git
-cd fonda-kubernetes-vivo-publisher
+git clone https://github.com/YagmurKati/fonda-vivo-run-publisher.git
+cd fonda-vivo-run-publisher
 ```
 
 Run the remaining commands from this directory.

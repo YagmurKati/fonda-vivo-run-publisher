@@ -73,7 +73,7 @@ Call the publisher only after the workflow command succeeds:
 ```bash
 RUN_ID="experiment-2026-08-25-01"
 ./run-nextflow.sh "$RUN_ID" && \
-  /path/to/fonda-kubernetes-vivo-publisher/scripts/publish-run.sh "$RUN_ID"
+  /path/to/fonda-vivo-run-publisher/scripts/publish-run.sh "$RUN_ID"
 ```
 
 For resumed Nextflow runs, set this before publication so metrics from cached

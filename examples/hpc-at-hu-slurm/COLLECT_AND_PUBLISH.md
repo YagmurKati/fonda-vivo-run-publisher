@@ -51,14 +51,14 @@ chmod 600 ~/.fonda-vivo/slurm.env
 ## 2. Create the job file
 
 ```bash
-cd "$WORK/fonda-kubernetes-vivo-publisher"
+cd "$WORK/fonda-vivo-run-publisher"
 sed "s#^WORK=.*#WORK=$WORK#" examples/hpc-at-hu-slurm/rangeland-test.sbatch.example > "$WORK/rangeland-test.sbatch"
 ```
 
 One thing in the job file matters for the metadata:
 
 ```bash
-"$WORK/fonda-kubernetes-vivo-publisher/collector/slurm/run-with-node-sampler.sh" \
+"$WORK/fonda-vivo-run-publisher/collector/slurm/run-with-node-sampler.sh" \
   "$HOME/vivo-evidence/$SLURM_JOB_ID" -- \
   nextflow run nf-core/rangeland -r 1.0.0 -profile test,apptainer --outdir "results-$SLURM_JOB_ID"
 ```
@@ -92,7 +92,7 @@ sacct -j JOB_ID --format=JobID,State,Elapsed,TotalCPU,MaxRSS,ConsumedEnergyRaw,N
 ## 5. Collect the metadata (dry run)
 
 ```bash
-cd "$WORK/fonda-kubernetes-vivo-publisher"
+cd "$WORK/fonda-vivo-run-publisher"
 examples/hpc-at-hu-slurm/publish-slurm-job.sh JOB_ID --dry-run
 ```
 

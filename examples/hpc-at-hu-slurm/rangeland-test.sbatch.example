@@ -25,6 +25,6 @@ mkdir -p "$APPTAINER_CACHEDIR" "$APPTAINER_TMPDIR"
 cd "$WORK"
 
 # The sampler reads the node's CPU use and power while the workflow runs.
-"$WORK/fonda-kubernetes-vivo-publisher/collector/slurm/run-with-node-sampler.sh" \
+"$WORK/fonda-vivo-run-publisher/collector/slurm/run-with-node-sampler.sh" \
   "$HOME/vivo-evidence/$SLURM_JOB_ID" -- \
   nextflow run nf-core/rangeland -r 1.0.0 -profile test,apptainer --outdir "results-$SLURM_JOB_ID"

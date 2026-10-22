@@ -11,7 +11,7 @@ Run everything on the login node. Start each session with:
 ```bash
 export WORK=/lustre/GROUP/USER/fonda
 module load python/3.12.9-gcc14.2.0
-cd "$WORK/fonda-kubernetes-vivo-publisher"
+cd "$WORK/fonda-vivo-run-publisher"
 ```
 
 ## 1. Check that the cluster reaches HU-Box

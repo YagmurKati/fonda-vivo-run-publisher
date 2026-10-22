@@ -11,7 +11,7 @@ Usage:
   ./scripts/publish-local.sh PATH/TO/OUTPUT.ttl --dry-run
   ./scripts/publish-local.sh PATH/TO/OUTPUT.ttl
 
-Run this command from the fonda-kubernetes-vivo-publisher repository root.
+Run this command from the fonda-vivo-run-publisher repository root.
 The dry run validates the TTL without contacting VIVO. A real publication
 prompts for the non-admin VIVO publisher email and password without storing
 them on disk.

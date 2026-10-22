@@ -934,7 +934,7 @@ def main() -> None:
         for task in tasks
     ]
     audit["collector_source"] = (
-        "https://github.com/YagmurKati/fonda-kubernetes-vivo-publisher"
+        "https://github.com/YagmurKati/fonda-vivo-run-publisher"
     )
 
     cli.output_file.parent.mkdir(parents=True, exist_ok=True)

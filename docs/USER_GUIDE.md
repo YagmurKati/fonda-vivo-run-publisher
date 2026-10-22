@@ -14,8 +14,8 @@ The administrator provides or enables a non-admin publisher account.
 ## 2. Clone and configure
 
 ```bash
-git clone https://github.com/YagmurKati/fonda-kubernetes-vivo-publisher.git
-cd fonda-kubernetes-vivo-publisher
+git clone https://github.com/YagmurKati/fonda-vivo-run-publisher.git
+cd fonda-vivo-run-publisher
 ```
 
 Select the profile for the workflow:

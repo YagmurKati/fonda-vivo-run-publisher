@@ -8,7 +8,7 @@
 # Only the last lines differ from a normal job: the real command is wrapped.
 
 WORK=/lustre/GROUP/USER/fonda
-PUBLISHER="$WORK/fonda-kubernetes-vivo-publisher"
+PUBLISHER="$WORK/fonda-vivo-run-publisher"
 EVIDENCE="$HOME/vivo-evidence/$SLURM_JOB_ID"
 
 "$PUBLISHER/collector/slurm/run-with-node-sampler.sh" "$EVIDENCE" -- \
