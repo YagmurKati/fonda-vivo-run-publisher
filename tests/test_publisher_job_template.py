@@ -3,6 +3,20 @@ from pathlib import Path
 
 
 class PublisherJobTemplateTests(unittest.TestCase):
+    def test_visibility_reaches_the_publisher_in_both_job_templates(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        for name in ("publisher-job.yaml", "snakemake-publisher-job.yaml"):
+            template = (root / "k8s" / name).read_text(encoding="utf-8")
+            self.assertIn('value: "__RUN_VISIBILITY__"', template)
+            self.assertIn(
+                '--visibility "${RUN_VISIBILITY_OVERRIDE:-${RUN_VISIBILITY:-}}"',
+                template,
+            )
+        publish_run = (root / "scripts" / "publish-run.sh").read_text(encoding="utf-8")
+        self.assertIn('-e "s/__RUN_VISIBILITY__/$run_visibility/g"', publish_run)
+        deploy = (root / "scripts" / "deploy.sh").read_text(encoding="utf-8")
+        self.assertEqual(deploy.count("RUN_VISIBILITY"), 2)
+
     def test_run_id_is_replaced_globally_in_all_evidence_paths(self) -> None:
         template = (
             Path(__file__).resolve().parents[1]

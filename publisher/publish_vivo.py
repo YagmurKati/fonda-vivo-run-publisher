@@ -35,6 +35,40 @@ class PublishError(RuntimeError):
     """A permanent or exhausted VIVO publication failure."""
 
 
+# Who may see the run page in VIVO (rm:visibility of the run). VIVO enforces it
+# with the access rule described in docs/ADMIN_SETUP.md.
+VISIBILITY_CHOICES = {
+    "public": ("VisibilityPublic", "everyone"),
+    "logged-in": ("VisibilityMembers", "logged-in VIVO users only"),
+    "private": ("VisibilityPrivate", "only the person who ran it, and VIVO administrators"),
+}
+VISIBILITY_RE = re.compile(r"(?m)^\s*(?:<[^<>\s]+>\s+)?rm:visibility\s")
+
+
+def normalize_visibility(value: Optional[str]) -> str:
+    """Return public, logged-in, private, or "" when no choice was made."""
+    choice = (value or "").strip().lower()
+    if choice in ("", "public", "logged-in", "private"):
+        return choice
+    raise PublishError(
+        "RUN_VISIBILITY / --visibility must be public, logged-in or private "
+        f"(got {value!r})"
+    )
+
+
+def turtle_with_visibility(turtle: str, visibility: str) -> str:
+    """Add the run's rm:visibility statement to the collected Turtle."""
+    if not visibility:
+        return turtle
+    if VISIBILITY_RE.search(turtle):
+        raise PublishError(
+            "the TTL file already sets rm:visibility; do not also use RUN_VISIBILITY"
+        )
+    run_iri = run_owned_resource_iris(turtle)[0]
+    individual = VISIBILITY_CHOICES[visibility][0]
+    return turtle.rstrip() + f"\n\n<{run_iri}> rm:visibility rm:{individual} .\n"
+
+
 def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
@@ -192,7 +226,9 @@ def turtle_to_run_delete_update(turtle: str, graph: str) -> Tuple[str, str, int]
     return update, owned_iris[0], len(owned_iris)
 
 
-def turtle_to_run_replace_update(turtle: str, graph: str) -> Tuple[str, str, int]:
+def turtle_to_run_replace_update(
+    turtle: str, graph: str, keep_visibility: bool = False
+) -> Tuple[str, str, int]:
     """Build one request that replaces a run's VIVO record with this TTL.
 
     INSERT DATA on its own keeps whatever an earlier publication of the same
@@ -211,6 +247,9 @@ def turtle_to_run_replace_update(turtle: str, graph: str) -> Tuple[str, str, int
     only lose statements that point at the run, and the INSERT restores the
     current ones. VIVO parses the whole request before applying either
     operation, so a malformed update changes nothing.
+
+    With keep_visibility the run's rm:visibility is not deleted, so a choice
+    made on the run page in VIVO survives a publication that sets none.
     """
     validate_absolute_iri(graph, "graph")
     prefixes, body = turtle_prefixes_and_body(turtle)
@@ -225,8 +264,13 @@ def turtle_to_run_replace_update(turtle: str, graph: str) -> Tuple[str, str, int
     run_iri = owned_iris[0]
     branches = []
     for iri in owned_iris:
+        keep = (
+            " FILTER (?predicate != rm:visibility)"
+            if keep_visibility and iri == run_iri
+            else ""
+        )
         branches.append(
-            f"    {{ <{iri}> ?predicate ?object . BIND (<{iri}> AS ?subject) }}"
+            f"    {{ <{iri}> ?predicate ?object .{keep} BIND (<{iri}> AS ?subject) }}"
         )
         branches.append(
             f"    {{ ?subject ?predicate <{iri}> . BIND (<{iri}> AS ?object) }}"
@@ -298,12 +342,13 @@ def is_success_status(value: object) -> bool:
 
 
 def receipt_matches(
-    path: Path, ttl_sha256: str, endpoint: str, graph: str
+    path: Path, ttl_sha256: str, endpoint: str, graph: str, visibility: str = ""
 ) -> bool:
     receipt = load_receipt(path)
     return bool(
         receipt
         and receipt.get("ttl_sha256") == ttl_sha256
+        and (receipt.get("visibility") or "") == visibility
         and receipt.get("endpoint") == endpoint
         and receipt.get("graph") == graph
         and is_success_status(receipt.get("http_status"))
@@ -443,6 +488,16 @@ def build_args() -> argparse.Namespace:
         action="store_true",
         help="Validate and prepare the update without contacting VIVO.",
     )
+    parser.add_argument(
+        "--visibility",
+        default=os.environ.get("RUN_VISIBILITY", ""),
+        help=(
+            "Who may see the run page in VIVO: public, logged-in or private "
+            "(only the person who ran it). Defaults to the RUN_VISIBILITY "
+            "environment variable. Without a choice a new run is public and a "
+            "published run keeps the choice made on its VIVO page."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -522,9 +577,19 @@ def main() -> None:
         print(f"Receipt updated: {receipt_path}")
         return
 
+    visibility = normalize_visibility(args.visibility)
     update, run_iri, owned_resource_count = turtle_to_run_replace_update(
-        turtle, args.graph
+        turtle_with_visibility(turtle, visibility),
+        args.graph,
+        keep_visibility=not visibility and not VISIBILITY_RE.search(turtle),
     )
+    if visibility:
+        visibility_note = f"{visibility} ({VISIBILITY_CHOICES[visibility][1]})"
+    else:
+        visibility_note = (
+            "not set (a new run is public; a published run keeps the choice "
+            "made on its VIVO page)"
+        )
 
     if not run_has_operator(turtle):
         print(
@@ -533,6 +598,12 @@ def main() -> None:
             "collecting.",
             file=sys.stderr,
         )
+        if visibility == "private":
+            print(
+                "WARNING: the run is private but has no \"run by\" person, so "
+                "only VIVO administrators will be able to see it.",
+                file=sys.stderr,
+            )
 
     if args.dry_run:
         print(f"TTL validated: {args.ttl_file}")
@@ -540,10 +611,11 @@ def main() -> None:
         print(f"Run: {run_iri}")
         print(f"Run-owned resources replaced on publication: {owned_resource_count}")
         print(f"Target graph: {args.graph}")
+        print(f"Visibility: {visibility_note}")
         return
 
     if not args.force and receipt_matches(
-        receipt_path, ttl_sha256, args.endpoint, args.graph
+        receipt_path, ttl_sha256, args.endpoint, args.graph, visibility
     ):
         print(f"Already published: {args.ttl_file}")
         print(f"Receipt: {receipt_path}")
@@ -577,10 +649,12 @@ def main() -> None:
         "run_uri": run_iri,
         "ttl_file": str(args.ttl_file),
         "ttl_sha256": ttl_sha256,
+        "visibility": visibility,
     }
     write_receipt_atomic(receipt_path, receipt)
     print(f"Published TTL to VIVO: {args.ttl_file}")
     print(f"Run record replaced: {run_iri}")
+    print(f"Visibility: {visibility_note}")
     print(f"HTTP {status}")
     print(f"Receipt: {receipt_path}")
 

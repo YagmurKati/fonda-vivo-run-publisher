@@ -1,17 +1,35 @@
 #!/usr/bin/env bash
 # Collect and publish one finished HPC@HU Slurm job. Run on the login node.
-# Usage: publish-slurm-job.sh JOB_ID [--dry-run]
+# Usage: publish-slurm-job.sh JOB_ID [--dry-run] [--visibility public|logged-in|private]
 # Settings come from ~/.fonda-vivo/slurm.env (see README.md).
+# --visibility: who may see the run page in VIVO; default RUN_VISIBILITY of slurm.env.
 set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 CONFIG="${FONDA_SLURM_ENV:-$HOME/.fonda-vivo/slurm.env}"
-if [[ $# -lt 1 || $# -gt 2 || ( $# -eq 2 && "$2" != "--dry-run" ) ]]; then
-  printf 'Usage: %s JOB_ID [--dry-run]\n' "$0" >&2
+usage() {
+  printf 'Usage: %s JOB_ID [--dry-run] [--visibility public|logged-in|private]\n' "$0" >&2
   exit 2
-fi
+}
+[[ $# -ge 1 ]] || usage
 JOB_ID="$1"
+shift
+DRY_RUN=0
+VISIBILITY_ARG=""
+while (($#)); do
+  case "$1" in
+    --dry-run) DRY_RUN=1 ;;
+    --visibility) (($# >= 2)) || usage; VISIBILITY_ARG="$2"; shift ;;
+    *) usage ;;
+  esac
+  shift
+done
 # shellcheck disable=SC1090
 source "$CONFIG"
+VISIBILITY="${VISIBILITY_ARG:-${RUN_VISIBILITY:-}}"
+case "$VISIBILITY" in
+  ""|public|logged-in|private) ;;
+  *) printf 'ERROR: visibility must be public, logged-in or private (got: %s)\n' "$VISIBILITY" >&2; exit 2 ;;
+esac
 : "${WORKFLOW_URI:?set WORKFLOW_URI in $CONFIG}"
 EVIDENCE_DIR="${EVIDENCE_ROOT:-$HOME/vivo-evidence}/$JOB_ID"
 OUT_DIR="$EVIDENCE_DIR/publication-$(date -u +%Y%m%dT%H%M%SZ)"
@@ -48,14 +66,15 @@ if [[ -z "${ELECTRICITY_MAPS_API_TOKEN:-}" && -s "$TOKEN_FILE" ]]; then
 fi
 python3 "$ROOT_DIR/collector/collect_slurm_job_metadata.py" "${collector_args[@]}"
 
-publish_args=("$OUT_DIR/run.ttl" --receipt-file "$OUT_DIR/run.published.json")
-if [[ "${2:-}" == "--dry-run" ]]; then
+publish_args=("$OUT_DIR/run.ttl" --receipt-file "$OUT_DIR/run.published.json"
+              --visibility "$VISIBILITY")
+if [[ "$DRY_RUN" == "1" ]]; then
   publish_args+=(--dry-run)
 else
   publish_args+=(--email-file "$HOME/.fonda-vivo/email" --password-file "$HOME/.fonda-vivo/password")
 fi
 python3 "$ROOT_DIR/publisher/publish_vivo.py" "${publish_args[@]}"
-if [[ "${2:-}" != "--dry-run" ]]; then
+if [[ "$DRY_RUN" != "1" ]]; then
   python3 -c 'import json, sys, urllib.parse
 run = json.load(open(sys.argv[1]))["run_uri"]
 print("VIVO page: https://vivo-fonda.hu-berlin.de/vivo/individual?uri=" + urllib.parse.quote(run, safe=""))' "$OUT_DIR/summary.json"

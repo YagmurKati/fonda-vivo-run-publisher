@@ -111,6 +111,11 @@ spec:
               if [[ "$DRY_RUN" == "1" ]]; then
                 publisher_args+=(--dry-run)
               fi
+              # Who may see the run page: --visibility of publish-run.sh, else
+              # RUN_VISIBILITY of the profile, else no choice.
+              publisher_args+=(
+                --visibility "${RUN_VISIBILITY_OVERRIDE:-${RUN_VISIBILITY:-}}"
+              )
               "${publisher_args[@]}"
           envFrom:
             - configMapRef:
@@ -126,6 +131,8 @@ spec:
               value: "__DRY_RUN__"
             - name: FORCE_REPUBLISH
               value: "__FORCE_REPUBLISH__"
+            - name: RUN_VISIBILITY_OVERRIDE
+              value: "__RUN_VISIBILITY__"
             - name: ALLOW_INCOMPLETE_NODE_METADATA
               value: "__ALLOW_INCOMPLETE_NODE_METADATA__"
             - name: ELECTRICITY_MAPS_API_TOKEN

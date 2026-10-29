@@ -146,6 +146,18 @@ There must be no `WARNING` line:
 examples/hpc-at-hu-slurm/publish-slurm-job.sh JOB_ID
 ```
 
+To limit who may see the run page in VIVO, add `--visibility logged-in`
+(logged-in VIVO users only) or `--visibility private` (only you, the
+`RUN_OPERATOR_URI` person, and the VIVO administrators):
+
+```bash
+examples/hpc-at-hu-slurm/publish-slurm-job.sh JOB_ID --visibility private
+```
+
+Without it, `RUN_VISIBILITY` of `slurm.env` is used; without both, the run is
+public. You can change it later on the run page in VIVO ("who can see this
+run"). See [Who can see your run](../../README.md#who-can-see-your-run).
+
 Expected at the end:
 
 ```text

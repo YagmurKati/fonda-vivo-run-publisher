@@ -13,6 +13,7 @@ dry_run="${DRY_RUN:-0}"
 force_republish="${FORCE_REPUBLISH:-0}"
 allow_incomplete_node_metadata="${ALLOW_INCOMPLETE_NODE_METADATA:-0}"
 run_trace_archive=""
+run_visibility=""
 while (($#)); do
   case "$1" in
     --dry-run) dry_run=1 ;;
@@ -21,10 +22,16 @@ while (($#)); do
       run_trace_archive="$2"
       shift
       ;;
-    *) die "Usage: $0 RUN_ID [--dry-run] [--run-trace-archive URL]" ;;
+    --visibility)
+      (($# >= 2)) || die "--visibility requires public, logged-in or private"
+      run_visibility="$2"
+      shift
+      ;;
+    *) die "Usage: $0 RUN_ID [--dry-run] [--run-trace-archive URL] [--visibility public|logged-in|private]" ;;
   esac
   shift
 done
+validate_visibility "$run_visibility" "--visibility"
 
 [[ "$RUN_ID" =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] ||
   die "RUN_ID may contain only letters, digits, dot, underscore, and hyphen"
@@ -81,6 +88,7 @@ sed \
   -e "s/__FORCE_REPUBLISH__/$force_republish/g" \
   -e "s/__ALLOW_INCOMPLETE_NODE_METADATA__/$allow_incomplete_node_metadata/g" \
   -e "s/__RUN_TRACE_ARCHIVE__/$escaped_run_trace_archive/g" \
+  -e "s/__RUN_VISIBILITY__/$run_visibility/g" \
   "$job_template" |
   kubectl -n "$NS" apply -f -
 
@@ -117,6 +125,9 @@ while true; do
       retry_args=("$RUN_ID")
       if [[ -n "$run_trace_archive" ]]; then
         retry_args+=(--run-trace-archive "$run_trace_archive")
+      fi
+      if [[ -n "$run_visibility" ]]; then
+        retry_args+=(--visibility "$run_visibility")
       fi
       ALLOW_INCOMPLETE_NODE_METADATA=1 \
         FORCE_REPUBLISH="$force_republish" \
