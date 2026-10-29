@@ -40,7 +40,7 @@ class PublishError(RuntimeError):
 VISIBILITY_CHOICES = {
     "public": ("VisibilityPublic", "everyone"),
     "logged-in": ("VisibilityMembers", "logged-in VIVO users only"),
-    "private": ("VisibilityPrivate", "only the person who ran it, and VIVO administrators"),
+    "private": ("VisibilityPrivate", "only the person who ran it"),
 }
 VISIBILITY_RE = re.compile(r"(?m)^\s*(?:<[^<>\s]+>\s+)?rm:visibility\s")
 
@@ -601,7 +601,7 @@ def main() -> None:
         if visibility == "private":
             print(
                 "WARNING: the run is private but has no \"run by\" person, so "
-                "only VIVO administrators will be able to see it.",
+                "you will not be able to see it either. Set RUN_OPERATOR_URI.",
                 file=sys.stderr,
             )
 

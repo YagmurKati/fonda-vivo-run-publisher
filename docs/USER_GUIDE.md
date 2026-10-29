@@ -150,17 +150,9 @@ Receipt: ...published.json
 
 No additional upload is needed.
 
-To limit who may see the run page in VIVO, add `--visibility`:
-
-```bash
-./scripts/publish-run.sh RUN_ID --visibility logged-in   # logged-in VIVO users only
-./scripts/publish-run.sh RUN_ID --visibility private     # only you and the VIVO administrators
-```
-
-Without it, `RUN_VISIBILITY` of `config/publisher.env` is used; without both,
-the run is public. The publisher prints the choice (`Visibility: ...`). You can
-change it later on the run page in VIVO ("who can see this run"). See
-[Who can see your run](../README.md#who-can-see-your-run).
+Runs are public. To hide one, add `--visibility logged-in` (only people logged
+in to VIVO) or `--visibility private` (only you). See
+[Who can see your run](RUN_VISIBILITY.md).
 
 Node hardware metadata is collected first through the Kubernetes API and then,
 when Node access is denied, through Prometheus. The required fields are
