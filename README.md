@@ -35,6 +35,44 @@ The collector writes three files to the workflow PVC: the run as Turtle
 (`.ttl`), a metrics audit and a publication receipt. Only the Turtle file is
 sent to VIVO.
 
+## Who can see your run
+
+You choose who may open the run's page in VIVO:
+
+| Choice | Who sees the run page |
+| --- | --- |
+| `public` (default) | everyone |
+| `logged-in` | everyone who is logged in to VIVO |
+| `private` | only you, the person who ran it (`RUN_OPERATOR_URI`), and the VIVO administrators |
+
+The choice also applies to the pages of the run's workflow stages.
+
+Set it when you publish, for one run:
+
+```bash
+# FONDA Kubernetes cluster
+./scripts/publish-run.sh my-run-01 --visibility private
+# HPC@HU (Slurm)
+examples/hpc-at-hu-slurm/publish-slurm-job.sh JOB_ID --visibility private
+# a TTL file you created
+./scripts/publish-local.sh "$OUTPUT_TTL" --visibility private
+```
+
+or for all your runs, with `RUN_VISIBILITY="private"` in your settings file
+(`config/publisher.env` or `~/.fonda-vivo/slurm.env`). `--visibility` wins over
+`RUN_VISIBILITY`.
+
+You can change it later on the run page in VIVO: log in, open the run and edit
+**who can see this run**. Only the person who ran it (and the administrators)
+can change it. Publishing the run again without a choice keeps the one made in
+VIVO.
+
+`private` needs `RUN_OPERATOR_URI`: without a "run by" person, only the VIVO
+administrators can see the run.
+
+The run's title can still appear in VIVO's search results and run lists. Its
+page, its values and its RDF open only for the people the choice allows.
+
 ## What you need on the FONDA Kubernetes cluster
 
 1. access to your FONDA Kubernetes namespace;
@@ -163,6 +201,9 @@ Then collect the metadata and send it to VIVO:
 ```bash
 ./scripts/publish-run.sh my-run-01
 ```
+
+Add `--visibility logged-in` or `--visibility private` to limit who may see the
+run page ([Who can see your run](#who-can-see-your-run)).
 
 **Node hardware.** It is read from the Kubernetes API. If your namespace may
 not read Node objects, the collector uses the `kube_node_info` and

@@ -24,6 +24,17 @@ warn_missing_run_operator() {
   fi
 }
 
+# Who may see the run page in VIVO (rm:visibility): public, logged-in or private
+# (only the person who ran it). Empty: no choice; a new run is public and a run
+# published again keeps the choice made on its VIVO page.
+validate_visibility() {
+  local value="$1"
+  local label="$2"
+  [[ -z "$value" || "$value" == "public" || "$value" == "logged-in" ||
+     "$value" == "private" ]] ||
+    die "$label must be public, logged-in or private (got: $value)"
+}
+
 need_command() {
   command -v "$1" >/dev/null 2>&1 || die "Required command not found: $1"
 }
@@ -135,6 +146,7 @@ load_config() {
   LANGUAGE_URIS="${LANGUAGE_URIS:-}"
   APPLICATION_DOMAIN_URI="${APPLICATION_DOMAIN_URI:-}"
   RUN_OPERATOR_URI="${RUN_OPERATOR_URI:-}"
+  RUN_VISIBILITY="${RUN_VISIBILITY:-}"
   RUN_IDENTITY_SCOPE="${RUN_IDENTITY_SCOPE:-}"
   BACKEND_URI="${BACKEND_URI:-}"
   CLUSTER_LABEL="${CLUSTER_LABEL:-FONDA Kubernetes Cluster}"
@@ -186,6 +198,7 @@ load_config() {
   optional_http_uri "$APPLICATION_DOMAIN_URI" "APPLICATION_DOMAIN_URI"
   optional_http_uri "$RUN_OPERATOR_URI" "RUN_OPERATOR_URI"
   warn_missing_run_operator "$RUN_OPERATOR_URI"
+  validate_visibility "$RUN_VISIBILITY" "RUN_VISIBILITY"
   optional_http_uri "$BACKEND_URI" "BACKEND_URI"
   validate_uri_list "$RESPONSIBLE_RESEARCHER_URIS" "RESPONSIBLE_RESEARCHER_URIS"
   validate_uri_list "$SUBPROJECT_URIS" "SUBPROJECT_URIS"

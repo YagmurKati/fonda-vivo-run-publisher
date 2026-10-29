@@ -19,6 +19,43 @@ Although the account is not a site administrator, SPARQL Update is privileged:
 it can write to the shared VIVO ABox graph. Grant it only to identified FONDA
 users and revoke it when the project or cluster access ends.
 
+## Run visibility (one time)
+
+Users choose who may see a run page: `public`, `logged-in` or `private`
+(only the run's "run by" person, `rm:runOperator`). The publisher writes the
+choice as `rm:visibility` of the run; VIVO enforces it with an access rule. The
+files are in [`vivo/run-visibility/`](../vivo/run-visibility/):
+
+1. Test the rule with VIVO's own Jena (reads only), on the VIVO server:
+
+   ```bash
+   cd vivo/run-visibility
+   java -cp "/opt/tomcat9/webapps/vivo/WEB-INF/lib/*" FondaPolicyCheck.java \
+     fonda-run-visibility.n3 /opt/vivo/vivo/rdf/accessControl/firsttime
+   ```
+
+   It must end with `ALL CHECKS PASSED`.
+2. Copy `fonda-run-visibility.n3` to `/opt/vivo/vivo/rdf/accessControl/firsttime/`
+   (same owner as the other files there).
+3. Upload `run-visibility.ttl`: Site Admin > Add/Remove RDF data > "add mixed
+   RDF", format Turtle.
+4. Ontology editor, object property "who can see this run": Display and
+   Publish for all roles; Add, Edit and Drop for Self Editor, Editor, Curator
+   and Admin. Self editors can change it only on their own runs (the runs that
+   name them as "run by", see `profile_proximity_query.n3`).
+5. Restart Tomcat.
+
+Test with one run set to `private`: not logged in you get the login page,
+another self editor gets "not authorized", the "run by" person and the
+administrators see it. Admins and curators always see every run.
+
+To undo: move the `.n3` file out of the folder and restart Tomcat (VIVO removes
+the rule at start), and upload `run-visibility.ttl` again with "remove mixed
+RDF".
+
+The rule uses the namespace `http://example.org/ontology/run-metadata#`. A
+deployment with another `ONTOLOGY_URI` must change it in both files.
+
 ## User-specific metadata
 
 Send the user the stable URIs they should place in `config/publisher.env`:

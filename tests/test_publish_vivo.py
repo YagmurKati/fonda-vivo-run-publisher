@@ -262,5 +262,67 @@ class RunOperatorTests(unittest.TestCase):
         self.assertFalse(publish_vivo.run_has_operator(turtle))
 
 
+class VisibilityTests(unittest.TestCase):
+    def test_accepts_the_three_choices_and_no_choice(self) -> None:
+        for value in ("public", "logged-in", "private", "", None, " Private "):
+            publish_vivo.normalize_visibility(value)
+        self.assertEqual(publish_vivo.normalize_visibility(" Private "), "private")
+
+    def test_rejects_other_values(self) -> None:
+        with self.assertRaisesRegex(publish_vivo.PublishError, "public, logged-in or private"):
+            publish_vivo.normalize_visibility("members")
+
+    def test_adds_the_choice_to_the_run(self) -> None:
+        turtle = publish_vivo.turtle_with_visibility(RUN_TTL, "private")
+        self.assertIn("<urn:fonda:run-1> rm:visibility rm:VisibilityPrivate .", turtle)
+        update = publish_vivo.turtle_to_run_replace_update(
+            turtle, publish_vivo.DEFAULT_GRAPH
+        )[0]
+        delete_part, insert_part = update.split(" ;\n\nINSERT DATA")
+        self.assertIn("rm:visibility rm:VisibilityPrivate", insert_part)
+        self.assertNotIn("FILTER (?predicate != rm:visibility)", delete_part)
+
+    def test_logged_in_maps_to_members(self) -> None:
+        turtle = publish_vivo.turtle_with_visibility(RUN_TTL, "logged-in")
+        self.assertIn("rm:visibility rm:VisibilityMembers", turtle)
+
+    def test_no_choice_leaves_the_turtle_and_keeps_the_vivo_choice(self) -> None:
+        self.assertEqual(publish_vivo.turtle_with_visibility(RUN_TTL, ""), RUN_TTL)
+        update = publish_vivo.turtle_to_run_replace_update(
+            RUN_TTL, publish_vivo.DEFAULT_GRAPH, keep_visibility=True
+        )[0]
+        delete_part = update.split(" ;\n\nINSERT DATA")[0]
+        self.assertIn(
+            "{ <urn:fonda:run-1> ?predicate ?object . FILTER (?predicate != rm:visibility)",
+            delete_part,
+        )
+        self.assertEqual(delete_part.count("FILTER (?predicate != rm:visibility)"), 1)
+
+    def test_rejects_a_second_choice_in_the_turtle(self) -> None:
+        turtle = RUN_TTL.replace(
+            "rdf:type rm:RunMetadata ;",
+            "rdf:type rm:RunMetadata ;\n  rm:visibility rm:VisibilityPublic ;",
+        )
+        with self.assertRaisesRegex(publish_vivo.PublishError, "already sets rm:visibility"):
+            publish_vivo.turtle_with_visibility(turtle, "private")
+
+    def test_receipt_with_another_choice_does_not_count_as_published(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            receipt_path = Path(directory) / "run.published.json"
+            receipt = {
+                "ttl_sha256": "abc",
+                "endpoint": publish_vivo.DEFAULT_ENDPOINT,
+                "graph": publish_vivo.DEFAULT_GRAPH,
+                "http_status": 200,
+            }
+            receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+            args = ("abc", publish_vivo.DEFAULT_ENDPOINT, publish_vivo.DEFAULT_GRAPH)
+            self.assertTrue(publish_vivo.receipt_matches(receipt_path, *args))
+            self.assertFalse(publish_vivo.receipt_matches(receipt_path, *args, "private"))
+            receipt["visibility"] = "private"
+            receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+            self.assertTrue(publish_vivo.receipt_matches(receipt_path, *args, "private"))
+
+
 if __name__ == "__main__":
     unittest.main()

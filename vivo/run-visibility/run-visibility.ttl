@@ -1,0 +1,39 @@
+# FONDA 2026-10-26: "Who can see this run" on workflow run pages.
+# Declares the field rm:visibility (run -> one of three choices) and the three choices. The run's "run by" person
+# chooses on the run page; without a choice the run is public, so nothing changes for existing runs.
+# Who may then see the run page is enforced by the access rule fonda-run-visibility.n3 in this folder.
+# Upload: Site Admin > Add/Remove RDF data > "add mixed RDF (instance and/or ontology)", format Turtle.
+# Undo:   the same file with "remove mixed RDF (instance and/or ontology)".
+# After the upload: set the role tick boxes of the field in the Ontology editor (see the steps).
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> .
+@prefix rm:    <http://example.org/ontology/run-metadata#> .
+
+rm:VisibilityLevel
+    a owl:Class ;
+    rdfs:label "visibility choice"@en-US .
+
+rm:visibility
+    a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:label "who can see this run"@en-US ;
+    rdfs:domain rm:RunMetadata ;
+    rdfs:range rm:VisibilityLevel ;
+    vitro:publicDescriptionAnnot "Who can see this run's page and its stages. Without a choice the run is public. Only the person who ran it can change this. Administrators always see every run."@en-US ;
+    vitro:inPropertyGroupAnnot <http://vitro.mannlib.cornell.edu/ns/default#n1133> ;
+    vitro:displayRankAnnot "1"^^xsd:int ;
+    vitro:selectFromExistingAnnot "true"^^xsd:boolean ;
+    vitro:offerCreateNewOptionAnnot "false"^^xsd:boolean .
+
+rm:VisibilityPublic
+    a rm:VisibilityLevel ;
+    rdfs:label "Everyone (public)"@en-US .
+
+rm:VisibilityMembers
+    a rm:VisibilityLevel ;
+    rdfs:label "Logged-in users only"@en-US .
+
+rm:VisibilityPrivate
+    a rm:VisibilityLevel ;
+    rdfs:label "Only me (the person who ran it)"@en-US .
