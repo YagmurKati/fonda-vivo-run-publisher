@@ -27,6 +27,9 @@ For each run:
 - links to the workflow, researcher, subproject, input data and
   infrastructure.
 
+Runs are public. You can make your runs visible only to logged-in VIVO users or
+only to yourself: [Who can see your run](docs/RUN_VISIBILITY.md).
+
 On the FONDA Kubernetes cluster, CPU time and memory come from the complete
 Nextflow trace when it has the `%cpu` and `peak_rss` fields (Prometheus is
 kept for comparison), and energy comes from Kepler through Prometheus.
