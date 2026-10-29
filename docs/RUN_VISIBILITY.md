@@ -4,17 +4,26 @@ Runs are public. FONDA aims at reproducible research, so please share at least
 one run of each workflow publicly. Other runs you can hide, for example results
 that are not published yet, or a series of runs you only want to compare.
 
-| Choice | Who sees the run |
+## Change it on the run page
+
+After your run is published, you can change who sees it at any time:
+
+1. Log in to [FONDA VIVO](https://vivo-fonda.hu-berlin.de).
+2. Open the page of your run.
+3. Under **who can see this run**, choose:
+
+| Choice in VIVO | Who sees the run |
 | --- | --- |
-| `public` (default) | everyone |
-| `logged-in` | people logged in to VIVO |
-| `private` | only you |
+| Everyone (public) | everyone (this is the default) |
+| Logged-in users only | people logged in to VIVO |
+| Only me (the person who ran it) | only you |
 
-The choice also applies to the pages of the run's workflow stages.
+Only the person who ran the run (its "run by") can change this. The choice also
+applies to the pages of the run's workflow stages.
 
-## When you publish
+## Or choose it when you publish
 
-Add `--visibility` to the publish command:
+Add `--visibility public`, `logged-in` or `private` to the publish command:
 
 ```bash
 # FONDA Kubernetes cluster
@@ -35,16 +44,11 @@ RUN_VISIBILITY="logged-in"
 ```
 
 `--visibility` wins over `RUN_VISIBILITY`. The publisher prints the choice at
-the end (`Visibility: ...`).
+the end (`Visibility: ...`). If you publish a run again without a choice, it
+keeps the one you made on its page.
 
 `private` means: only the run's "run by" person, so set `RUN_OPERATOR_URI` to
 your VIVO person URI.
-
-## Later, in VIVO
-
-Log in, open the run and edit **who can see this run**. Only you, as the run's
-"run by" person, can change it. Publishing the run again without
-`--visibility` keeps this choice.
 
 ## Good to know
 
