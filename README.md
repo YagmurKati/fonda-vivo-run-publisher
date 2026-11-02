@@ -3,6 +3,13 @@
 Publishes the metadata of finished workflow runs to
 [FONDA VIVO](https://vivo-fonda.hu-berlin.de/vivo/runs).
 
+## Add publications to VIVO
+
+To add journal articles, conference papers, preprints, books, chapters, posters,
+reports, or software outputs, follow [Add publications to FONDA VIVO](docs/PUBLICATIONS.md).
+The guide covers DOI import, publication types, author matching, and subproject
+links through the [VIVO publication form](https://vivo-fonda.hu-berlin.de/vivo/fonda-publications).
+
 ## Start here
 
 | Your cluster | Guide |
@@ -308,6 +315,7 @@ audit files. See [Remove a published run](docs/USER_GUIDE.md#8-remove-a-publishe
 
 ## Documentation
 
+- [Add publications to FONDA VIVO](docs/PUBLICATIONS.md)
 - [User guide](docs/USER_GUIDE.md)
 - [Administrator onboarding](docs/ADMIN_SETUP.md)
 - [Publish a workflow that is not listed](docs/NEW_WORKFLOW.md)
