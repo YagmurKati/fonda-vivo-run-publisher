@@ -5,10 +5,8 @@ Publishes the metadata of finished workflow runs to
 
 ## Add publications to VIVO
 
-To add journal articles, conference papers, preprints, books, chapters, posters,
-reports, or software outputs, follow [Add publications to FONDA VIVO](docs/PUBLICATIONS.md).
-The guide covers DOI import, publication types, author matching, and subproject
-links through the [VIVO publication form](https://vivo-fonda.hu-berlin.de/vivo/fonda-publications).
+[Add publications to FONDA VIVO](docs/PUBLICATIONS.md): enter DOIs, confirm types,
+and link authors and subprojects through the VIVO website.
 
 ## Start here
 
