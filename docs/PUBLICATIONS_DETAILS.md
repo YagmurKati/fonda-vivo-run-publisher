@@ -4,100 +4,110 @@
 
 ## Account and access
 
-Your VIVO account must be connected to your researcher profile and allow you to
-edit it. For an account, a missing **Add publications (DOI)** button, or a wrong
-profile connection, contact [yagmur.kati@hu-berlin.de](mailto:yagmur.kati@hu-berlin.de).
-Include your name, institutional email, and profile URL if it already exists.
+Use your self-editor account connected to your researcher profile. Publication
+entry runs in the VIVO website; no download or command-line setup is needed.
 
-Publication import uses the VIVO website. No repository download, cluster access,
-or command-line setup is needed.
+If you need an account or your profile connection is missing, email
+[yagmur.kati@hu-berlin.de](mailto:yagmur.kati@hu-berlin.de).
 
-## Which DOI to use
+## With a DOI
 
-Both a bare DOI and a doi.org link are accepted. For example, replace these with
-DOIs for your own publications:
+Enter the DOI of the individual publication, such as `10.1234/example`, or its
+`https://doi.org/…` link. Enter up to five at a time.
 
-```text
-10.48550/arxiv.2505.09375
-https://doi.org/10.1016/j.suscom.2026.101438
-```
+Use the paper or chapter DOI rather than the DOI of its whole proceedings or
+book. For an arXiv preprint, use its DOI link.
 
-Use the DOI of the individual paper or chapter. A book or proceedings volume may
-have its own DOI. For an arXiv preprint, use its DOI link rather than only its
-arXiv identifier.
+VIVO fills in available metadata and reuses an existing record with the same
+DOI. Review every publication before saving. You must be an author or creator.
 
-Add publications that you authored or created. Each publication in a batch must
-include your profile in its author or creator list.
+## Without a DOI
 
-## Checking the type
+In **Add / manage publications**, open **No DOI? Enter publication details**.
 
-Source metadata suggests a type, but you must check it. A publisher may describe
-a conference contribution as a book chapter. Choose **Poster** for the poster
-itself and **Conference paper** for a written conference contribution.
+1. Enter the title, publication type, and year.
+2. Enter all authors or creators, one per line, in publication order. Include
+   yourself at the correct position.
+3. Optionally add the journal, proceedings, or book title and a publication link.
+4. Click **Review publication and links**.
+5. Match authors to existing profiles and select the contributing subprojects.
+   Add workflow and dataset links when relevant.
+6. Confirm the review and save.
 
-Books and chapters keep their individual types and share one chart category.
-Posters, reports, and software outputs appear under **Other outputs**. Preprints
-have their own category.
+If your profile already has a publication with the same title and year, the form
+opens that record for link review. Check that it is the intended publication.
+Use the publication page's edit controls for additional fields such as pages or
+volume.
 
-Changing a selected type clears its confirmation checkbox. Confirm the new choice
-before saving. The type of an existing DOI record is preserved; ask the
-administrator to correct it if needed.
+The form adds metadata and relationships. It does not upload a PDF or accept
+BibTeX/RIS files. You can include a link to the published work.
 
-## Author matches
+## Authors and co-authors
 
-ORCID identifiers and matching names help suggest existing researcher profiles.
-Check the identity before accepting a suggestion, especially when names are
-similar. Use the name filter to find the correct profile.
+ORCID identifiers and names suggest existing profiles. Check each suggestion;
+similar names can belong to different people. Use the name filter when needed.
 
-External co-authors remain in publication order without creating new researcher
-profiles. If a FONDA profile is missing, or an existing author link is wrong, ask
-the administrator. Do not select another person as a substitute.
+Select an existing profile for each FONDA co-author. External authors keep their
+names and order without creating new researcher profiles. Existing profile
+links are preserved.
 
-## Subproject suggestions
+To add an author missing from an existing publication, open its publication page
+and choose **Manage Authors**, then **Add Author**. Search for the existing
+researcher, add them, check the order, and save. This is available to the
+publication's self editor.
 
-Membership suggestions are left unchecked for you to review. Select the projects
-that contributed to the publication. A researcher's membership in several
-projects does not mean every publication belongs to all of them.
+## Subprojects, workflows, and datasets
 
-Existing project links are marked **Already linked** and are preserved.
+Choose the subprojects that contributed to the publication. Membership-based
+suggestions are unchecked; they do not establish which projects supported it.
 
-## Existing records and versions
+Open **Workflows used (optional)** to select workflows used in the publication.
+Open **Datasets used or cited (optional)** to select its data sources. Search by
+name and select the existing records. These links are not inferred from a DOI.
+Leave them empty when they do not apply.
 
-VIVO reuses an existing record with the same DOI and preserves its recorded type,
-author links, and project links. This avoids creating another copy when a
-co-author has already added it.
+You can select all these relationships during the same review, including for a
+publication without a DOI. No administrator is needed to add the links.
 
-A preprint and its published version can have different DOIs. Check which version
-you are adding and choose its type. A shared title alone does not make two
-versions the same record.
+## Add links to an existing publication
 
-## Publications without a DOI
+1. Open **Add / manage publications** on your profile.
+2. Open **Manage existing publication links** and choose a publication.
+3. Click **Review publication links**.
+4. Select the additional subprojects, workflows, or datasets, then confirm and
+   save.
 
-Use the add control in your profile's **Publications** section to enter the
-metadata manually. Choose the correct publication type and reuse existing
-researcher and subproject records where the form allows it. Ask the administrator
-for help with fields or relationships your account cannot edit.
+The list contains publications linked to your profile. Existing relationships
+are marked **Already linked** and retained; this form adds links.
 
-The DOI form adds the publication record and its connections. It does not upload
-the PDF or accept BibTeX/RIS files.
+## Publication types and versions
 
-## Workflow and dataset links
+Check the type even when it was suggested. A publisher may describe a conference
+contribution as a book chapter. A poster and a written conference paper have
+different types.
 
-DOI import does not infer these links. After saving, open the publication page
-and add the appropriate relationship where your permissions allow it, or ask the
-administrator.
+Books and chapters share one chart category. Posters, reports, and software
+outputs appear under **Other outputs**. Preprints have their own category.
+
+Changing a new publication's type clears its confirmation checkbox. Confirm the
+new choice before saving. Link review preserves the type of an existing record.
+
+A preprint and its published version may have different DOIs. Choose the correct
+version and type. A shared title alone does not make two DOI records identical.
 
 ## Common problems
 
 | Problem | What to do |
 | --- | --- |
-| Metadata cannot be retrieved | Check the DOI, try again later, or use the manual form. |
-| Your author profile is not selected | Select your profile at the correct position for every publication in the batch. |
-| A DOI has duplicate records | Ask the administrator to review the duplicates. |
-| A record changed during review | Look up the DOI again to load the latest record. |
-| Saving reports an error | Check whether the record was saved and contact the administrator before retrying or creating a manual copy. |
-| The profile or chart has not updated | Allow a moment for processing, then refresh. |
+| DOI metadata is unavailable | Check the DOI or use **No DOI? Enter publication details** after checking for an existing record. |
+| Your profile is not selected | Select it at the correct author position for every publication. |
+| A publication is missing from your list | Open its page and check its author links. If it has a DOI, look it up to review the existing author slots. |
+| A workflow or dataset is missing | Check whether it has an existing record. The picker links existing records. |
+| The record changed during review | Start a new review to load its current details and links. |
+| Saving reports an error | Check the publication before retrying. Do not create another copy. If the problem persists, send the error message to the contact below. |
+| Your profile or chart has not updated | Allow a moment for processing, then refresh. |
 
-For help, email [yagmur.kati@hu-berlin.de](mailto:yagmur.kati@hu-berlin.de) with the
-DOI, your profile URL, and the message you saw. Keep passwords out of support
+For account problems, duplicate records, or a persistent error, email
+[yagmur.kati@hu-berlin.de](mailto:yagmur.kati@hu-berlin.de) with your profile URL,
+the publication link or DOI, and the message shown. Keep passwords out of support
 messages.

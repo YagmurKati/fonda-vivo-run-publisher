@@ -3,20 +3,20 @@
 ## 1. Open your profile
 
 [Sign in to VIVO](https://vivo-fonda.hu-berlin.de/vivo/authenticate), open your
-researcher profile, and click **Add publications (DOI)**. Check that
-**Adding publications for** shows your name.
+researcher profile, and click **Add / manage publications**.
 
-## 2. Enter the DOIs
+## 2. Choose how to start
 
-Paste up to **five DOIs or doi.org links**, one per line. Click
-**Look up publications**. VIVO fills in the details and checks for existing
-records.
+- **With a DOI:** paste up to five DOIs or doi.org links, one per line. Click
+  **Look up publications** to fill in the details.
+- **Without a DOI:** open **No DOI? Enter publication details**. Enter the title,
+  type, year, and authors in order. Click **Review publication and links**.
+- **Already in VIVO:** open **Manage existing publication links**, choose your
+  publication, and click **Review publication links**.
 
-## 3. Check the publication type
+## 3. Check the type
 
-Choose the correct type for each publication:
-
-| Chart category | Type to choose |
+| Chart category | Publication type |
 | --- | --- |
 | Journal articles | Journal article |
 | Conference papers | Conference paper |
@@ -24,28 +24,27 @@ Choose the correct type for each publication:
 | Books and chapters | Book or Book chapter |
 | Other outputs | Poster, Report, or Software output |
 
-Check **Chart category**, then tick **I confirm this publication type and chart
-category**. An existing record's type is shown for review; contact the
-administrator if it is wrong.
+Check the type and chart category, then tick their confirmation. Existing types
+are preserved when adding links.
 
 ## 4. Check the authors
 
-- Select your profile at your position in the author list.
-- Select the correct existing profiles for FONDA co-authors.
-- Leave other co-authors as **External author / keep name only**.
+Select your profile at your position in the author list. Select the existing
+profiles of FONDA co-authors. Leave other authors as **External author / keep
+name only**. Check suggested matches before accepting them.
 
-## 5. Select the subprojects
+## 5. Select the links
 
-Select at least one subproject that contributed to each publication. Check the
-membership suggestions before selecting them. Existing links are preserved.
+Select at least one contributing **FONDA subproject**. If relevant, open
+**Workflows used (optional)** and **Datasets used or cited (optional)**, then
+select the existing records. Existing links are retained.
 
-## 6. Save and check
+## 6. Save
 
-Tick the final review confirmation and click **Save publications and
-connections**. Open the saved records to check their types, authors, and
-subprojects. Profile listings may take a moment to refresh.
+Tick the final confirmation and click **Save publications and connections**.
+Open the saved publication to check the result.
 
-**No DOI, wrong metadata, or another problem?** See
-[Publication details and help](PUBLICATIONS_DETAILS.md).
+You can add these links with your self-editor account. No administrator is
+needed for this process.
 
-[Back to the repository guide](../README.md)
+[More details and help](PUBLICATIONS_DETAILS.md) · [Repository guide](../README.md)

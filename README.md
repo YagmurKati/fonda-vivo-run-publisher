@@ -5,8 +5,8 @@ Publishes the metadata of finished workflow runs to
 
 ## Add publications to VIVO
 
-[Add publications to FONDA VIVO](docs/PUBLICATIONS.md): enter DOIs, confirm types,
-and link authors and subprojects through the VIVO website.
+[Add publications to FONDA VIVO](docs/PUBLICATIONS.md): import by DOI or enter
+details manually, then link authors, subprojects, workflows, and datasets.
 
 ## Start here
 
