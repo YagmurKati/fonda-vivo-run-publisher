@@ -1,4 +1,7 @@
-# User guide
+# Workflow-run user guide
+
+To add publications, follow the [publication guide](PUBLICATIONS.md).
+The steps below are for publishing workflow runs.
 
 ## 1. Request VIVO publishing access
 

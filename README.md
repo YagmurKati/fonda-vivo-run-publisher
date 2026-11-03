@@ -1,12 +1,16 @@
-# FONDA workflow-run publisher for VIVO
+# FONDA VIVO: publications and workflow runs
 
-Publishes the metadata of finished workflow runs to
-[FONDA VIVO](https://vivo-fonda.hu-berlin.de/vivo/runs).
+Add publications and publish metadata from finished workflow runs to
+[FONDA VIVO](https://vivo-fonda.hu-berlin.de/vivo/).
 
 ## Add publications to VIVO
 
-[Add publications to FONDA VIVO](docs/PUBLICATIONS.md): import by DOI or enter
-details manually, then link authors, subprojects, workflows, and datasets.
+[Open the publication form](https://vivo-fonda.hu-berlin.de/vivo/fonda-publications).
+Import by DOI or enter details manually, then link authors, subprojects, workflows,
+and datasets.
+
+Follow the [six-step guide](docs/PUBLICATIONS.md).
+[More details and help](docs/PUBLICATIONS_DETAILS.md).
 
 ## Start here
 

@@ -3,7 +3,8 @@
 ## 1. Open your profile
 
 [Sign in to VIVO](https://vivo-fonda.hu-berlin.de/vivo/authenticate), open your
-researcher profile, and click **Add / manage publications**.
+researcher profile, and click **Add / manage publications**. You can also
+[open the publication form directly](https://vivo-fonda.hu-berlin.de/vivo/fonda-publications).
 
 ## 2. Choose how to start
 
@@ -32,6 +33,9 @@ are preserved when adding links.
 Select your profile at your position in the author list. Select the existing
 profiles of FONDA co-authors. Leave other authors as **External author / keep
 name only**. Check suggested matches before accepting them.
+
+For a missing author on an existing publication, open its publication page and
+choose **Manage Authors**, then **Add Author**.
 
 ## 5. Select the links
 
