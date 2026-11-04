@@ -51,4 +51,5 @@ Open the saved publication to check the result.
 You can add these links with your self-editor account. No administrator is
 needed for this process.
 
+[Presentations and attended events](PRESENTATIONS_AND_EVENTS.md) ·
 [More details and help](PUBLICATIONS_DETAILS.md) · [Repository guide](../README.md)

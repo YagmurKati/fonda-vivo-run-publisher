@@ -1,16 +1,23 @@
-# FONDA VIVO: publications and workflow runs
+# FONDA VIVO: publications, presentations, events and workflow runs
 
-Add publications and publish metadata from finished workflow runs to
+Add entries to your profile or publish finished workflow-run metadata to
 [FONDA VIVO](https://vivo-fonda.hu-berlin.de/vivo/).
 
-## Add publications to VIVO
+## Add entries to your profile
 
-[Open the publication form](https://vivo-fonda.hu-berlin.de/vivo/fonda-publications).
-Import by DOI or enter details manually, then link authors, subprojects, workflows,
-and datasets.
+[Sign in](https://vivo-fonda.hu-berlin.de/vivo/authenticate) and open your researcher profile.
+No download or terminal is needed for these steps.
 
-Follow the [six-step guide](docs/PUBLICATIONS.md).
-[More details and help](docs/PUBLICATIONS_DETAILS.md).
+| Add | Profile button | Steps |
+| --- | --- | --- |
+| Publication | **Add / manage publications** | [Publication guide](docs/PUBLICATIONS.md) |
+| Talk, demo or poster presentation | **Add presentation** | [Presentation guide](docs/PRESENTATIONS_AND_EVENTS.md#add-a-presentation) |
+| Event you attended | **Add attended event** | [Attendance guide](docs/PRESENTATIONS_AND_EVENTS.md#add-an-attended-event) |
+
+Publications support DOI lookup or manual entry. Presentations and attendance
+need no DOI or accompanying publication.
+
+[Publication details and help](docs/PUBLICATIONS_DETAILS.md).
 
 ## Start here
 
@@ -318,6 +325,7 @@ audit files. See [Remove a published run](docs/USER_GUIDE.md#8-remove-a-publishe
 ## Documentation
 
 - [Add publications to FONDA VIVO](docs/PUBLICATIONS.md)
+- [Add presentations and attended events](docs/PRESENTATIONS_AND_EVENTS.md)
 - [User guide](docs/USER_GUIDE.md)
 - [Administrator onboarding](docs/ADMIN_SETUP.md)
 - [Publish a workflow that is not listed](docs/NEW_WORKFLOW.md)

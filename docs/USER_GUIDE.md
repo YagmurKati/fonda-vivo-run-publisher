@@ -1,6 +1,7 @@
 # Workflow-run user guide
 
-To add publications, follow the [publication guide](PUBLICATIONS.md).
+For profile entries, use the [publication guide](PUBLICATIONS.md) or
+[presentations and attended events](PRESENTATIONS_AND_EVENTS.md).
 The steps below are for publishing workflow runs.
 
 ## 1. Request VIVO publishing access
