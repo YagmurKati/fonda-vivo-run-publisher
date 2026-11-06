@@ -1,5 +1,7 @@
 # FONDA VIVO: publications, presentations, events and workflow runs
 
+[![DOI](https://zenodo.org/badge/1346353991.svg)](https://doi.org/10.5281/zenodo.24023228)
+
 Add entries to your profile or publish finished workflow-run metadata to
 [FONDA VIVO](https://vivo-fonda.hu-berlin.de/vivo/).
 
