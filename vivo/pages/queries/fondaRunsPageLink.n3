@@ -1,0 +1,4 @@
+@prefix display: <http://vitro.mannlib.cornell.edu/ontologies/display/1.1#> .
+
+<http://vitro.mannlib.cornell.edu/ns/default#n5899>
+    display:hasDataGetter display:fondaRunsByStartDataGetter .

@@ -1,0 +1,12 @@
+# $This file is distributed under the terms of the license in LICENSE$
+#
+# FONDA 2026-10-04: the "publications" list on subproject pages (vivo:subjectAreaOf) uses the
+# list view config/listViewConfig-fondaSubjectAreaOf.xml, which sorts by publication date,
+# newest first, instead of by title.
+# To undo: remove this file from rdf/display/everytime and restart Tomcat.
+
+@prefix display: <http://vitro.mannlib.cornell.edu/ontologies/display/1.1#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<http://vivoweb.org/ontology/core#subjectAreaOf>
+    display:listViewConfigFile "listViewConfig-fondaSubjectAreaOf.xml"^^xsd:string .

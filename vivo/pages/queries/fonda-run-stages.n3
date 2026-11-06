@@ -1,0 +1,38 @@
+# $This file is distributed under the terms of the license in LICENSE$
+#
+# FONDA 2026-10-18: data for "where the run's resources went" on workflow run pages. Runs on every page of class
+# rm:RunMetadata (http://example.org/ontology/run-metadata#RunMetadata) and returns one row per workflow stage of
+# the run (rm:hasWorkflowProcess), with its title (rm:jobName), label, CPU time, task count and energy, as published.
+# Template: themes/tenderfoot/templates/body/partials/individual/individual-run-stage-breakdown.ftl
+# To undo: remove this file from rdf/display/everytime and restart Tomcat.
+
+@prefix display: <http://vitro.mannlib.cornell.edu/ontologies/display/1.1#> .
+
+<http://example.org/ontology/run-metadata#RunMetadata>
+    display:hasDataGetter display:fondaRunStagesDataGetter .
+
+display:fondaRunStagesDataGetter
+    a <java:edu.cornell.mannlib.vitro.webapp.utils.dataGetter.SparqlQueryDataGetter> ;
+    display:saveToVar "runStageRows" ;
+    display:uri "individualURI" ;
+    display:query """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX rm:   <http://example.org/ontology/run-metadata#>
+        SELECT ?proc
+               (SAMPLE(STR(?jobName))   AS ?title)
+               (SAMPLE(STR(?procLabel)) AS ?label)
+               (SAMPLE(?cpuSeconds)     AS ?cpu)
+               (SAMPLE(?taskCount)      AS ?tasks)
+               (SAMPLE(?kwh)            AS ?energy)
+        WHERE {
+            { ?individualURI rm:hasWorkflowProcess ?proc }
+            UNION
+            { ?proc rm:isWorkflowProcessOf ?individualURI }
+            OPTIONAL { ?proc rm:jobName ?jobName }
+            OPTIONAL { ?proc rdfs:label ?procLabel }
+            OPTIONAL { ?proc rm:cpuTimeSeconds ?cpuSeconds }
+            OPTIONAL { ?proc rm:taskCount ?taskCount }
+            OPTIONAL { ?proc rm:energyKWh ?kwh }
+        }
+        GROUP BY ?proc
+    """ .

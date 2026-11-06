@@ -1,0 +1,65 @@
+# $This file is distributed under the terms of the license in LICENSE$
+#
+# FONDA 2026-10-19: data for "power over time" on workflow run pages. Runs on every page of class rm:RunMetadata.
+#   runPowerRows:     one row for a run with rm:nodePowerReadings (the node's power during the job, saved by the
+#                     collector since 2026-10-19), with the node's idle power, duration, start, node use and energy.
+#   runStageTimeRows: one row per stage of the run (rm:hasWorkflowProcess) with its name, start and end.
+# Template: themes/tenderfoot/templates/body/partials/individual/individual-run-power-time.ftl
+# To undo: remove this file from rdf/display/everytime and restart Tomcat.
+
+@prefix display: <http://vitro.mannlib.cornell.edu/ontologies/display/1.1#> .
+
+<http://example.org/ontology/run-metadata#RunMetadata>
+    display:hasDataGetter display:fondaRunPowerDataGetter ;
+    display:hasDataGetter display:fondaRunStageTimesDataGetter .
+
+display:fondaRunPowerDataGetter
+    a <java:edu.cornell.mannlib.vitro.webapp.utils.dataGetter.SparqlQueryDataGetter> ;
+    display:saveToVar "runPowerRows" ;
+    display:uri "individualURI" ;
+    display:query """
+        PREFIX rm:   <http://example.org/ontology/run-metadata#>
+        PREFIX prov: <http://www.w3.org/ns/prov#>
+        SELECT (STR(?r) AS ?readings) (STR(?m) AS ?method) ?idlePower ?sleepPower ?awakePower ?duration ?energy ?aboveIdle
+               (STR(?s) AS ?start) (STR(?nUse) AS ?nodeUse) (STR(?cov) AS ?coverage)
+        WHERE {
+            ?individualURI rm:nodePowerReadings ?r .
+            OPTIONAL { ?individualURI rm:nodePowerReadingsMethod ?m }
+            OPTIONAL { ?individualURI rm:nodeIdlePowerW ?idlePower }
+            OPTIONAL { ?individualURI rm:nodeIdlePowerSleepW ?sleepPower }
+            OPTIONAL { ?individualURI rm:nodeIdlePowerSampledW ?awakePower }
+            OPTIONAL { ?individualURI rm:durationSeconds ?duration }
+            OPTIONAL { ?individualURI rm:energyKWh ?energy }
+            OPTIONAL { ?individualURI rm:energyAboveIdleKWh ?aboveIdle }
+            OPTIONAL { ?individualURI prov:startedAtTime ?s }
+            OPTIONAL { ?individualURI rm:nodeUse ?nUse }
+            OPTIONAL { ?individualURI rm:energyMeasurementCoverage ?cov }
+        }
+        LIMIT 1
+    """ .
+
+display:fondaRunStageTimesDataGetter
+    a <java:edu.cornell.mannlib.vitro.webapp.utils.dataGetter.SparqlQueryDataGetter> ;
+    display:saveToVar "runStageTimeRows" ;
+    display:uri "individualURI" ;
+    display:query """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX rm:   <http://example.org/ontology/run-metadata#>
+        PREFIX prov: <http://www.w3.org/ns/prov#>
+        SELECT ?proc
+               (SAMPLE(STR(?jobName))   AS ?title)
+               (SAMPLE(STR(?procLabel)) AS ?label)
+               (SAMPLE(STR(?s))         AS ?started)
+               (SAMPLE(STR(?e))         AS ?ended)
+        WHERE {
+            ?individualURI rm:nodePowerReadings ?any .
+            { ?individualURI rm:hasWorkflowProcess ?proc }
+            UNION
+            { ?proc rm:isWorkflowProcessOf ?individualURI }
+            ?proc prov:startedAtTime ?s ;
+                  prov:endedAtTime ?e .
+            OPTIONAL { ?proc rm:jobName ?jobName }
+            OPTIONAL { ?proc rdfs:label ?procLabel }
+        }
+        GROUP BY ?proc
+    """ .

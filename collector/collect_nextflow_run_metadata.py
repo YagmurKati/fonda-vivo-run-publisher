@@ -2328,6 +2328,469 @@ def append_metric_predicates(
         )
 
 
+# ---------------------------------------------------------------------------
+# FONDA 2026-10-20: whole-node energy, idle power, power over time and hourly
+# grid carbon for a run that had ONE node to itself (rm:nodeUse "exclusive").
+# Such a run is accounted like an exclusive HPC@HU job: its energy becomes the
+# node's measured energy during the run (Kepler's kepler_node_platform_joules_total,
+# the node's ACPI power meter) instead of the sum of its pods' Kepler shares,
+# which misses pods that finish between Kepler readings. Adds the properties the
+# run page charts use (idle vs. work, power over time, "was the timing green?"):
+# rm:nodeIdlePowerW, rm:energyAboveIdleKWh, rm:nodePowerAvgW, rm:nodePowerMaxW,
+# rm:nodePowerReadings(+Method), rm:nodeConditionsMethod and, when Electricity
+# Maps' hourly history covers the run, time-matched carbon and
+# rm:gridCarbonIntensityHours(+Method). Runs on several nodes or shared nodes
+# are published exactly as before. Set FONDA_NODE_POWER=0 to switch it off.
+# Publish at least 12 minutes after the run ended (quiet window after the run)
+# and within 24 hours (Electricity Maps' history covers the last 24 hours).
+# ---------------------------------------------------------------------------
+NODE_POWER_METRIC = "kepler_node_platform_joules_total"
+NODE_POWER_IDLE_WINDOW = 600
+NODE_POWER_IDLE_GAP = 60
+NODE_POWER_BUSY_CPUS_WARN = 2.0
+NODE_POWER_MAX_POINTS = 600
+NODE_POWER_HOURS_AROUND = 24
+NODE_POWER_EM_HISTORY = "https://api.electricitymaps.com/v4/carbon-intensity/history"
+NODE_POWER_WHOLE_NODE = "100% of the node (whole node, measured)"
+
+
+def _np_result(data: Dict[str, Any], query: str) -> Any:
+    if data.get("status") != "success":
+        raise RuntimeError(f"Prometheus query failed: {query}")
+    return data["data"]["result"]
+
+
+def _np_instant(prom_url: str, query: str, at: float) -> Optional[float]:
+    result = _np_result(http_get_json(f"{prom_url.rstrip('/')}/api/v1/query",
+                                      {"query": query, "time": f"{at:.3f}"}), query)
+    values = []
+    for item in result:
+        try:
+            value = float(item["value"][1])
+        except (KeyError, IndexError, TypeError, ValueError):
+            continue
+        if math.isfinite(value):
+            values.append(value)
+    return sum(values) if values else None
+
+
+def _np_range(prom_url: str, query: str, start: float, end: float, step: int) -> List[Tuple[float, float]]:
+    result = _np_result(http_get_json(f"{prom_url.rstrip('/')}/api/v1/query_range",
+                                      {"query": query, "start": f"{start:.3f}", "end": f"{end:.3f}",
+                                       "step": f"{step}s"}), query)
+    points: Dict[float, float] = {}
+    for item in result:
+        for t, v in item.get("values", []):
+            try:
+                t, v = float(t), float(v)
+            except (TypeError, ValueError):
+                continue
+            if math.isfinite(v):
+                points[t] = points.get(t, 0.0) + v
+    return sorted(points.items())
+
+
+def _np_selector(node: str) -> str:
+    return f'{NODE_POWER_METRIC}{{instance="{prometheus_label_value(node)}"}}'
+
+
+def node_power_readings(prom_url: str, node: str, start: float, end: float,
+                        interval: float) -> Tuple[List[Tuple[float, float]], int, int]:
+    """[(seconds since the run start, watts)] from the run start to the run end: each value is the
+    average power over `window` seconds centred on its time, every `step` seconds, plus one value
+    exactly at the run's end."""
+    step = max(5, int(round(interval)))
+    window = max(30, int(math.ceil(2 * interval)) + 1)
+    half = window / 2
+    query = f"sum(rate({_np_selector(node)}[{window}s]))"
+    points = [(t - half - start, w) for t, w in _np_range(prom_url, query, start + half, end + half, step)]
+    points = [(o, w) for o, w in points if -1 <= o <= end - start + 1]
+    if not points or end - start - points[-1][0] > 1:
+        last = _np_instant(prom_url, query, end + half)
+        if last is not None:
+            points.append((end - start, last))
+    if len(points) > NODE_POWER_MAX_POINTS:
+        width = (end - start) / NODE_POWER_MAX_POINTS
+        bins: Dict[int, List[float]] = {}
+        for offset, w in points:
+            bins.setdefault(min(NODE_POWER_MAX_POINTS - 1, max(0, int(offset // width))), []).append(w)
+        points = [((i + 0.5) * width, sum(v) / len(v)) for i, v in sorted(bins.items())]
+    return points, step, window
+
+
+def _np_hour(epoch: float) -> str:
+    return datetime.fromtimestamp(epoch, timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
+
+
+def _np_literal_value(obj: str) -> str:
+    """Lexical value of a literal written by ttl_literal()."""
+    if not obj.startswith('"'):
+        return obj
+    out, i = [], 1
+    while i < len(obj):
+        c = obj[i]
+        if c == "\\" and i + 1 < len(obj):
+            out.append({"n": "\n", "r": "\r"}.get(obj[i + 1], obj[i + 1]))
+            i += 2
+            continue
+        if c == '"':
+            break
+        out.append(c)
+        i += 1
+    return "".join(out)
+
+
+def _np_grid_history(token: str, zone: str) -> Tuple[str, List[Dict[str, Any]]]:
+    params = {"zone": zone, "temporalGranularity": "hourly", "emissionFactorType": "lifecycle",
+              "flowTraced": "true"}
+    url = NODE_POWER_EM_HISTORY + "?" + urllib.parse.urlencode(params)
+    payload = http_get_json(NODE_POWER_EM_HISTORY, params, {"auth-token": token})
+    if payload.get("zone") != zone or payload.get("temporalGranularity") != "hourly":
+        raise ValueError("unexpected Electricity Maps zone or time resolution")
+    rows = payload.get("history", payload.get("data"))
+    if not isinstance(rows, list):
+        raise ValueError("no hourly Electricity Maps data")
+    points = []
+    for row in rows:
+        if row.get("emissionFactorType") != "lifecycle" or row.get("flowTraced") is not True:
+            raise ValueError("unexpected Electricity Maps emissions basis")
+        value = row.get("carbonIntensity", row.get("value"))
+        if value is None or isinstance(value, bool):
+            continue
+        points.append({"begin": datetime.fromisoformat(str(row["datetime"]).replace("Z", "+00:00")).timestamp(),
+                       "g_per_kwh": float(value), "estimated": bool(row.get("isEstimated", False))})
+    return url, sorted(points, key=lambda p: p["begin"])
+
+
+def _np_covered(points: List[Dict[str, Any]], start: float, end: float) -> List[Dict[str, Any]]:
+    """The hourly records that cover every instant of the run, cut to the run."""
+    pieces = []
+    for point in points:
+        begin, finish = point["begin"], point["begin"] + 3600
+        if finish <= start or begin >= end:
+            continue
+        pieces.append(dict(point, start=max(begin, start), end=min(finish, end)))
+    cursor = start
+    for piece in pieces:
+        if abs(piece["start"] - cursor) > 1e-6:
+            raise ValueError("Electricity Maps history does not cover the run without gaps")
+        cursor = piece["end"]
+    if not pieces or abs(cursor - end) > 1e-6:
+        raise ValueError("Electricity Maps history does not cover the run")
+    return pieces
+
+
+def _np_shares(pieces: List[Dict[str, Any]], readings: List[Tuple[float, float]], start: float) -> List[float]:
+    """Share of the run's energy in each hourly piece, from the power readings (time share if too few)."""
+    points = [(start + o, w) for o, w in readings]
+
+    def energy_in(a: float, b: float) -> Optional[float]:
+        if len(points) < 2:
+            return None
+        total = 0.0
+        for (t0, w0), (t1, w1) in zip(points, points[1:]):
+            lo, hi = max(a, t0), min(b, t1)
+            if hi <= lo or t1 <= t0:
+                continue
+            f0 = w0 + (w1 - w0) * (lo - t0) / (t1 - t0)
+            f1 = w0 + (w1 - w0) * (hi - t0) / (t1 - t0)
+            total += (f0 + f1) / 2 * (hi - lo)
+        return total
+
+    parts = [energy_in(p["start"], p["end"]) for p in pieces]
+    if any(p is None for p in parts) or sum(p or 0 for p in parts) <= 0:
+        parts = [p["end"] - p["start"] for p in pieces]
+    total = sum(parts)
+    return [p / total for p in parts]
+
+
+# FONDA 2026-10-20 (2): node conditions of a run that had ONE node to itself, as for HPC@HU jobs:
+# rm:nodeCpuUtilizationAvgPercent (busy CPUs of the node), rm:cpuEfficiencyPercent (the run's CPU time /
+# (node CPUs x duration)) and, when the node reports fan sensors to Prometheus, rm:fanSpeedAvgRPM. Each value
+# is explained in rm:nodeConditionsMethod. The Nextflow driver's pod is found in the debug log ("Process:
+# PID@HOST"; in a pod HOST is the pod name) and counted as part of the run.
+NODE_CONDITIONS_FANS = ('(node_hwmon_fan_rpm > 0) * on(instance) group_left() '
+                        'max by (instance) (node_uname_info{{nodename="{node}"}})')
+
+
+def driver_pod_from_log(debug_log: Optional[str]) -> Optional[str]:
+    """The pod the Nextflow driver ran in: HOST of the debug log line '  Process: PID@HOST [IP]'."""
+    match = re.search(r"^\s*Process:\s*\d+@([a-z0-9](?:[-a-z0-9.]*[a-z0-9])?)\s", debug_log or "", re.MULTILINE)
+    return match.group(1) if match else None
+
+
+def node_conditions_k8s(args: argparse.Namespace, run_predicates: List[Tuple[str, str]], node: str,
+                        start: float, end: float, duration: float,
+                        interval: float) -> Tuple[Dict[str, str], List[str], Dict[str, Any]]:
+    """New properties, sentences for rm:nodeConditionsMethod and a summary for the metrics audit."""
+    prom = args.prom_url
+    sel = prometheus_label_value(node)
+    seconds = max(1, int(round(duration)))
+    cpus = _np_instant(prom, f'max(machine_cpu_cores{{node="{sel}"}})', end)
+    cpu_source = "machine_cpu_cores, cAdvisor"
+    if not cpus:
+        cpus = _np_instant(prom, f'max(kube_node_status_capacity{{node="{sel}",resource="cpu"}})', end)
+        cpu_source = "kube_node_status_capacity, kube-state-metrics"
+    if not cpus or cpus <= 0:
+        raise ValueError(f"the number of CPUs of node {node} is unknown")
+    cpus = int(round(cpus))
+    new: Dict[str, str] = {}
+    texts: List[str] = []
+    summary: Dict[str, Any] = {"node_cpus": cpus}
+
+    busy = _np_instant(prom, f'sum(increase(container_cpu_usage_seconds_total{{id="/",node="{sel}"}}'
+                             f'[{seconds}s]))', end)
+    if busy is not None:
+        util = 100 * busy / (cpus * duration)
+        new["rm:nodeCpuUtilizationAvgPercent"] = ttl_literal(round(util, 1))
+        texts.append(f"Node CPU utilisation: CPU time of all processes on the node (cAdvisor, "
+                     f"container_cpu_usage_seconds_total of the node's root cgroup) {busy:.0f} s / ({cpus} CPUs "
+                     f"({cpu_source}) x {duration:.0f} s) = {util:.1f}% ({busy / duration:.1f} of {cpus} CPUs "
+                     "busy on average).")
+        summary["node_cpu_utilization_percent"] = util
+
+    task_literal = dict(run_predicates).get("rm:cpuTimeSeconds")
+    if task_literal:
+        task_s = float(_np_literal_value(task_literal))
+        driver = getattr(args, "detected_driver_pod", None)
+        driver_s = None
+        if driver:
+            namespace = prometheus_label_value(getattr(args, "namespace", "") or "")
+            driver_s = _np_instant(prom, f'sum(increase(container_cpu_usage_seconds_total{{namespace="{namespace}",'
+                                         f'pod="{prometheus_label_value(driver)}",container!="",container!="POD"}}'
+                                         f'[{seconds}s]))', end)
+        run_s = task_s + (driver_s or 0.0)
+        efficiency = 100 * run_s / (cpus * duration)
+        new["rm:cpuEfficiencyPercent"] = ttl_literal(round(efficiency, 1))
+        driver_text = (f" + the Nextflow driver pod {driver} {driver_s:.0f} s from cAdvisor" if driver_s is not None
+                       else ", without the Nextflow driver, whose pod was not found")
+        texts.append(f"CPU efficiency: run CPU time {run_s:.0f} s (tasks {task_s:.0f} s from the Nextflow trace"
+                     f"{driver_text}) / ({cpus} CPUs of the node, which the run had to itself, x {duration:.0f} s) "
+                     f"= {efficiency:.1f}%.")
+        summary.update(cpu_efficiency_percent=efficiency, task_cpu_seconds=task_s, driver_pod=driver,
+                       driver_cpu_seconds=driver_s)
+
+    fans = NODE_CONDITIONS_FANS.format(node=sel)
+    step = max(5, int(round(interval)))
+    try:
+        averages = [w for _, w in _np_range(prom, f"avg({fans})", start, end, step)]
+        highest = [w for _, w in _np_range(prom, f"max({fans})", start, end, step)]
+        count = _np_instant(prom, f"count({fans})", end)
+    except (RuntimeError, ValueError, KeyError, TypeError, OSError, urllib.error.URLError):
+        averages = []
+    if averages:
+        avg_rpm = sum(averages) / len(averages)
+        max_rpm = max(highest or averages)
+        new["rm:fanSpeedAvgRPM"] = ttl_literal(float(round(avg_rpm)))
+        texts.append(f"Fan speed: fan sensors of the node (node_exporter, node_hwmon_fan_rpm), "
+                     f"{int(count or 0)} fans, {len(averages)} readings: average {avg_rpm:.0f} rpm (mean of the fans, "
+                     f"over time), highest {max_rpm:.0f} rpm.")
+        summary.update(fan_avg_rpm=avg_rpm, fan_max_rpm=max_rpm, fan_count=count)
+    else:
+        summary["fans"] = "the node reports no fan sensors to Prometheus"
+    return new, texts, summary
+
+
+def node_power_apply(
+    args: argparse.Namespace,
+    run_predicates: List[Tuple[str, str]],
+    node_names: Sequence[str],
+    node_use: Optional[Dict[str, Any]],
+    run_start: datetime,
+    run_end: datetime,
+    now: Optional[float] = None,
+) -> Dict[str, Any]:
+    """Replace the energy of an exclusive single-node run by the node's measured energy and add
+    idle power, power readings and hourly grid carbon. Changes run_predicates in place; returns
+    a summary for the metrics audit."""
+    nodes = unique(node_names)
+    if os.environ.get("FONDA_NODE_POWER", "1") == "0":
+        return {"applied": False, "reason": "switched off (FONDA_NODE_POWER=0)"}
+    if len(nodes) != 1:
+        return {"applied": False, "reason": f"the run used {len(nodes)} nodes"}
+    if not node_use or not node_use.get("exclusive"):
+        return {"applied": False, "reason": "the run did not have its node to itself"}
+    prom_url = getattr(args, "prom_url", "") or ""
+    if not prom_url:
+        return {"applied": False, "reason": "no Prometheus URL"}
+    node = nodes[0]
+    start, end = run_start.timestamp(), run_end.timestamp()
+    duration = end - start
+    now = datetime.now(timezone.utc).timestamp() if now is None else now
+    try:
+        if duration <= 0:
+            raise ValueError("run end is not after its start")
+        counts = _np_result(http_get_json(f"{prom_url.rstrip('/')}/api/v1/query",
+                                          {"query": f"count_over_time({_np_selector(node)}[600s])",
+                                           "time": f"{end:.3f}"}), "count_over_time")
+        samples = max((float(r["value"][1]) for r in counts), default=0.0)
+        if samples < 2:
+            raise ValueError(f"Prometheus has no {NODE_POWER_METRIC} for node {node}")
+        interval = 600.0 / samples
+        seconds = max(1, int(round(duration)))
+        energy_j = _np_instant(prom_url, f"sum(increase({_np_selector(node)}[{seconds}s]))", end)
+        if energy_j is None or energy_j <= 0:
+            raise ValueError(f"no {NODE_POWER_METRIC} increase for node {node} during the run")
+        windows = []
+        ends = [start - NODE_POWER_IDLE_GAP]
+        after = end + NODE_POWER_IDLE_GAP + NODE_POWER_IDLE_WINDOW
+        if now >= after + 30:
+            ends.append(after)
+        for window_end in ends:
+            joules = _np_instant(prom_url, f"sum(increase({_np_selector(node)}[{NODE_POWER_IDLE_WINDOW}s]))",
+                                 window_end)
+            busy = _np_instant(prom_url, f'sum(rate(container_cpu_usage_seconds_total{{id="/",node="'
+                                         f'{prometheus_label_value(node)}"}}[{NODE_POWER_IDLE_WINDOW}s]))', window_end)
+            if joules is not None:
+                windows.append({"start": window_end - NODE_POWER_IDLE_WINDOW, "end": window_end,
+                                "watts": joules / NODE_POWER_IDLE_WINDOW, "busy_cpus": busy})
+        if not windows:
+            raise ValueError("no node power before the run; cannot determine the idle power")
+        readings, step, rate_window = node_power_readings(prom_url, node, start, end, interval)
+    except (RuntimeError, ValueError, KeyError, TypeError, OSError, urllib.error.URLError) as exc:
+        print(f"WARNING: node power not added ({exc}); the run keeps its pod energy.", file=sys.stderr)
+        return {"applied": False, "reason": str(exc)}
+
+    idle_w = sum(w["watts"] for w in windows) / len(windows)
+    above_kwh = (energy_j - idle_w * duration) / 3_600_000
+    energy_kwh = energy_j / 3_600_000
+    max_w = max((w for _, w in readings), default=None)
+    warnings = []
+    for w in windows:
+        if w["busy_cpus"] is not None and w["busy_cpus"] > NODE_POWER_BUSY_CPUS_WARN:
+            warnings.append(f"the node had {w['busy_cpus']:.1f} busy CPUs in the quiet window "
+                            f"{_np_hour(w['start'])[11:16]}-{_np_hour(w['end'])[11:16]} UTC; the idle power may be "
+                            "too high")
+    if len(windows) == 1:
+        warnings.append("only the window before the run was used (the window after it had not passed yet)")
+
+    def window_text(w: Dict[str, Any]) -> str:
+        busy = "" if w["busy_cpus"] is None else f", {w['busy_cpus']:.2f} CPUs busy on average"
+        return (f"{datetime.fromtimestamp(w['start'], BERLIN_TZ):%H:%M}-"
+                f"{datetime.fromtimestamp(w['end'], BERLIN_TZ):%H:%M} Berlin time: {w['watts']:.1f} W{busy}")
+
+    values = {p: o for p, o in run_predicates}
+    old_energy = values.get("rm:energyKWh")
+    old_energy_kwh = float(_np_literal_value(old_energy)) if old_energy else None
+    start_utc = datetime.fromtimestamp(start, timezone.utc).isoformat()
+    end_utc = datetime.fromtimestamp(end, timezone.utc).isoformat()
+    new: Dict[str, str] = {
+        "rm:nodeIdlePowerW": ttl_literal(round(idle_w, 1)),
+        "rm:energyAboveIdleKWh": ttl_literal(above_kwh),
+        "rm:nodePowerAvgW": ttl_literal(round(energy_j / duration, 1)),
+        "rm:nodeConditionsMethod": ttl_literal(
+            f"Idle power: {idle_w:.0f} W, the mean power of node {node} (ACPI power meter, read by Kepler as "
+            f"{NODE_POWER_METRIC}) in {len(windows)} quiet window{'s' if len(windows) > 1 else ''} of "
+            f"{NODE_POWER_IDLE_WINDOW // 60} minutes, {NODE_POWER_IDLE_GAP} s before"
+            f"{' and after' if len(windows) > 1 else ''} the run on {run_start.astimezone(BERLIN_TZ):%Y-%m-%d}: "
+            + "; ".join(window_text(w) for w in windows) + ". "
+            f"Energy above idle = (node energy {energy_j:.0f} J - {idle_w:.0f} W x {duration:.0f} s) = "
+            f"{energy_j - idle_w * duration:.0f} J = {above_kwh:.6f} kWh."
+            + ("" if not warnings else " Note: " + "; ".join(warnings) + ".")),
+        "rm:energyKWh": ttl_literal(energy_kwh),
+        "rm:energyMeasurementCoverage": ttl_literal(NODE_POWER_WHOLE_NODE),
+        "rm:energyMetricSource": ttl_literal(f"{NODE_POWER_METRIC} (ACPI power meter of the node, read by Kepler)"),
+        "rm:energyCalculationUsesFallbackEstimate": ttl_literal(False),
+        "rm:energyCalculationMethod": ttl_literal(
+            f"Whole-node energy: the run had node {node} to itself ({node_use.get('text', 'exclusive')}), so all of "
+            f"the node's energy during the run is the run's energy, as for an exclusive HPC@HU job. Node energy = "
+            f"increase of {NODE_POWER_METRIC} (the node's ACPI power meter, read by Kepler) from {start_utc} to "
+            f"{end_utc} = {energy_j:.0f} J = {energy_kwh:.6f} kWh, including the node's idle power; cooling and "
+            "network are excluded."
+            + (f" It replaces the sum of the run's pods' Kepler shares ({old_energy_kwh:.6f} kWh), which misses "
+               "pods that finished between Kepler readings." if old_energy_kwh is not None else "")),
+    }
+    if max_w is not None:
+        new["rm:nodePowerMaxW"] = ttl_literal(round(max_w, 1))
+    if len(readings) >= 3:
+        new["rm:nodePowerReadings"] = ttl_literal("; ".join(f"{o:.1f} {w:.0f}" for o, w in readings))
+        new["rm:nodePowerReadingsMethod"] = ttl_literal(
+            f"Power of the whole node {node} from its ACPI power meter, read by Kepler ({NODE_POWER_METRIC}) and "
+            f"stored in Prometheus about every {interval:.0f} s; each value is the average power over the "
+            f"{rate_window} s centred on its time, every {step} s and at the run's end: {len(readings)} readings. "
+            f"Each entry is the time since the run started ({start_utc}) in seconds and the node's power in watts.")
+
+    carbon_note = None
+    try:
+        token = os.environ.get(getattr(args, "electricity_maps_api_token_env", "ELECTRICITY_MAPS_API_TOKEN")
+                               or "ELECTRICITY_MAPS_API_TOKEN", "").strip()
+        if not token:
+            raise ValueError("no Electricity Maps token")
+        zone = getattr(args, "electricity_maps_zone", "DE") or "DE"
+        source_url, points = _np_grid_history(token, zone)
+        pieces = _np_covered(points, start, end)
+        shares = _np_shares(pieces, readings, start)
+        g = sum(s * p["g_per_kwh"] for s, p in zip(shares, pieces))
+        intensity = g / 1000
+        first = math.floor(start / 3600) * 3600 - NODE_POWER_HOURS_AROUND * 3600
+        last = math.ceil(end / 3600) * 3600 + NODE_POWER_HOURS_AROUND * 3600
+        hours = [p for p in points if first <= p["begin"] < last]
+        detail = ", ".join(f"{_np_hour(p['begin'])[11:16]} UTC {p['g_per_kwh']:.0f} g/kWh x {s:.1%}"
+                           for p, s in zip(pieces, shares))
+        new.update({
+            "rm:carbonIntensityAssumptionKgCO2ePerKWh": ttl_literal(intensity),
+            "rm:carbonEmissionKgCO2e": ttl_literal(energy_kwh * intensity),
+            "rm:carbonIntensitySource": ttl_literal(
+                f"Electricity Maps hourly history (zone {zone}, lifecycle, flow-traced)"),
+            "rm:carbonIntensitySourceLink": ttl_literal(source_url, "xsd:anyURI"),
+            "rm:carbonIntensityWindowStart": ttl_literal(
+                datetime.fromtimestamp(pieces[0]["begin"], timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "xsd:dateTime"),
+            "rm:carbonIntensityWindowEnd": ttl_literal(
+                datetime.fromtimestamp(pieces[-1]["begin"] + 3600, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "xsd:dateTime"),
+            "rm:carbonIntensityDataPointCount": ttl_literal(len(pieces), "xsd:integer"),
+            "rm:carbonIntensityIncludesEstimatedData": ttl_literal(any(p["estimated"] for p in pieces)),
+            "rm:carbonIntensityEmissionsBasis": ttl_literal("lifecycle CO2e"),
+            "rm:carbonIntensityTemporalGranularity": ttl_literal("hourly"),
+            "rm:carbonCalculationMethod": ttl_literal(
+                f"Time-matched: the run's energy {energy_kwh:.6f} kWh x the hourly carbon intensity of the grid "
+                f"(Electricity Maps, zone {zone}, lifecycle, flow-traced) in the hours the run used, weighted by "
+                f"the run's energy in each hour ({detail}) = {g:.1f} g/kWh, so "
+                f"{energy_kwh * intensity * 1000:.2f} g CO2e."),
+        })
+        if len(hours) >= 2:
+            new["rm:gridCarbonIntensityHours"] = ttl_literal("; ".join(
+                f"{_np_hour(p['begin'])} {p['g_per_kwh']:.1f}{'*' if p['estimated'] else ''}" for p in hours))
+            new["rm:gridCarbonIntensityHoursMethod"] = ttl_literal(
+                f"Hourly carbon intensity of the grid (zone {zone}) from Electricity Maps (lifecycle CO2e, "
+                f"flow-traced), in grams per kWh, for the {len(hours)} hours from {_np_hour(hours[0]['begin'])} to "
+                f"{_np_hour(hours[-1]['begin'] + 3600)} (UTC) that its history returned when this record was made. "
+                "Each entry is the start of an hour and its intensity; * = estimated by the source. Shown on the run "
+                "page next to the hour or hours the run used.")
+    except (RuntimeError, ValueError, KeyError, TypeError, OSError, urllib.error.URLError) as exc:
+        carbon_note = f"carbon not time-matched ({exc}); the run's intensity is applied to the node energy"
+        old_intensity = values.get("rm:carbonIntensityAssumptionKgCO2ePerKWh")
+        if old_intensity:
+            intensity = float(_np_literal_value(old_intensity))
+            old_method = _np_literal_value(values.get("rm:carbonCalculationMethod", '""'))
+            new["rm:carbonEmissionKgCO2e"] = ttl_literal(energy_kwh * intensity)
+            new["rm:carbonCalculationMethod"] = ttl_literal(
+                (old_method + " " if old_method else "") + f"Applied to the whole-node energy {energy_kwh:.6f} kWh: "
+                f"{energy_kwh * intensity * 1000:.2f} g CO2e.")
+
+    try:
+        cond_new, cond_texts, cond_summary = node_conditions_k8s(args, run_predicates, node, start, end,
+                                                                 duration, interval)
+    except Exception as exc:  # optional values: the publication goes on without them
+        cond_new, cond_texts, cond_summary = {}, [], {"error": str(exc)}
+        print(f"WARNING: node CPU utilisation, CPU efficiency and fan speed not added ({exc})", file=sys.stderr)
+    new.update(cond_new)
+    if cond_texts:
+        new["rm:nodeConditionsMethod"] = ttl_literal(
+            _np_literal_value(new["rm:nodeConditionsMethod"]) + " " + " ".join(cond_texts))
+    run_predicates[:] = [(p, o) for p, o in run_predicates if p not in new] + list(new.items())
+    summary = {"applied": True, "node": node, "node_energy_kwh": energy_kwh, "pod_energy_kwh": old_energy_kwh,
+               "idle_w": round(idle_w, 1), "above_idle_kwh": above_kwh, "readings": len(readings),
+               "quiet_windows": windows, "grid_hours": "rm:gridCarbonIntensityHours" in new,
+               "carbon_note": carbon_note, "warnings": warnings}
+    summary["node_conditions"] = cond_summary
+    print(f"node_power: whole-node energy {energy_kwh:.6f} kWh (pods: {old_energy_kwh}), idle {idle_w:.1f} W, "
+          f"above idle {above_kwh:.6f} kWh, {len(readings)} power readings, grid hours: {summary['grid_hours']}")
+    for warning in warnings + ([carbon_note] if carbon_note else []):
+        print(f"WARNING: {warning}", file=sys.stderr)
+    return summary
+
+
 def build_ttl(
     args: argparse.Namespace,
     tasks: Sequence[TaskRecord],
@@ -2905,6 +3368,9 @@ def build_ttl(
         run_predicates.append(
             ("rm:usesWorkflowStage", ttl_uri(stage["workflow_stage_uri"]))
         )
+    # FONDA 2026-10-20: a run that had one node to itself gets the whole node's measured energy, its idle
+    # power, power readings and hourly grid carbon (node_power_apply).
+    node_power = node_power_apply(args, run_predicates, node_names, node_use, run_start, run_end)
     add_resource(lines, ttl_uri(run_uri), run_predicates)
 
     for dataset in input_datasets:
@@ -3116,6 +3582,7 @@ def build_ttl(
     )
     missing_hardware = missing_node_metadata(expected_nodes, node_infos)
     audit = {
+        "node_power": node_power,
         "workflow_name": args.workflow_name,
         "workflow_uri": workflow_uri,
         "run_uri": run_uri,
@@ -3648,11 +4115,13 @@ def main() -> None:
             file=sys.stderr,
         )
     node_use: Optional[Dict[str, Any]] = None
+    # FONDA 2026-10-20: the Nextflow driver's pod counts as part of the run (debug log "Process: PID@POD").
+    args.detected_driver_pod = driver_pod_from_log(debug_log)
     try:
         node_use = kubernetes_node_use(
             args.prom_url,
             node_names,
-            [*pod_metrics.keys(), args.driver_pod],
+            [*pod_metrics.keys(), args.driver_pod, args.detected_driver_pod],
             metric_start,
             metric_end,
             args.node_use_max_other_cpus,

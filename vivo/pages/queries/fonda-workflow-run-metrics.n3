@@ -1,0 +1,86 @@
+# $This file is distributed under the terms of the license in LICENSE$
+#
+# FONDA 2026-09-29: data for the "energy, carbon and time per run" plots on workflow pages.
+# Runs on every page of class rm:Workflow (http://example.org/ontology/run-metadata#Workflow)
+# and returns one row per run of that workflow (rm:hasRun / rm:hasWorkflowRun / rm:workflow),
+# so new runs appear automatically.
+# 2026-10-01: also returns the start of rm:energyCalculationMethod (energy measurement coverage).
+# 2026-10-03: also returns rm:energyMeasurementCoverage; the method text is kept for runs without it.
+# 2026-10-03: also returns the compute cluster of each run (for "Exclude clusters from mean +/- SD").
+# 2026-10-03: also returns the persons who ran each run (rm:runOperator, "run by") as
+#             "<person URI> | <name>" entries separated by " ;; ".
+# 2026-10-03: also returns rm:nodeUse of each run ("exclusive (...)" / "non-exclusive (...)").
+# 2026-10-04: also returns the number of nodes of each run (its distinct rm:executionHost values).
+# 2026-10-24: ?cpu is the CPU time of the run's tasks (sum of its stage executions); the run's own value
+#             is returned as ?cpuRecorded.
+# 2026-10-24: also returns rm:energyAboveIdleKWh of each run as ?energyAboveIdle.
+# Template: themes/tenderfoot/templates/body/partials/individual/individual-workflow-run-metrics.ftl
+# To undo: remove this file from rdf/display/everytime and restart Tomcat.
+
+@prefix display: <http://vitro.mannlib.cornell.edu/ontologies/display/1.1#> .
+
+<http://example.org/ontology/run-metadata#Workflow>
+    display:hasDataGetter display:fondaWorkflowRunMetricsDataGetter .
+
+display:fondaWorkflowRunMetricsDataGetter
+    a <java:edu.cornell.mannlib.vitro.webapp.utils.dataGetter.SparqlQueryDataGetter> ;
+    display:saveToVar "workflowRunMetricRows" ;
+    display:uri "individualURI" ;
+    display:query """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX rm:   <http://example.org/ontology/run-metadata#>
+        SELECT ?run
+               (SAMPLE(?runLabel)   AS ?label)
+               (SAMPLE(?startTime)  AS ?start)
+               (SAMPLE(?kwh)        AS ?energy)
+               (SAMPLE(?kg)         AS ?carbon)
+               (SAMPLE(?taskCpu)    AS ?cpu)
+               (SAMPLE(?cpuSeconds) AS ?cpuRecorded)
+               (SAMPLE(?seconds)    AS ?duration)
+               (SAMPLE(?aboveIdle)  AS ?energyAboveIdle)
+               (SAMPLE(SUBSTR(STR(?eMethod), 1, 300)) AS ?energyMethod)
+               (SAMPLE(STR(?eCoverage)) AS ?coverage)
+               (SAMPLE(STR(?clusterUri))   AS ?cluster)
+               (SAMPLE(STR(?clusterLabel)) AS ?clusterName)
+               (GROUP_CONCAT(DISTINCT ?operatorEntry; separator=" ;; ") AS ?runBy)
+               (SAMPLE(STR(?nUse)) AS ?nodeUse)
+               (COUNT(DISTINCT ?host) AS ?nodes)
+        WHERE {
+            { ?individualURI rm:hasRun ?run }
+            UNION { ?individualURI rm:hasWorkflowRun ?run }
+            UNION { ?run rm:workflow ?individualURI }
+            OPTIONAL { ?run rdfs:label ?runLabel }
+            OPTIONAL { ?run rm:startTime ?startTime }
+            OPTIONAL { ?run rm:energyKWh ?kwh }
+            OPTIONAL { ?run rm:carbonEmissionKgCO2e ?kg }
+            OPTIONAL { ?run rm:cpuTimeSeconds ?cpuSeconds }
+            # FONDA 2026-10-24: CPU time of the run's tasks = sum over its stage executions (Nextflow trace)
+            OPTIONAL {
+                SELECT ?run (SUM(?stageCpu) AS ?taskCpu)
+                WHERE {
+                    { SELECT DISTINCT ?run ?stage
+                      WHERE { { ?run rm:hasWorkflowProcess ?stage } UNION { ?stage rm:isWorkflowProcessOf ?run } } }
+                    ?stage rm:cpuTimeSeconds ?stageCpu .
+                }
+                GROUP BY ?run
+            }
+            OPTIONAL { ?run rm:durationSeconds ?seconds }
+            OPTIONAL { ?run rm:energyAboveIdleKWh ?aboveIdle }
+            OPTIONAL { ?run rm:energyCalculationMethod ?eMethod }
+            OPTIONAL { ?run rm:energyMeasurementCoverage ?eCoverage }
+            OPTIONAL {
+                { ?run rm:computeCluster ?clusterUri }
+                UNION
+                { ?clusterUri rm:hasRun ?run . ?clusterUri a rm:ComputeCluster }
+                OPTIONAL { ?clusterUri rdfs:label ?clusterLabel }
+            }
+            OPTIONAL { ?run rm:nodeUse ?nUse }
+            OPTIONAL { ?run rm:executionHost ?host }
+            OPTIONAL {
+                ?run rm:runOperator ?operator .
+                OPTIONAL { ?operator rdfs:label ?operatorLabel }
+            }
+            BIND(IF(BOUND(?operator), CONCAT(STR(?operator), " | ", COALESCE(STR(?operatorLabel), "")), "") AS ?operatorEntry)
+        }
+        GROUP BY ?run
+    """ .

@@ -1,0 +1,117 @@
+# FONDA: home page data getters — Energy & Carbon section, Workflows box, Recent publications box.
+# Deploy to: /opt/vivo/vivo/rdf/display/everytime/  (loaded at tomcat startup)
+
+@prefix display: <http://vitro.mannlib.cornell.edu/ontologies/display/1.1#> .
+
+<freemarker:page-home.ftl>     display:hasDataGetter display:fondaLatestRunsDataGetter , display:fondaRunImpactDataGetter , display:fondaWorkflowsDataGetter , display:fondaRecentPubsDataGetter .
+<freemarker:lib-home-page.ftl> display:hasDataGetter display:fondaLatestRunsDataGetter , display:fondaRunImpactDataGetter , display:fondaWorkflowsDataGetter , display:fondaRecentPubsDataGetter .
+
+# Returns a recent-runs pool, not the final four. page-home.ftl narrows this to one
+# run per workflow and then tops it back up to 4 with the newest runs left over, so a
+# single busy workflow cannot fill the panel. ?wf is what makes that grouping possible;
+# it stays OPTIONAL so a run with no workflow link still appears rather than vanishing.
+# 2026-10-30: pool = all runs (was the 60 newest), so other workflows and clusters are in it;
+# runs that are not public (rm:visibility) are left out of the home page.
+display:fondaLatestRunsDataGetter
+    a <java:edu.cornell.mannlib.vitro.webapp.utils.dataGetter.SparqlQueryDataGetter> ;
+    display:saveToVar "latestRunsDG" ;
+    display:query """
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rm:   <http://example.org/ontology/run-metadata#>
+
+SELECT DISTINCT ?run ?runLabel ?wf ?wfLabel ?cluster ?clusterLabel ?start ?energy ?co2
+WHERE {
+    ?run a rm:RunMetadata .
+    ?run rdfs:label ?runLabel .
+    OPTIONAL { ?run rm:startTime ?start }
+    OPTIONAL { ?run rm:workflow ?wf . OPTIONAL { ?wf rdfs:label ?wfLabel } }
+    OPTIONAL { ?run rm:computeCluster ?cluster . ?cluster rdfs:label ?clusterLabel }
+    OPTIONAL { ?run rm:energyKWh ?energy }
+    OPTIONAL { ?run rm:carbonEmissionKgCO2e ?co2 }
+    FILTER NOT EXISTS { ?run rm:visibility ?vis . FILTER (?vis != rm:VisibilityPublic) }
+}
+ORDER BY DESC(?start)
+LIMIT 1000
+""" .
+
+# Totals for the Energy / Carbon / CPU-hours cards.
+# Each metric is first reduced to one number per run, then summed:
+#  - COALESCE(?x, 0): a run without a value (e.g. Kepler measured 0 of 47 pods) simply adds 0.
+#    A plain SUM over OPTIONAL values comes back unbound in Jena as soon as one run lacks the
+#    value; page-home.ftl then falls back to "0" and hides the card.
+#  - MAX(...) GROUP BY ?run: one value per run, even if a re-import left several values behind.
+#    Also avoids the OPTIONAL cross-product that counted such runs' energy/CPU several times.
+#  - xsd:double(STR(...)): accepts values like "2.8e-06" whatever datatype they were stored with.
+display:fondaRunImpactDataGetter
+    a <java:edu.cornell.mannlib.vitro.webapp.utils.dataGetter.SparqlQueryDataGetter> ;
+    display:saveToVar "runImpactDG" ;
+    display:query """
+PREFIX rm:  <http://example.org/ontology/run-metadata#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT (COUNT(DISTINCT ?run)   AS ?runCount)
+       (SUM(COALESCE(?e,   0)) AS ?totalEnergy)
+       (SUM(COALESCE(?c,   0)) AS ?totalCO2)
+       (SUM(COALESCE(?cpu, 0)) AS ?totalCpu)
+WHERE {
+    ?run a rm:RunMetadata .
+    OPTIONAL { { SELECT ?run (MAX(?num) AS ?e)
+                 WHERE { ?run rm:energyKWh ?raw . BIND (xsd:double(STR(?raw)) AS ?num) FILTER (BOUND(?num)) }
+                 GROUP BY ?run } }
+    OPTIONAL { { SELECT ?run (MAX(?num) AS ?c)
+                 WHERE { ?run rm:carbonEmissionKgCO2e ?raw . BIND (xsd:double(STR(?raw)) AS ?num) FILTER (BOUND(?num)) }
+                 GROUP BY ?run } }
+    OPTIONAL { { SELECT ?run (MAX(?num) AS ?cpu)
+                 WHERE { ?run rm:cpuTimeSeconds ?raw . BIND (xsd:double(STR(?raw)) AS ?num) FILTER (BOUND(?num)) }
+                 GROUP BY ?run } }
+}
+""" .
+
+# Workflows box: same one-number-per-run reduction as fondaRunImpactDataGetter, grouped by
+# workflow, so one run without energy/carbon no longer blanks the whole workflow's badge and
+# runs with duplicate carbon values are not counted twice.
+display:fondaWorkflowsDataGetter
+    a <java:edu.cornell.mannlib.vitro.webapp.utils.dataGetter.SparqlQueryDataGetter> ;
+    display:saveToVar "workflowsDG" ;
+    display:query """
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rm:   <http://example.org/ontology/run-metadata#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?wf ?wfLabel (COUNT(DISTINCT ?run) AS ?runCount) (SUM(COALESCE(?e, 0)) AS ?energy) (SUM(COALESCE(?c, 0)) AS ?co2)
+WHERE {
+    ?wf a rm:Workflow .
+    ?wf rdfs:label ?wfLabel .
+    OPTIONAL {
+        ?run rm:workflow ?wf .
+        OPTIONAL { { SELECT ?run (MAX(?num) AS ?e)
+                     WHERE { ?run rm:energyKWh ?raw . BIND (xsd:double(STR(?raw)) AS ?num) FILTER (BOUND(?num)) }
+                     GROUP BY ?run } }
+        OPTIONAL { { SELECT ?run (MAX(?num) AS ?c)
+                     WHERE { ?run rm:carbonEmissionKgCO2e ?raw . BIND (xsd:double(STR(?raw)) AS ?num) FILTER (BOUND(?num)) }
+                     GROUP BY ?run } }
+    }
+}
+GROUP BY ?wf ?wfLabel
+ORDER BY DESC(?runCount)
+LIMIT 6
+""" .
+
+display:fondaRecentPubsDataGetter
+    a <java:edu.cornell.mannlib.vitro.webapp.utils.dataGetter.SparqlQueryDataGetter> ;
+    display:saveToVar "recentPubsDG" ;
+    display:query """
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX bibo: <http://purl.org/ontology/bibo/>
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
+
+SELECT DISTINCT ?pub ?pubLabel ?date
+WHERE {
+    VALUES ?type { bibo:AcademicArticle vivo:ConferencePaper bibo:Book bibo:Chapter bibo:Report }
+    ?pub a ?type .
+    ?pub rdfs:label ?pubLabel .
+    OPTIONAL { ?pub vivo:dateTimeValue ?dtv . ?dtv vivo:dateTime ?date }
+}
+ORDER BY DESC(?date)
+LIMIT 5
+""" .

@@ -1,0 +1,157 @@
+# FONDA 2026-10-26: who may see a workflow run page (rm:visibility of the run, set on the run page).
+#   Public (or no value) .............. everyone
+#   Logged-in users only .............. everyone who is logged in
+#   Only the person who ran it ........ the run's "run by" person (rm:runOperator), and admins and curators
+# The same applies to the pages of the run's stage executions. If a run has more than one value, the most
+# restrictive one wins. Admins and curators always see every run.
+# Checked before VIVO's general "anyone may display a page" policy (priority 1000).
+# Installed as a firsttime file: at the next start VIVO adds it to its access-control graph.
+# To undo: move this file out of the folder and restart Tomcat; VIVO then removes it again.
+
+@prefix access-individual: <https://vivoweb.org/ontology/vitro-application/auth/individual/> .
+@prefix access: <https://vivoweb.org/ontology/vitro-application/auth/vocabulary/> .
+@prefix : <https://vivoweb.org/ontology/vitro-application/auth/individual/fonda-run-visibility/> .
+
+:Policy a access:Policy ;
+    access:priority 3000 ;
+    access:hasRule :DenyPrivateRunToOthers ;
+    access:hasRule :DenyMembersRunToVisitors .
+
+### 1. "Only the person who ran it": deny everyone except admins, curators and the run's "run by" person
+
+:DenyPrivateRunToOthers a access:Rule ;
+    access:hasDecision access-individual:Deny ;
+    access:requiresCheck :P_IsDisplay ;
+    access:requiresCheck :P_IsIndividual ;
+    access:requiresCheck :P_NotAdminOrCurator ;
+    access:requiresCheck :P_RunIsPrivate ;
+    access:requiresCheck :P_UserIsNotRunner ;
+    access:requiresCheck :P_UserIsNotRunnerByProxy .
+
+:P_IsDisplay a access:Check ;
+    access:useOperator access-individual:Equals ;
+    access:hasTypeToCheck access-individual:Operation ;
+    access:value access-individual:DisplayOperation .
+
+:P_IsIndividual a access:Check ;
+    access:useOperator access-individual:Equals ;
+    access:hasTypeToCheck access-individual:AccessObjectType ;
+    access:value access-individual:IndividualAccessObject .
+
+:P_NotAdminOrCurator a access:Check ;
+    access:useOperator access-individual:NotOneOf ;
+    access:hasTypeToCheck access-individual:SubjectRole ;
+    access:values :AdminAndCuratorRoles .
+
+:AdminAndCuratorRoles a access:ValueSet ;
+    access:value access-individual:AdminRoleUri ;
+    access:value access-individual:CuratorRoleUri .
+
+:P_RunIsPrivate a access:Check ;
+    access:useOperator access-individual:SparqlSelectQueryResultsContain ;
+    access:hasTypeToCheck access-individual:AccessObjectUri ;
+    access:useConfiguration :PrivateRunQuery ;
+    access:value :Match .
+
+# the logged-in user's own profile (matched by login id, as for self editing)
+:P_UserIsNotRunner a access:Check ;
+    access:useOperator access-individual:SparqlSelectQueryResultsNotContain ;
+    access:hasTypeToCheck access-individual:AccessObjectUri ;
+    access:useConfiguration :RunnerQuery ;
+    access:value :Match .
+
+# a profile the logged-in user edits as proxy
+:P_UserIsNotRunnerByProxy a access:Check ;
+    access:useOperator access-individual:SparqlSelectQueryResultsNotContain ;
+    access:hasTypeToCheck access-individual:AccessObjectUri ;
+    access:useConfiguration :RunnerByProxyQuery ;
+    access:value :Match .
+
+### 2. "Logged-in users only": deny visitors who are not logged in
+
+:DenyMembersRunToVisitors a access:Rule ;
+    access:hasDecision access-individual:Deny ;
+    access:requiresCheck :M_IsDisplay ;
+    access:requiresCheck :M_IsIndividual ;
+    access:requiresCheck :M_IsVisitor ;
+    access:requiresCheck :M_RunIsMembersOnly .
+
+:M_IsDisplay a access:Check ;
+    access:useOperator access-individual:Equals ;
+    access:hasTypeToCheck access-individual:Operation ;
+    access:value access-individual:DisplayOperation .
+
+:M_IsIndividual a access:Check ;
+    access:useOperator access-individual:Equals ;
+    access:hasTypeToCheck access-individual:AccessObjectType ;
+    access:value access-individual:IndividualAccessObject .
+
+:M_IsVisitor a access:Check ;
+    access:useOperator access-individual:Equals ;
+    access:hasTypeToCheck access-individual:SubjectRole ;
+    access:value access-individual:PublicRoleUri .
+
+:M_RunIsMembersOnly a access:Check ;
+    access:useOperator access-individual:SparqlSelectQueryResultsContain ;
+    access:hasTypeToCheck access-individual:AccessObjectUri ;
+    access:useConfiguration :MembersRunQuery ;
+    access:value :Match .
+
+### Queries. ?objectUri = the page asked for (a run, or a stage execution of a run).
+
+:PrivateRunQuery a access:SparqlSelectValuesQuery ;
+    access:id """
+    SELECT ?match WHERE {
+        { ?objectUri <http://example.org/ontology/run-metadata#visibility> <http://example.org/ontology/run-metadata#VisibilityPrivate> . }
+        UNION
+        { ?objectUri <http://example.org/ontology/run-metadata#isWorkflowProcessOf> ?run .
+          ?run <http://example.org/ontology/run-metadata#visibility> <http://example.org/ontology/run-metadata#VisibilityPrivate> . }
+        UNION
+        { ?run <http://example.org/ontology/run-metadata#hasWorkflowProcess> ?objectUri .
+          ?run <http://example.org/ontology/run-metadata#visibility> <http://example.org/ontology/run-metadata#VisibilityPrivate> . }
+        BIND(<https://vivoweb.org/ontology/vitro-application/auth/individual/fonda-run-visibility/Match> AS ?match)
+    }
+    """ .
+
+:MembersRunQuery a access:SparqlSelectValuesQuery ;
+    access:id """
+    SELECT ?match WHERE {
+        { ?objectUri <http://example.org/ontology/run-metadata#visibility> <http://example.org/ontology/run-metadata#VisibilityMembers> . }
+        UNION
+        { ?objectUri <http://example.org/ontology/run-metadata#isWorkflowProcessOf> ?run .
+          ?run <http://example.org/ontology/run-metadata#visibility> <http://example.org/ontology/run-metadata#VisibilityMembers> . }
+        UNION
+        { ?run <http://example.org/ontology/run-metadata#hasWorkflowProcess> ?objectUri .
+          ?run <http://example.org/ontology/run-metadata#visibility> <http://example.org/ontology/run-metadata#VisibilityMembers> . }
+        BIND(<https://vivoweb.org/ontology/vitro-application/auth/individual/fonda-run-visibility/Match> AS ?match)
+    }
+    """ .
+
+:RunnerQuery a access:SparqlSelectValuesQuery ;
+    access:id """
+    SELECT ?match WHERE {
+        ?profile ?matchingPropertyUri ?externalAuthId .
+        { ?objectUri <http://example.org/ontology/run-metadata#runOperator> ?profile . }
+        UNION
+        { ?objectUri <http://example.org/ontology/run-metadata#isWorkflowProcessOf> ?run .
+          ?run <http://example.org/ontology/run-metadata#runOperator> ?profile . }
+        UNION
+        { ?run <http://example.org/ontology/run-metadata#hasWorkflowProcess> ?objectUri .
+          ?run <http://example.org/ontology/run-metadata#runOperator> ?profile . }
+        BIND(<https://vivoweb.org/ontology/vitro-application/auth/individual/fonda-run-visibility/Match> AS ?match)
+    }
+    """ .
+
+:RunnerByProxyQuery a access:SparqlSelectValuesQuery ;
+    access:id """
+    SELECT ?match WHERE {
+        { ?objectUri <http://example.org/ontology/run-metadata#runOperator> ?profileUri . }
+        UNION
+        { ?objectUri <http://example.org/ontology/run-metadata#isWorkflowProcessOf> ?run .
+          ?run <http://example.org/ontology/run-metadata#runOperator> ?profileUri . }
+        UNION
+        { ?run <http://example.org/ontology/run-metadata#hasWorkflowProcess> ?objectUri .
+          ?run <http://example.org/ontology/run-metadata#runOperator> ?profileUri . }
+        BIND(<https://vivoweb.org/ontology/vitro-application/auth/individual/fonda-run-visibility/Match> AS ?match)
+    }
+    """ .

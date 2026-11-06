@@ -1,0 +1,17 @@
+# One line per run of the nf-core/rangeland workflow (output: data/runs.csv).
+# Run on the VIVO SPARQL query page (Site Admin > SPARQL Query), result format CSV.
+PREFIX rm: <http://example.org/ontology/run-metadata#>
+SELECT ?run (SAMPLE(?cl) AS ?cluster) (SAMPLE(?st) AS ?start) (SAMPLE(?e) AS ?energyKWh)
+       (SAMPLE(?c) AS ?carbonKg) (SAMPLE(?cpu) AS ?cpuS) (SAMPLE(?d) AS ?durS) (SAMPLE(?src) AS ?source)
+       (SAMPLE(?gr) AS ?granularity) (SAMPLE(?u) AS ?nodeUse) (SAMPLE(?fb) AS ?fallback)
+       (SAMPLE(?tc) AS ?tasks) (COUNT(DISTINCT ?h) AS ?hosts)
+WHERE {
+  ?run rm:workflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> .
+  OPTIONAL { ?run rm:computeCluster ?cl } OPTIONAL { ?run rm:startTime ?st }
+  OPTIONAL { ?run rm:energyKWh ?e } OPTIONAL { ?run rm:carbonEmissionKgCO2e ?c }
+  OPTIONAL { ?run rm:cpuTimeSeconds ?cpu } OPTIONAL { ?run rm:durationSeconds ?d }
+  OPTIONAL { ?run rm:energyMetricSource ?src } OPTIONAL { ?run rm:carbonIntensityTemporalGranularity ?gr }
+  OPTIONAL { ?run rm:nodeUse ?u } OPTIONAL { ?run rm:energyCalculationUsesFallbackEstimate ?fb }
+  OPTIONAL { ?run rm:taskCount ?tc } OPTIONAL { ?run rm:executionHost ?h }
+}
+GROUP BY ?run ORDER BY ?start

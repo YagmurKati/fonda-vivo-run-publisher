@@ -1,0 +1,35 @@
+# $This file is distributed under the terms of the license in LICENSE$
+#
+# FONDA 2026-10-19: data for "was the timing green?" on workflow run pages. Runs on every page of class
+# rm:RunMetadata and returns one row for a run that has rm:gridCarbonIntensityHours (the hourly grid carbon
+# intensity around the run, saved by the collector since 2026-10-19), with the run's own intensity, carbon
+# emission, energy, start time and the hour window its intensity covers. No row for all other runs.
+# Template: themes/tenderfoot/templates/body/partials/individual/individual-run-grid-timing.ftl
+# To undo: remove this file from rdf/display/everytime and restart Tomcat.
+
+@prefix display: <http://vitro.mannlib.cornell.edu/ontologies/display/1.1#> .
+
+<http://example.org/ontology/run-metadata#RunMetadata>
+    display:hasDataGetter display:fondaRunGridTimingDataGetter .
+
+display:fondaRunGridTimingDataGetter
+    a <java:edu.cornell.mannlib.vitro.webapp.utils.dataGetter.SparqlQueryDataGetter> ;
+    display:saveToVar "runGridTimingRows" ;
+    display:uri "individualURI" ;
+    display:query """
+        PREFIX rm: <http://example.org/ontology/run-metadata#>
+        SELECT (STR(?h) AS ?hours) (STR(?m) AS ?method) ?intensity ?carbon ?energy
+               (STR(?s) AS ?start) (STR(?ws) AS ?windowStart) (STR(?we) AS ?windowEnd) (STR(?b) AS ?basis)
+        WHERE {
+            ?individualURI rm:gridCarbonIntensityHours ?h .
+            OPTIONAL { ?individualURI rm:gridCarbonIntensityHoursMethod ?m }
+            OPTIONAL { ?individualURI rm:carbonIntensityAssumptionKgCO2ePerKWh ?intensity }
+            OPTIONAL { ?individualURI rm:carbonEmissionKgCO2e ?carbon }
+            OPTIONAL { ?individualURI rm:energyKWh ?energy }
+            OPTIONAL { ?individualURI rm:startTime ?s }
+            OPTIONAL { ?individualURI rm:carbonIntensityWindowStart ?ws }
+            OPTIONAL { ?individualURI rm:carbonIntensityWindowEnd ?we }
+            OPTIONAL { ?individualURI rm:carbonIntensityEmissionsBasis ?b }
+        }
+        LIMIT 1
+    """ .

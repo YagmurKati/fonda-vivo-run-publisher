@@ -1,0 +1,39 @@
+# $This file is distributed under the terms of the license in LICENSE$
+#
+# FONDA 2026-10-18: data for "idle vs. work" on workflow run pages. Runs on every page of class rm:RunMetadata and
+# returns one row for a run that has rm:energyAboveIdleKWh (HPC@HU Slurm runs published with an idle measurement
+# of their node), with its energy, the node's idle power, duration, node power, CPU efficiency, node use and the
+# node conditions text (which names the node the idle power was measured on). No row for all other runs.
+# Template: themes/tenderfoot/templates/body/partials/individual/individual-run-idle-work.ftl
+# To undo: remove this file from rdf/display/everytime and restart Tomcat.
+
+@prefix display: <http://vitro.mannlib.cornell.edu/ontologies/display/1.1#> .
+
+<http://example.org/ontology/run-metadata#RunMetadata>
+    display:hasDataGetter display:fondaRunIdleWorkDataGetter .
+
+display:fondaRunIdleWorkDataGetter
+    a <java:edu.cornell.mannlib.vitro.webapp.utils.dataGetter.SparqlQueryDataGetter> ;
+    display:saveToVar "runIdleRows" ;
+    display:uri "individualURI" ;
+    display:query """
+        PREFIX rm: <http://example.org/ontology/run-metadata#>
+        SELECT ?energy ?aboveIdle ?idlePower ?sleepPower ?duration ?powerAvg ?powerMax ?cpuEfficiency
+               (STR(?nUse)      AS ?nodeUse)
+               (STR(?eCoverage) AS ?coverage)
+               (STR(?cond)      AS ?conditions)
+        WHERE {
+            ?individualURI rm:energyAboveIdleKWh ?aboveIdle .
+            OPTIONAL { ?individualURI rm:energyKWh ?energy }
+            OPTIONAL { ?individualURI rm:nodeIdlePowerW ?idlePower }
+            OPTIONAL { ?individualURI rm:nodeIdlePowerSleepW ?sleepPower }
+            OPTIONAL { ?individualURI rm:durationSeconds ?duration }
+            OPTIONAL { ?individualURI rm:nodePowerAvgW ?powerAvg }
+            OPTIONAL { ?individualURI rm:nodePowerMaxW ?powerMax }
+            OPTIONAL { ?individualURI rm:cpuEfficiencyPercent ?cpuEfficiency }
+            OPTIONAL { ?individualURI rm:nodeUse ?nUse }
+            OPTIONAL { ?individualURI rm:energyMeasurementCoverage ?eCoverage }
+            OPTIONAL { ?individualURI rm:nodeConditionsMethod ?cond }
+        }
+        LIMIT 1
+    """ .

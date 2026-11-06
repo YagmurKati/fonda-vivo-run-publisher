@@ -1,0 +1,62 @@
+# $This file is distributed under the terms of the license in LICENSE$
+#
+# FONDA 2026-10-18: data for "this run among the workflow's runs" on workflow run pages. Runs on every page of
+# class rm:RunMetadata and returns one row per run of the same workflow (the run itself included), with the
+# values the workflow plots use: energy, carbon, CPU time, duration, start, compute cluster, node use, energy
+# measurement coverage and number of nodes (distinct rm:executionHost values).
+# Template: themes/tenderfoot/templates/body/partials/individual/individual-run-peers.ftl
+# To undo: remove this file from rdf/display/everytime and restart Tomcat.
+
+@prefix display: <http://vitro.mannlib.cornell.edu/ontologies/display/1.1#> .
+
+<http://example.org/ontology/run-metadata#RunMetadata>
+    display:hasDataGetter display:fondaRunPeersDataGetter .
+
+display:fondaRunPeersDataGetter
+    a <java:edu.cornell.mannlib.vitro.webapp.utils.dataGetter.SparqlQueryDataGetter> ;
+    display:saveToVar "runPeerRows" ;
+    display:uri "individualURI" ;
+    display:query """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX rm:   <http://example.org/ontology/run-metadata#>
+        SELECT ?run
+               (SAMPLE(STR(?runLabel))     AS ?label)
+               (SAMPLE(STR(?startTime))    AS ?start)
+               (SAMPLE(?kwh)               AS ?energy)
+               (SAMPLE(?kg)                AS ?carbon)
+               (SAMPLE(?cpuSeconds)        AS ?cpu)
+               (SAMPLE(?seconds)           AS ?duration)
+               (SAMPLE(STR(?eCoverage))    AS ?coverage)
+               (SAMPLE(STR(?clusterUri))   AS ?cluster)
+               (SAMPLE(STR(?clusterLabel)) AS ?clusterName)
+               (SAMPLE(STR(?nUse))         AS ?nodeUse)
+               (COUNT(DISTINCT ?host)      AS ?nodes)
+               (SAMPLE(STR(?wf))           AS ?workflow)
+               (SAMPLE(STR(?wfLabel))      AS ?workflowName)
+        WHERE {
+            { ?individualURI rm:workflow ?wf }
+            UNION { ?wf rm:hasRun ?individualURI }
+            UNION { ?wf rm:hasWorkflowRun ?individualURI }
+            ?wf a rm:Workflow .
+            { ?wf rm:hasRun ?run }
+            UNION { ?wf rm:hasWorkflowRun ?run }
+            UNION { ?run rm:workflow ?wf }
+            OPTIONAL { ?wf rdfs:label ?wfLabel }
+            OPTIONAL { ?run rdfs:label ?runLabel }
+            OPTIONAL { ?run rm:startTime ?startTime }
+            OPTIONAL { ?run rm:energyKWh ?kwh }
+            OPTIONAL { ?run rm:carbonEmissionKgCO2e ?kg }
+            OPTIONAL { ?run rm:cpuTimeSeconds ?cpuSeconds }
+            OPTIONAL { ?run rm:durationSeconds ?seconds }
+            OPTIONAL { ?run rm:energyMeasurementCoverage ?eCoverage }
+            OPTIONAL {
+                { ?run rm:computeCluster ?clusterUri }
+                UNION
+                { ?clusterUri rm:hasRun ?run . ?clusterUri a rm:ComputeCluster }
+                OPTIONAL { ?clusterUri rdfs:label ?clusterLabel }
+            }
+            OPTIONAL { ?run rm:nodeUse ?nUse }
+            OPTIONAL { ?run rm:executionHost ?host }
+        }
+        GROUP BY ?run
+    """ .

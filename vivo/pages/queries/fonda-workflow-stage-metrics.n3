@@ -1,0 +1,72 @@
+# $This file is distributed under the terms of the license in LICENSE$
+#
+# FONDA 2026-10-03: data for the "energy, carbon and time of this stage per run" plots on the pages of
+# workflow stages. Runs on every page of class rm:WorkflowStage
+# (http://example.org/ontology/run-metadata#WorkflowStage) and returns one row per execution of that
+# stage (rm:hasStageExecution), so new runs appear automatically.
+# Energy, carbon, CPU time and duration are the values of the stage execution; the start time, the
+# compute cluster, the node use (rm:nodeUse), the number of nodes (distinct rm:executionHost values), the persons who ran it (rm:runOperator, "run by", as "<person URI> | <name>" entries
+# separated by " ;; ") and, when the stage execution has none, the energy measurement coverage are
+# those of its workflow run.
+# Template: themes/tenderfoot/templates/body/partials/individual/individual-workflow-run-metrics.ftl
+# To undo: remove this file from rdf/display/everytime and restart Tomcat.
+
+@prefix display: <http://vitro.mannlib.cornell.edu/ontologies/display/1.1#> .
+
+<http://example.org/ontology/run-metadata#WorkflowStage>
+    display:hasDataGetter display:fondaWorkflowStageMetricsDataGetter .
+
+display:fondaWorkflowStageMetricsDataGetter
+    a <java:edu.cornell.mannlib.vitro.webapp.utils.dataGetter.SparqlQueryDataGetter> ;
+    display:saveToVar "workflowStageMetricRows" ;
+    display:uri "individualURI" ;
+    display:query """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX rm:   <http://example.org/ontology/run-metadata#>
+        SELECT ?run
+               (SAMPLE(?runLabel)   AS ?label)
+               (SAMPLE(?startTime)  AS ?start)
+               (SAMPLE(?kwh)        AS ?energy)
+               (SAMPLE(?kg)         AS ?carbon)
+               (SAMPLE(?cpuSeconds) AS ?cpu)
+               (SAMPLE(?seconds)    AS ?duration)
+               (SAMPLE(SUBSTR(STR(?eMethod), 1, 300)) AS ?energyMethod)
+               (SAMPLE(STR(?eCoverage)) AS ?coverage)
+               (SAMPLE(STR(?rCoverage)) AS ?runCoverage)
+               (SAMPLE(STR(?clusterUri))   AS ?cluster)
+               (SAMPLE(STR(?clusterLabel)) AS ?clusterName)
+               (GROUP_CONCAT(DISTINCT ?operatorEntry; separator=" ;; ") AS ?runBy)
+               (SAMPLE(STR(?nUse)) AS ?nodeUse)
+               (COUNT(DISTINCT ?host) AS ?nodes)
+        WHERE {
+            ?individualURI rm:hasStageExecution ?run .
+            OPTIONAL { ?run rdfs:label ?runLabel }
+            OPTIONAL { ?run rm:energyKWh ?kwh }
+            OPTIONAL { ?run rm:carbonEmissionKgCO2e ?kg }
+            OPTIONAL { ?run rm:cpuTimeSeconds ?cpuSeconds }
+            OPTIONAL { ?run rm:durationSeconds ?seconds }
+            OPTIONAL { ?run rm:energyCalculationMethod ?eMethod }
+            OPTIONAL { ?run rm:energyMeasurementCoverage ?eCoverage }
+            OPTIONAL {
+                { ?run rm:isWorkflowProcessOf ?workflowRun }
+                UNION
+                { ?workflowRun rm:hasWorkflowProcess ?run }
+                OPTIONAL { ?workflowRun rm:startTime ?startTime }
+                OPTIONAL { ?workflowRun rm:energyMeasurementCoverage ?rCoverage }
+                OPTIONAL {
+                    { ?workflowRun rm:computeCluster ?clusterUri }
+                    UNION
+                    { ?clusterUri rm:hasRun ?workflowRun . ?clusterUri a rm:ComputeCluster }
+                    OPTIONAL { ?clusterUri rdfs:label ?clusterLabel }
+                }
+                OPTIONAL { ?workflowRun rm:nodeUse ?nUse }
+                OPTIONAL { ?workflowRun rm:executionHost ?host }
+                OPTIONAL {
+                    ?workflowRun rm:runOperator ?operator .
+                    OPTIONAL { ?operator rdfs:label ?operatorLabel }
+                }
+            }
+            BIND(IF(BOUND(?operator), CONCAT(STR(?operator), " | ", COALESCE(STR(?operatorLabel), "")), "") AS ?operatorEntry)
+        }
+        GROUP BY ?run
+    """ .

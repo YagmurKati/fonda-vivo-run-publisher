@@ -1,0 +1,1123 @@
+/* =====================================================================
+   FONDA VIVO — dark mode (tenderfoot theme)
+   2026-07-19
+
+   Loaded on every page from head.ftl, AFTER screen.css.
+   Every rule is scoped under html.dark-mode, which is set by a small
+   script in head.ftl (persisted in localStorage as "fonda-theme").
+   Light mode = no class = site exactly as before.
+
+   Palette:
+     page bg        #0f151f      raised surface  #1a2334
+     surface        #151d2b      borders         #273349 / #2c3a52
+     text           #d5dde7      muted text      #9aa7b8
+     links          #9ecbff      FONDA navy      #1f3a5f (unchanged)
+     cyan accent    #1ea7ff      green / amber   #7cc47f / #f0a04a
+   ===================================================================== */
+
+/* ---------- 1. Page canvas ---------- */
+
+html.dark-mode body {
+    background-color: #0f151f;
+    /* keep the FONDA top strip: dark on the left, navy on the right */
+    background-image: linear-gradient(to right, #0f151f 0%, #10182a 35%, #1f3a5f 100%);
+    color: #d5dde7;
+}
+
+html.dark-mode #wrapper-content,
+html.dark-mode #content-wrapper,
+html.dark-mode #contentwrap {
+    background: #0f151f !important;   /* profile-restyle sets #fafbfc !important */
+}
+
+html.dark-mode .row {
+    background: #0f151f;
+}
+
+html.dark-mode .faculty-home,
+html.dark-mode .research-count,
+html.dark-mode .home-sections {
+    background-color: #0f151f;
+}
+
+html.dark-mode .home-sections {
+    border-top-color: #273349;
+    border-bottom-color: #273349;
+}
+
+/* ---------- 2. Typography & links ---------- */
+
+html.dark-mode h2,
+html.dark-mode h3,
+html.dark-mode h4,
+html.dark-mode h5 {
+    color: #7fc0dd;
+}
+
+html.dark-mode a { color: #9ecbff; }
+html.dark-mode a:hover,
+html.dark-mode a:focus { color: #c4e0ff; }
+
+html.dark-mode h2 a { color: #9ecbff; }
+
+/* ---------- 3. Header, menu bar, search ---------- */
+
+/* top-right Index / Log in links already white — keep them */
+
+html.dark-mode #nav {
+    background: #131b28;
+    border-bottom: 1px solid #273349;
+}
+
+html.dark-mode #main-nav > li > a {
+    color: #cfd9e6;
+}
+
+html.dark-mode #main-nav > li > a:hover,
+html.dark-mode #main-nav > li.active > a {
+    color: #ffffff;
+}
+
+html.dark-mode .navbar-default {
+    background: transparent;
+    border-color: transparent;
+}
+
+/* navbar search box (non-home pages) */
+html.dark-mode #search-field {
+    border-color: #2c3a52;
+}
+html.dark-mode #search-field input.search-vivo {
+    background: #1a2334;
+    color: #d5dde7;
+}
+
+/* ---------- 4. Home page ---------- */
+
+/* hero is already a dark navy photo — keep it and just soften its edge.
+   NOTE: the "html.dark-mode .row" rule above uses the `background` shorthand
+   and outranks page-home.css's ".hero", which wiped the photo out. Restore it
+   here with a more specific selector. */
+html.dark-mode .row.hero {
+    background-color: #0a1226;
+    /* Two layers: a translucent navy wash ON TOP of the photo, so the hero
+       sits a bit darker in dark mode. The image file is untouched and light
+       mode (page-home.css) is unaffected. Raise/lower the 0.45 to taste. */
+    background-image:
+        linear-gradient(rgba(8, 14, 30, 0.45), rgba(8, 14, 30, 0.45)),
+        url(../images/fonda-hero.jpg);
+    background-repeat: no-repeat, no-repeat;
+    background-position: center center, center center;
+    background-size: cover, cover;
+    border-bottom: 1px solid #273349;
+}
+
+/* section headers keep the FONDA navy + cyan underline (works on dark) */
+html.dark-mode .home-sections h4 {
+    border-top-color: rgba(30, 167, 255, 0.15);
+    background-color: #1f3a5f;
+    color: #ffffff;
+}
+
+/* Workflows / Recent Publications panels (defined in a <style> block
+   in page-home.ftl — html.dark-mode prefix outweighs it) */
+html.dark-mode .f-panel {
+    background: #151d2b;
+    border-color: #273349;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+html.dark-mode .f-item { border-bottom-color: #232e42; }
+html.dark-mode .f-item:hover { background: #1a2334; }
+html.dark-mode .f-sub { color: #9aa7b8; }
+html.dark-mode .f-year { color: #8b96a8; }
+
+html.dark-mode .f-badge-green { background: #16281c; color: #7cc47f; }
+html.dark-mode .f-badge-amber { background: #2b2113; color: #f0a04a; }
+
+/* Energy & Carbon stat cards use inline style attributes -> !important */
+html.dark-mode .f-stat {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+}
+html.dark-mode .f-stat[style*="eef6ee"] { background: #16281c !important; }
+html.dark-mode .f-stat[style*="fdf3e7"] { background: #2b2113 !important; }
+html.dark-mode .f-stat[style*="eaf1f8"] { background: #16202e !important; }
+html.dark-mode .f-stat .f-num[style*="2e7d32"] { color: #7cc47f !important; }
+html.dark-mode .f-stat .f-num[style*="e07b00"] { color: #f0a04a !important; }
+html.dark-mode .f-stat .f-num[style*="23395d"] { color: #8fb4e3 !important; }
+html.dark-mode .f-cap { color: #9aa7b8; }
+
+/* energy-per-run chart */
+html.dark-mode .f-chart-label { color: #9aa7b8; }
+html.dark-mode .f-chart-track { background: #202a3a; }
+html.dark-mode .f-chart-val { color: #7cc47f; }
+
+/* run cards */
+html.dark-mode .f-run-card {
+    background: #151d2b;
+    border-color: #273349;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+html.dark-mode .f-run-card:hover {
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.6);
+}
+
+/* footnote under the stat cards (inline color #888 is fine on dark) */
+
+/* statistics strip */
+html.dark-mode #home-stats .stats-count { color: #7fb3e8 !important; }
+html.dark-mode #home-stats .stats-type { color: #9aa8ba !important; }
+
+/* ---------- 5. Forms & buttons (Bootstrap) ---------- */
+
+html.dark-mode .form-control,
+html.dark-mode select,
+html.dark-mode textarea,
+html.dark-mode input[type="text"],
+html.dark-mode input[type="search"],
+html.dark-mode input[type="email"],
+html.dark-mode input[type="password"] {
+    background-color: #1a2334;
+    border-color: #2c3a52;
+    color: #d5dde7;
+}
+html.dark-mode .form-control::placeholder,
+html.dark-mode input::placeholder {
+    color: #8b96a8;
+    opacity: 1;
+}
+
+html.dark-mode .btn-default {
+    background-color: #1f3a5f;
+    border-color: #2c4a75;
+    color: #ffffff;
+}
+html.dark-mode .btn-default:hover {
+    background-color: #2a4f80;
+    border-color: #35598a;
+    color: #ffffff;
+}
+
+html.dark-mode .input-group .input-group-btn .btn {
+    background-color: #1f3a5f;
+    border-color: #2c4a75;
+    color: #fff;
+}
+
+/* header user dropdown */
+html.dark-mode #header-nav ul.sub_menu {
+    background: #1a2334;
+    border: 1px solid #2c3a52;
+}
+html.dark-mode #header-nav ul.sub_menu a { color: #d5dde7; }
+
+html.dark-mode .dropdown-menu {
+    background-color: #1a2334;
+    border-color: #2c3a52;
+}
+html.dark-mode .dropdown-menu > li > a { color: #d5dde7; }
+html.dark-mode .dropdown-menu > li > a:hover {
+    background-color: #232e42;
+    color: #ffffff;
+}
+
+/* ---------- 6. Tables, browse & index pages ---------- */
+
+html.dark-mode table,
+html.dark-mode th,
+html.dark-mode td {
+    border-color: #273349 !important;
+    color: #d5dde7;
+}
+html.dark-mode th { background-color: #1a2334; }
+html.dark-mode tr:nth-child(even) td { background-color: rgba(255, 255, 255, 0.02); }
+
+html.dark-mode .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #151d2b;
+}
+
+/* class-group browse pages (People, Organizations, Workflows, ...) */
+html.dark-mode #browse-by,
+html.dark-mode #browse-classes,
+html.dark-mode #individuals-in-class,
+html.dark-mode #alpha-browse-container,
+html.dark-mode #alpha-browse-individuals,
+html.dark-mode #menupage-intro,
+html.dark-mode .contents {
+    background-color: transparent;
+    color: #d5dde7;
+}
+
+html.dark-mode #browse-classes li a,
+html.dark-mode nav.alpha-browse li a {
+    color: #9ecbff;
+}
+
+html.dark-mode .vclass-count,
+html.dark-mode span.count-classes {
+    color: #9aa7b8;
+}
+
+/* generic light containers */
+html.dark-mode .panel,
+html.dark-mode .well,
+html.dark-mode .list-group-item {
+    background-color: #151d2b;
+    border-color: #273349;
+    color: #d5dde7;
+}
+
+html.dark-mode .pagination > li > a,
+html.dark-mode .pagination > li > span {
+    background-color: #1a2334;
+    border-color: #2c3a52;
+    color: #9ecbff;
+}
+
+/* yellow flash / welcome banners */
+html.dark-mode #flash-message,
+html.dark-mode #welcome-message {
+    background-color: #2b2113;
+    border-color: #6b5210;
+    color: #e8d9a0;
+}
+
+/* ---------- 7. Individual profile pages ---------- */
+/* profile-restyle.css uses !important light colors; the html.dark-mode
+   prefix gives these rules higher specificity, so they win. */
+
+html.dark-mode #individual-intro {
+    border-color: #2c3a52 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* the navy banner itself already works on dark — leave it */
+
+html.dark-mode #individual-intro #share-contact {
+    background: #151d2b !important;
+    border-right-color: #273349 !important;
+}
+
+html.dark-mode #photo-wrapper:has(img[src*="placeholder"]),
+html.dark-mode #photo-wrapper:has(img[src*="no_thumbnail"]),
+html.dark-mode #photo-wrapper:has(img[src*="no-thumbnail"]) {
+    background: linear-gradient(160deg, #1a2334 0%, #151d2b 100%);
+    border-color: #273349;
+}
+
+html.dark-mode .property-group h2,
+html.dark-mode .property-group h3,
+html.dark-mode .propsList h3,
+html.dark-mode .propsList .property-name h3,
+html.dark-mode h3.property-name,
+html.dark-mode .property-name {
+    color: #c6d2e0 !important;
+    border-bottom-color: #2c3a52 !important;
+}
+
+html.dark-mode .property-group .property-list > li,
+html.dark-mode .property-group ul.property-list > li {
+    color: #d5dde7 !important;
+    border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+html.dark-mode .property-group .property-list > li a {
+    color: #35c493 !important;
+}
+
+html.dark-mode .property-group h4,
+html.dark-mode .property-group .subheader,
+html.dark-mode .subclass h3 {
+    color: #9aa7b8 !important;
+}
+
+/* flat profile tabs */
+html.dark-mode .ui-tabs .ui-tabs-nav,
+html.dark-mode #individual-property-group-tabs .ui-tabs-nav {
+    border-bottom-color: #2c3a52 !important;
+}
+html.dark-mode .ui-tabs .ui-tabs-nav li a,
+html.dark-mode #individual-property-group-tabs .ui-tabs-nav li a {
+    color: #9aa7b8 !important;
+}
+html.dark-mode .ui-tabs .ui-tabs-nav li:hover a,
+html.dark-mode #individual-property-group-tabs .ui-tabs-nav li:hover a {
+    color: #e6edf5 !important;
+}
+html.dark-mode .ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+html.dark-mode .ui-tabs .ui-tabs-nav li.ui-state-active a,
+html.dark-mode #individual-property-group-tabs .ui-tabs-nav li.ui-tabs-active a {
+    color: #35c493 !important;
+    border-bottom-color: #35c493 !important;
+}
+
+/* right-hand column card + charts */
+html.dark-mode #right-hand-column {
+    background: #151d2b !important;
+    border-color: #273349 !important;
+}
+html.dark-mode #right-hand-column h2,
+html.dark-mode #right-hand-column h3,
+html.dark-mode .visualization-wrapper h3 {
+    color: #c6d2e0 !important;
+}
+html.dark-mode #right-hand-column .highcharts-axis-labels text,
+html.dark-mode .visualization-wrapper .highcharts-axis-labels text {
+    fill: #9aa7b8 !important;
+}
+html.dark-mode #right-hand-column .highcharts-legend-item text,
+html.dark-mode .visualization-wrapper .highcharts-legend-item text {
+    fill: #d5dde7 !important;
+}
+html.dark-mode #right-hand-column .highcharts-grid-line,
+html.dark-mode .visualization-wrapper .highcharts-grid-line {
+    stroke: rgba(255, 255, 255, 0.07) !important;
+}
+html.dark-mode #right-hand-column .highcharts-axis-line,
+html.dark-mode #right-hand-column .highcharts-tick,
+html.dark-mode .visualization-wrapper .highcharts-axis-line,
+html.dark-mode .visualization-wrapper .highcharts-tick {
+    stroke: rgba(255, 255, 255, 0.15) !important;
+}
+html.dark-mode #right-hand-column a.coauthor-network-link,
+html.dark-mode #right-hand-column .vis-link,
+html.dark-mode .visualization-wrapper a {
+    background: #1a2334 !important;
+    border-color: #2c3a52 !important;
+    color: #d5dde7 !important;
+}
+html.dark-mode #right-hand-column a.coauthor-network-link:hover,
+html.dark-mode #right-hand-column .vis-link:hover,
+html.dark-mode .visualization-wrapper a:hover {
+    background: #232e42 !important;
+    border-color: #35c493 !important;
+    color: #9fe1cb !important;
+}
+
+/* person/photo strips built in tenderfoot.css */
+html.dark-mode .photo-wrapper,
+html.dark-mode .person-details {
+    background: #151d2b;
+}
+
+html.dark-mode .row.title { background: #1f3a5f; }
+
+/* FONDA author highlight (publication author lists) */
+html.dark-mode a.fonda-author-link,
+html.dark-mode a.fonda-author-link:visited {
+    color: #7fd4e8 !important;
+}
+html.dark-mode a.fonda-author-link:hover,
+html.dark-mode a.fonda-author-link:focus {
+    color: #a8e6f5 !important;
+    background: #16202e;
+}
+html.dark-mode .fonda-author-badge {
+    background: #16202e;
+    border-color: #2c5a68;
+    color: #7fd4e8;
+}
+
+/* ---------- 8. Footer ---------- */
+
+html.dark-mode footer,
+html.dark-mode footer .row,
+html.dark-mode #footer-nav {
+    background: #0a0f17 !important;
+    border-top: 1px solid #1c2534;
+}
+
+/* ---------- 9. The toggle itself ---------- */
+
+#theme-toggle {
+    cursor: pointer;
+    user-select: none;
+}
+#theme-toggle .theme-toggle-icon {
+    display: inline-block;
+    margin-right: 4px;
+}
+
+/* ---------- 10. Gentle transition ---------- */
+
+html.dark-mode body,
+html.dark-mode .f-panel,
+html.dark-mode .f-run-card,
+html.dark-mode #nav {
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* =====================================================================
+   2026-07-19 additions: individual pages, nav chips, buttons, browse
+   boxes. Fixes the remaining light/white areas reported in dark mode.
+   ===================================================================== */
+
+/* ---------- 11. Bootstrap-theme gradients (bright chips & buttons) ---------- */
+/* bootstrap-theme.min.css paints these with background-IMAGE gradients,
+   so a background-color alone never wins — null the image too. */
+
+html.dark-mode .navbar-default .navbar-nav > .active > a,
+html.dark-mode .navbar-default .navbar-nav > .active > a:hover,
+html.dark-mode .navbar-default .navbar-nav > .active > a:focus {
+    background-image: none !important;
+    background-color: #1f3a5f !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+
+html.dark-mode .navbar-default .navbar-nav > li > a:hover,
+html.dark-mode .navbar-default .navbar-nav > li > a:focus {
+    background-image: none !important;
+    background-color: #1a2334 !important;
+    color: #ffffff !important;
+}
+
+html.dark-mode .btn-default,
+html.dark-mode .btn-info,
+html.dark-mode .collaboratorship-link-container a.btn-info,
+html.dark-mode input[type="submit"],
+html.dark-mode input.search {
+    background-image: none !important;
+    background-color: #1f3a5f !important;
+    border-color: #2c4a75 !important;
+    color: #ffffff !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+html.dark-mode .btn-default:hover,
+html.dark-mode .btn-default:focus,
+html.dark-mode .btn-info:hover,
+html.dark-mode input[type="submit"]:hover,
+html.dark-mode input.search:hover {
+    background-color: #2a4f80 !important;
+    border-color: #35598a !important;
+    color: #ffffff !important;
+}
+
+/* ---------- 12. Individual pages (workflow, run, publication, org, ...) ---------- */
+/* generic template, styled by individual.css + page-individual.css */
+
+/* section container + light-gradient header bar */
+html.dark-mode article.property {
+    border-color: #273349;
+    background: #151d2b;
+}
+html.dark-mode article.property h3 {
+    background-image: none;
+    background-color: #1a2334;
+    border-bottom-color: #273349;
+    color: #7fc0dd;
+}
+html.dark-mode article.property li h3 {
+    background-image: none;
+    background-color: transparent;
+}
+
+/* white content bodies */
+html.dark-mode article.property ul.property-list,
+html.dark-mode article.property ul.property-list li,
+html.dark-mode article.property ul.property-list li.subclass h3 {
+    background: #151d2b;
+    background-color: #151d2b;
+    color: #d5dde7;
+}
+/* Rich-text property values (e.g. the workflow "purpose" statements) contain
+   <p>/<ul> markup. page-browse.css sets `article.property ul.property-list
+   { color:#5e6363 }`, a gray tuned for the white theme; the rule above only
+   recolors the <li> itself, so nested paragraphs stayed gray on dark.
+   Anchors are deliberately excluded so link colors are preserved. */
+html.dark-mode article.property ul.property-list li p,
+html.dark-mode article.property ul.property-list li div,
+html.dark-mode article.property ul.property-list li span,
+html.dark-mode article.property ul.property-list li ul,
+html.dark-mode article.property ul.property-list li ol,
+html.dark-mode article.property ul.property-list li strong,
+html.dark-mode article.property ul.property-list li em {
+    color: #d5dde7 !important;
+}
+html.dark-mode article.property .data-property-statement {
+    color: #d5dde7;
+}
+
+/* grouped-view section headers (base css uses !important) */
+html.dark-mode section.property-group h2 {
+    background: #1a2334 !important;
+    color: #c6d2e0 !important;
+}
+
+/* tab strip (Overview / ... / View All) */
+html.dark-mode li.nonSelectedGroupTab {
+    background-color: #1a2334;
+    border-color: #273349;
+    color: #9aa7b8;
+}
+html.dark-mode li.selectedGroupTab {
+    background-color: #151d2b;
+    border-color: #273349;
+    border-bottom-color: #151d2b;
+    color: #e6edf5;
+}
+html.dark-mode li.groupTabSpacer {
+    background-color: transparent;
+    border-bottom-color: #273349;
+}
+html.dark-mode ul.propertyTabsList li {
+    color: #cfd9e6;
+}
+
+/* "... more" chip */
+html.dark-mode a.more-less {
+    background: #232e42;
+    color: #9aa7b8;
+}
+html.dark-mode a:hover.more-less {
+    background: #2c3a52;
+    color: #ffffff;
+}
+
+/* small white boxes & misc on individual pages */
+html.dark-mode #individual-intro #iconControlsRightSide { background-color: transparent; }
+html.dark-mode #individual-intro h1 { color: #7fc0dd; }
+html.dark-mode section.verbosePropertyListing { background-color: #1a2334; }
+html.dark-mode #admin { background-color: #151d2b; }
+html.dark-mode #admin h3 { background-color: #1f3a5f; }
+
+/* ---------- 13. Menu pages & browse widget (bright borders/boxes) ---------- */
+
+html.dark-mode #menupage-intro { background: transparent; }
+html.dark-mode #menupage-intro h2 { color: #7fc0dd; }
+html.dark-mode #menupage-content h3 {
+    color: #a8c6dd;
+    border-bottom-color: #273349;
+}
+html.dark-mode #menupage-content.people { border-right-color: #273349; }
+
+html.dark-mode ul#browse-classes {
+    border-color: #273349;
+    background-color: #151d2b;
+}
+html.dark-mode ul#browse-classes li,
+html.dark-mode ul#vgraph-classes li {
+    border-bottom-color: #273349;
+}
+
+html.dark-mode nav#alpha-browse-container {
+    border-color: #273349;
+    background-color: #151d2b;
+}
+html.dark-mode ul#alpha-browse-individuals { background-color: #151d2b; }
+
+html.dark-mode #individuals-in-class {
+    border-color: #273349;
+    background-color: #151d2b;
+}
+html.dark-mode #individuals-in-class li.individual { border-bottom-color: #273349; }
+html.dark-mode #individuals-in-class li img { border-color: #273349; }
+html.dark-mode #individuals-in-class li h1,
+html.dark-mode #property-group-menu ul { color: #d5dde7; }
+
+/* ---------- 14. Bootstrap nav-tabs (individual-page tab strip) ---------- */
+/* tenderfoot renders the Overview/.../View All tabs as .nav-tabs with
+   li.active — Bootstrap gives the active tab a white background. */
+
+html.dark-mode .nav-tabs {
+    border-bottom-color: #273349;
+}
+html.dark-mode .nav-tabs > li > a {
+    color: #9db5cc;
+}
+html.dark-mode .nav-tabs > li > a:hover {
+    background-color: #1a2334;
+    border-color: #273349;
+    color: #ffffff;
+}
+html.dark-mode .nav-tabs > li.active > a,
+html.dark-mode .nav-tabs > li.active > a:hover,
+html.dark-mode .nav-tabs > li.active > a:focus {
+    background-color: #151d2b;
+    border-color: #273349;
+    border-bottom-color: transparent;
+    color: #e6edf5;
+}
+
+/* ---------- 14b. Home hero heading (was pure white + shadow, too bright) ---------- */
+
+/* Hero type is near-NEUTRAL, not blue: saturated blue-gray text on a blue
+   photo reads as "tint on tint" and loses perceived contrast. Pure white is
+   avoided because it halates on dark backgrounds; a soft dark shadow (rather
+   than the light theme's hard 1px 1px 4px) carries legibility over the photo
+   so the text itself needn't be brighter. */
+html.dark-mode .jumbotron h1 {
+    color: #dde4ed;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
+}
+html.dark-mode .jumbotron p {
+    color: #cad3df;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- 15. Logo ---------- */
+/* FONDA-logo-dark.png = same image, only the navy "FONDA" lettering
+   recolored to light (#dbe4f0); the cube is pixel-identical. */
+
+html.dark-mode h1.vivo-logo {
+    background-image: url(../images/FONDA-logo-dark.png);
+}
+
+/* ---------- 16. Site Admin dashboard (white section bars) ---------- */
+
+html.dark-mode #adminDashboard .pageBodyGroup h3 {
+    background-color: #1a2334;
+    border-bottom-color: #2c3a52;
+    color: #7fc0dd;
+}
+html.dark-mode #adminDashboard .pageBodyGroup h4,
+html.dark-mode #adminDashboard .pageBodyGroup h4 a {
+    color: #9aa7b8;
+}
+
+/* ---------- 17. Ontology editor & legacy admin forms ---------- */
+/* class/property hierarchy pages (classHierarchy.css) */
+
+html.dark-mode table.classHierarchy {
+    background-color: #151d2b;
+    border-color: #273349;
+}
+html.dark-mode table.classHierarchy .classDetail,
+html.dark-mode td.classDetail,
+html.dark-mode span.rangeClass {
+    color: #7fc0dd;
+}
+html.dark-mode section#container div {
+    background-color: #1a2334;
+}
+
+/* legacy editing forms (edit.css): propertyEdit, class edit, etc. */
+html.dark-mode .editingForm {
+    background-color: #151d2b;
+    color: #d5dde7;
+}
+html.dark-mode .editingForm table {
+    border-color: #273349;
+}
+html.dark-mode .editingForm .entryFormHead {
+    background-color: #1a2334;
+    border-color: #273349;
+}
+html.dark-mode .editingForm .entryFormHead h2 {
+    color: #d5dde7;
+}
+html.dark-mode .editingForm .form-item {
+    background-color: #1a2334;
+    border-color: #2c3a52;
+    color: #d5dde7;
+}
+html.dark-mode tr.form-row-even {
+    background-color: #151d2b;
+    border-color: #273349;
+}
+html.dark-mode tr.form-row-odd {
+    background-color: #1a2334;
+    border-color: #273349;
+}
+html.dark-mode .form-editingRow {
+    background-color: #2b2113;
+    border-color: #6b5210;
+}
+
+/* legacy JSP screens (propertyEdit, vclassEdit, vclass_retry, editForm,
+   listIndividuals): formBasic.jsp hard-codes an INLINE
+   style="background-color:#fff" on the form table, and several tables are
+   generated in Java — !important is required to beat inline styles. */
+html.dark-mode .editingForm table,
+html.dark-mode .editingForm td,
+html.dark-mode .editingForm th,
+html.dark-mode tr.editformcell,
+html.dark-mode tr.editformcell td {
+    background-color: #151d2b !important;
+    color: #d5dde7 !important;
+    border-color: #273349 !important;
+}
+/* any table that inline-forces white, anywhere in the admin area */
+html.dark-mode table[style*="background-color:#fff"],
+html.dark-mode table[style*="background-color: #fff"],
+html.dark-mode table[bgcolor] {
+    background-color: #151d2b !important;
+}
+html.dark-mode .editingForm h3.blue { color: #7fc0dd; }
+html.dark-mode .editingForm .note,
+html.dark-mode .editingForm .notice { color: #f0a04a; }
+html.dark-mode .editingForm select,
+html.dark-mode .editingForm input[type="text"],
+html.dark-mode .editingForm textarea {
+    background-color: #1a2334 !important;
+    color: #d5dde7 !important;
+    border-color: #2c3a52 !important;
+}
+
+/* ---------- 18. More admin screens ---------- */
+
+/* institutional internal class form */
+html.dark-mode #noLocalOntologyExists { background: #1a2334; }
+html.dark-mode #noLocalOntologyExists blockquote { background: #2b2113; }
+
+/* menu management (DefaultMenu page in the display model) */
+html.dark-mode ul.menuItems li {
+    background-color: #1a2334 !important;
+    color: #d5dde7;
+}
+
+/* manage proxies (account.css light panels) */
+html.dark-mode #associateProfileBackgroundOne { background-color: #151d2b !important; }
+html.dark-mode #associateProfileBackgroundTwo,
+html.dark-mode #associateProfileBackgroundThree,
+html.dark-mode #associateProfileBackgroundFour {
+    background-color: #1a2334 !important;
+    border-color: #2c3a52 !important;
+}
+html.dark-mode fieldset.proxy,
+html.dark-mode fieldset.profile { background: transparent; }
+html.dark-mode section.account-feedback { color: #d5dde7; }
+
+/* startup status: keep the traffic-light semantics, darkened */
+html.dark-mode #startup-trace li.error { background-color: #3a1c20; }
+html.dark-mode #startup-trace li.warning { background-color: #2b2113; }
+html.dark-mode #startup-trace li.info { background-color: #16281c; }
+html.dark-mode #startup-trace li.not_executed { background-color: #1a2334; }
+
+/* SPARQL query page: YASQE (CodeMirror) editor + YASR results */
+html.dark-mode .CodeMirror {
+    background-color: #151d2b !important;
+    color: #d5dde7 !important;
+    border-color: #273349 !important;
+}
+html.dark-mode .CodeMirror-gutters {
+    background-color: #1a2334 !important;
+    border-color: #273349 !important;
+}
+html.dark-mode .CodeMirror-linenumber { color: #8b96a8 !important; }
+html.dark-mode .CodeMirror-cursor { border-left-color: #d5dde7 !important; }
+html.dark-mode .cm-s-default .cm-keyword { color: #c792ea !important; }
+html.dark-mode .cm-s-default .cm-string,
+html.dark-mode .cm-s-default .cm-string-2 { color: #a5d6a7 !important; }
+html.dark-mode .cm-s-default .cm-variable-2,
+html.dark-mode .cm-s-default .cm-variable-3,
+html.dark-mode .cm-s-default .cm-atom { color: #82aaff !important; }
+html.dark-mode .cm-s-default .cm-comment { color: #7e8a9a !important; }
+html.dark-mode .cm-s-default .cm-operator,
+html.dark-mode .cm-s-default .cm-punctuation { color: #d5dde7 !important; }
+html.dark-mode .yasr table,
+html.dark-mode .yasr_results table,
+html.dark-mode .yasr .dataTables_wrapper {
+    background: #151d2b !important;
+    color: #d5dde7 !important;
+}
+html.dark-mode .yasqe_buttons button,
+html.dark-mode .yasr_btnGroup .yasr_btn {
+    background-color: #1f3a5f !important;
+    color: #ffffff !important;
+    border-color: #2c4a75 !important;
+}
+
+/* ---------- 19. Page management (Add/Edit Page form) ---------- */
+
+html.dark-mode section#pageDetails,
+html.dark-mode section#floatRight {
+    background-color: transparent !important;
+}
+html.dark-mode section#headerBar {
+    background-color: #1a2334;
+    border-color: #2c3a52;
+    color: #7fc0dd;
+}
+html.dark-mode .pageContentContainer {
+    background-color: #151d2b;
+    border-color: #2c3a52;
+}
+html.dark-mode .pageContentWrapper,
+html.dark-mode .contentSectionContainer {
+    background-color: #1a2334;
+    border-color: #2c3a52;
+}
+html.dark-mode .pageContentTypeLabel {
+    color: #7fc0dd;
+}
+/* menu management shared bits */
+html.dark-mode #selectedContentTypeValue,
+html.dark-mode #internal-class {
+    background: #1a2334;
+    color: #d5dde7;
+}
+
+/* ---------- 19a. Hero search: make the primary action read clearly ---------- */
+/* over the dimmed hero photo the default navy button nearly disappears */
+
+html.dark-mode .row.hero .input-group-btn .btn,
+html.dark-mode .row.hero .btn-default {
+    background-color: #2a5c96 !important;
+    border-color: #4a7fc0 !important;
+    color: #ffffff !important;
+}
+html.dark-mode .row.hero .input-group-btn .btn:hover,
+html.dark-mode .row.hero .btn-default:hover,
+html.dark-mode .row.hero .btn-default:focus {
+    background-color: #3570b3 !important;
+    border-color: #5b91d1 !important;
+}
+html.dark-mode .row.hero .form-control,
+html.dark-mode .row.hero #classgroup {
+    background-color: rgba(20, 28, 44, 0.85) !important;
+    border-color: #3a4f6d !important;
+    color: #e6edf5 !important;
+}
+/* The label lives in a <span class="icon-search"> inside the button; target it
+   directly and kill bootstrap-theme's white text-shadow, which muddies it. */
+html.dark-mode .row.hero .btn,
+html.dark-mode .row.hero .btn span,
+html.dark-mode .row.hero .btn .icon-search {
+    color: #ffffff !important;
+    text-shadow: none !important;
+    opacity: 1 !important;
+}
+
+/* ---------- 19b. Home page: inline styles that stay dark-on-dark ---------- */
+/* page-home.ftl hard-codes a few legacy colors inline; they were designed for
+   the white theme and are unreadable (or invisible) on the dark one. */
+
+/* "Energy per run" chart heading — inline #23395d ≈ 1.3:1 on the panel */
+html.dark-mode #home-latest-runs .f-panel > div[style*="23395d"] {
+    color: #8fb4e3 !important;
+}
+/* "on <Cluster>" caption in the run cards — inline #666 / link #444 */
+html.dark-mode .f-run-card span[style*="color:#666"] {
+    color: #9aa7b8 !important;
+}
+html.dark-mode .f-run-card span[style*="color:#666"] a[style*="color:#444"] {
+    color: #9ecbff !important;
+}
+/* footnote under the stat cards — #888 passes, but lift it slightly */
+html.dark-mode #home-latest-runs p[style*="color:#888"] {
+    color: #9aa7b8 !important;
+}
+
+/* ---------- 19bis-b. Small light chips on individual pages ---------- */
+/* The year badge beside publications (.listDateTime, background #f4f4f4) and
+   the "Photo" / edit / delete labels over the image (rgba(255,255,255,.6)) are
+   near-white blocks designed for the light theme. */
+html.dark-mode .listDateTime {
+    background: #1a2334;
+    color: #9aa7b8;
+}
+html.dark-mode #mainImage,
+html.dark-mode .edit-mainImage,
+html.dark-mode .delete-mainImage {
+    background-color: rgba(21, 29, 43, 0.75) !important;
+    color: #cfd9e6;
+}
+
+/* ---------- 19bis-a. Home page: match the two column panels ---------- */
+/* page-home.ftl sets an inline font-weight:600 on the workflow titles, so the
+   Workflows column reads heavier than Recent Publications even though both are
+   the same kind of link. On dark, bold + saturated blue is a lot of emphasis;
+   normal weight lets the kWh / CO2e badges carry the accent instead.
+   Scoped to .f-item so the run cards below keep their bold titles. */
+html.dark-mode .f-item > a[style*="font-weight"] {
+    font-weight: 400 !important;
+}
+/* Same for the run cards, so no bold links are left on the home page and the
+   energy / carbon badges stay the focal point. */
+html.dark-mode .f-run-card > a[style*="font-weight"] {
+    font-weight: 400 !important;
+}
+
+/* ---------- 19bis. A–Z index on browse pages ---------- */
+/* An earlier rule targeted "nav.alpha-browse li a", a class that does not
+   exist in the markup — VIVO renders nav#alpha-browse-container /
+   ul#alpha-browse-individuals, so the letter row was never styled for dark. */
+html.dark-mode ul#alpha-browse-individuals a {
+    color: #9ecbff !important;
+}
+html.dark-mode ul#alpha-browse-individuals a:hover,
+html.dark-mode ul#alpha-browse-individuals a.selected {
+    color: #ffffff !important;
+}
+
+/* ---------- 19c. Secondary type labels ---------- */
+/* The "Workflow" label beside a profile title, under each name in the browse
+   lists, and in search results. search.css carries an UNSCOPED
+   .display-title { color:#5e6363 }, a gray tuned for the white theme; on dark
+   it lands at roughly 2.5:1, below every WCAG threshold. #9aa7b8 gives ~7.4:1
+   while still reading as secondary next to the bright titles. */
+html.dark-mode .display-title,
+html.dark-mode #individual-intro span.display-title,
+html.dark-mode #individual-intro h1 .display-title,
+html.dark-mode #individuals-in-class span.title,
+html.dark-mode li.individual span.title {
+    color: #9aa7b8 !important;
+    border-left-color: #3a4a5f !important;
+}
+
+/* ---------- 20. Placeholder avatar (dark variant) ---------- */
+/* light version + sizing live in local/css/local.css */
+
+html.dark-mode img.individual-photo[src*="placeholder"] {
+    content: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'><rect width='160' height='160' rx='10' fill='%231a2334'/><circle cx='80' cy='60' r='26' fill='%233d4c63'/><path d='M24 152 C24 112 136 112 136 152 Z' fill='%233d4c63'/></svg>");
+}
+
+/* ---------- Person pages: positions list (added 2026-08-20) ----------
+   ul#individual-personInPosition has no colour rule in any loaded
+   stylesheet, so it inherited #595b5b from the light theme. On #151d2b
+   that measures 2.47:1 -- the text under "Positions" was effectively
+   unreadable in dark mode. #d5dde7 is the body colour already used
+   elsewhere in this file and gives ~12:1.
+
+   The link inside that line was already correct at #9ecbff (~8:1) via the
+   global html.dark-mode a rule, so it is deliberately left alone. */
+html.dark-mode ul#individual-personInPosition,
+html.dark-mode ul#individual-personInPosition li,
+/* the text sits in <span itemprop="jobTitle"> and "worksFor" children,
+   so inheriting from the li is not enough */
+html.dark-mode ul#individual-personInPosition li span[itemprop] {
+    color: #d5dde7 !important;
+}
+
+/* ---------- Browse pages: multi-type labels (added 2026-08-20) ----------
+   A person with ONE type renders
+
+       <span class="title">Non-Faculty Academic</span>
+
+   and picks up the #9aa7b8 rule earlier in this file. A person with
+   SEVERAL renders
+
+       <span class="title"><ul><li>Alumni</li><li>Faculty Member</li></ul></span>
+
+   and those nested <li> carry a light-theme colour of their own, which
+   overrides what they would otherwise inherit from the span. That is why
+   exactly the multi-type entries stayed dark-on-dark while single-type
+   ones were fine -- the span rule reached the text in one case and not
+   the other. */
+html.dark-mode #individuals-in-class li.individual span.title li,
+html.dark-mode li.individual span.title li {
+    color: #9aa7b8 !important;
+}
+
+/* ---------- Light-theme raster icons on dark (added 2026-08-21) ----------
+   Three assets were drawn for a white background and keep their own colour
+   and white highlights on dark: share-uri-icon.png (the green chain beside
+   a title), qr-code-icon.png, and arrow.gif / arrowSmall.gif behind the
+   selected item in the browse sidebars.
+
+   The two <img> icons can be flattened in place: brightness(0) drives every
+   pixel to black while preserving alpha, invert(1) turns that silhouette
+   white, and the opacity settles it to the same weight as the surrounding
+   chrome. No replacement asset needed.
+
+   The arrows cannot be treated that way -- they are CSS backgrounds on the
+   <a>, so a filter would recolour the label text with them. They are
+   replaced by an inline SVG triangle in the accent already used elsewhere
+   in this file. Background-position is carried over from page-browse.css;
+   nudge it if the new glyph sits a pixel off. */
+
+html.dark-mode #uriIcon,
+html.dark-mode #qrIcon {
+    filter: brightness(0) invert(1);
+    opacity: 0.65;
+}
+
+html.dark-mode #uriIcon:hover,
+html.dark-mode #qrIcon:hover {
+    opacity: 1;
+}
+
+html.dark-mode ul#browse-classes a:hover,
+html.dark-mode ul#browse-classes a.selected {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='10'%3E%3Cpath d='M1 1l5 4-5 4z' fill='%237fc0dd'/%3E%3C/svg%3E");
+}
+
+html.dark-mode ul#alpha-browse-individuals a:hover,
+html.dark-mode ul#alpha-browse-individuals a.selected {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='10'%3E%3Cpath d='M1 1l5 4-5 4z' fill='%237fc0dd'/%3E%3C/svg%3E");
+}
+
+/* ---------- Altmetric donut on dark (restored 2026-08-21) ----------
+   The donut's centre is transparent and its score is baked into a bitmap
+   served by badges.altmetric.com, so on a dark page the score vanishes
+   while the coloured ring still renders. Nothing here can be recoloured;
+   a light disc puts the badge back in the conditions it was drawn for.
+   border-radius:50% keeps the disc to the donut's own circle. */
+html.dark-mode .altmetric-embed img,
+html.dark-mode .altmetric-embed svg {
+    background: #e8edf3;
+    border-radius: 50%;
+}
+
+/* ---------- Charts drawn for the white theme (added 2026-09-16) ----------
+   VIVO's own charts hard-code black, which disappears on the dark page:
+   - d3.axis writes fill/stroke="#000" on every tick label and axis line;
+   - the legend of "Publications in VIVO" (every person page) and the name
+     labels of the co-author chord fall back to SVG's default black fill;
+   - the person's own arc in the co-author chord is an inline
+     style="fill: rgb(0, 0, 0)", hence the !important on that one rule.
+   SVG presentation attributes lose to any stylesheet rule, so the rest
+   needs no !important. Colours follow the Highcharts rules in section 7:
+   axis labels #9aa7b8, legend text #d5dde7. */
+
+/* any D3 axis: tick labels, axis line, tick marks */
+html.dark-mode svg .tick text { fill: #9aa7b8; }
+html.dark-mode svg .domain,
+html.dark-mode svg .tick line { stroke: rgba(255, 255, 255, 0.3); }
+
+/* person pages: "Publications in VIVO" (heading was #595b5b, ~2.7:1) */
+html.dark-mode #publicationsHeading { color: #c6d2e0; }
+html.dark-mode #publicationsChart text { fill: #d5dde7; }
+html.dark-mode #publicationsChart .tick text { fill: #9aa7b8; }
+
+/* co-author network (/vis/author-network, body.vis): personlevel/page.css
+   paints white panels, which put the dark theme's light text on white */
+html.dark-mode body.vis #body,
+html.dark-mode body.vis #bodyPannel,
+html.dark-mode body.vis .vis_stats,
+html.dark-mode body.vis .vis_stats_full {
+    background: #0f151f;
+}
+html.dark-mode body.vis .vis-tables {
+    background: #151d2b;
+    border-color: #273349;
+}
+/* ".vis-tables table thead tr th" (#eaeaea) outranks the generic th rule */
+html.dark-mode body.vis .vis-tables table thead tr th {
+    background-color: #1a2334;
+}
+/* yellow "Note: This information is based solely on..." box: same
+   treatment as the flash / welcome banners in section 6 */
+html.dark-mode body.vis #incomplete-data-small {
+    background-color: #2b2113;
+    border-color: #6b5210;
+    color: #e8d9a0;
+}
+html.dark-mode body.vis #chord text { fill: #d5dde7; }
+html.dark-mode body.vis #chord path[style*="rgb(0, 0, 0)"] {
+    fill: #d5dde7 !important;
+    stroke: #d5dde7 !important;
+}
+/* Google Charts sparklines: the white card behind the line */
+html.dark-mode body.vis svg > rect[fill="#ffffff"] {
+    fill: #151d2b;
+    stroke: #273349;
+}
+
+/* ---------- Login form labels (added 2026-09-28) ----------
+   login.css leaves "Email" / "Password" at the light theme's #5e6363,
+   nearly invisible on the dark page. */
+html.dark-mode #login-form label { color: #d5dde7; }
+
+/* ---------- Add / edit / delete icons (added 2026-09-29) ----------
+   addIcon.gif, editIcon.gif and deleteIcon.gif are drawn for a white page
+   (grey disc with a pale halo, dark slate pencil and bin). Inverting the
+   lightness gives a light disc with a dark plus and light pencil/bin; the
+   hue-rotate keeps the original hue instead of the inverted one. */
+html.dark-mode img.add-individual,
+html.dark-mode img.edit-individual,
+html.dark-mode img.delete-individual {
+    filter: invert(1) hue-rotate(180deg);
+}
