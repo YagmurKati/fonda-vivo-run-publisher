@@ -414,6 +414,18 @@ def run_period(start_utc, end_utc, tz):
     return f"{start:%Y-%m-%d %H:%M} {start.tzname()}–{end_text} {end.tzname()}"
 
 
+def slurm_average_watts(s):
+    """Average node power that the Slurm accounting energy would mean over the job."""
+    return s["slurm_node_energy_joules"] / s["duration_seconds"]
+
+
+def slurm_energy_plausible(s):
+    """True when the Slurm energy lies within the node's lowest and highest IPMI reading during the job."""
+    if s.get("power_min_watts") is None or s.get("power_max_watts") is None or not s.get("duration_seconds"):
+        return False
+    return s["power_min_watts"] <= slurm_average_watts(s) <= s["power_max_watts"]
+
+
 def build_ttl(summary, args, tz):
     key = "hpc-at-hu-slurm-" + summary["job_id"] + "-" + summary["start_utc"][:19].replace("-", "").replace(":", "").replace("T", "t")
     run, date = BASE + "run/" + key, BASE + "datetime/" + key
@@ -443,9 +455,15 @@ def build_ttl(summary, args, tz):
             comparison = ""
             if s.get("slurm_node_energy_joules"):
                 frequency = f" every {s['slurm_node_freq']}" if s.get("slurm_node_freq") else " at longer intervals"
-                comparison = (f"For comparison, Slurm accounting (acct_gather_energy/ipmi) reports "
-                              f"{s['slurm_node_energy_joules']:.0f} J; it reads the power only{frequency}, "
-                              "which is less precise for a job of this length. ")
+                if slurm_energy_plausible(s):
+                    comparison = (f"For comparison, Slurm accounting (acct_gather_energy/ipmi) reports "
+                                  f"{s['slurm_node_energy_joules']:.0f} J; it reads the power only{frequency}, "
+                                  "which is less precise for a job of this length. ")
+                else:
+                    comparison = (f"Slurm accounting (acct_gather_energy/ipmi) reports "
+                                  f"{s['slurm_node_energy_joules']:.0f} J; it is not used, because it would mean an "
+                                  f"average power of {slurm_average_watts(s):.0f} W, outside the node's IPMI readings "
+                                  f"during the job ({s['power_min_watts']:.0f} to {s['power_max_watts']:.0f} W). ")
         else:
             measured = (f"Node energy: {s['node_energy_source']}, {s['node_energy_joules']:.0f} J over the job "
                         f"({s['duration_seconds']:.0f} s). ")
@@ -485,6 +503,11 @@ def build_ttl(summary, args, tz):
              ("rm:resourceAccountingStartTime", local(s["start_utc"])), ("rm:resourceAccountingEndTime", local(s["end_utc"])),
              ("rm:executionHost", literal(s["node"])),
              ("rm:jobName", literal(f"{s['job_name']} (Slurm job {s['job_id']}, partition {s['partition']}, exit code {s['exit_code']})"))]
+    if (s["whole_node"] and s["energy_basis"] == "sampled" and s.get("slurm_node_energy_joules")
+            and slurm_energy_plausible(s)):
+        # Second measurement of the same energy, shown on the run page; comparisons use rm:energyKWh.
+        # Stored only when its average power lies within the node's own readings during the job.
+        props += [("rm:slurmAccountingEnergyKWh", literal(s["slurm_node_energy_joules"] / 3_600_000))]
     if s["memory_peak_gb"] is not None:
         props += [("rm:memoryPeakGB", literal(s["memory_peak_gb"])),
                   ("rm:memoryCalculationMethod", literal(
