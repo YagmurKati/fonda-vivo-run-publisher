@@ -296,10 +296,22 @@ class WholeNodeEnergyTests(unittest.TestCase):
         self.assertEqual(summary["slurm_node_energy_joules"], 36498.0)
         self.assertIn("read about every 1.0 s while the job ran (72 readings, 294 to 770 W", ttl)
         self.assertIn("Slurm accounting (acct_gather_energy/ipmi) reports 36498 J", ttl)
+        self.assertIn("rm:slurmAccountingEnergyKWh", ttl)
+        self.assertIn(repr(36498.0 / 3_600_000), ttl)
         self.assertIn("The whole node was allocated to this job", ttl)
         self.assertIn('rm:energyMeasurementCoverage "100% of the node (whole node, measured)"', ttl)
         self.assertNotIn("CPU-time share", ttl)
         self.assertNotIn("the job shared its node", stderr)
+
+    def test_impossible_slurm_energy_is_not_stored(self):
+        # 3,042,666 J in 74 s would be about 41 kW, far above the node's readings (294 to 770 W)
+        (self.root / "sacct.txt").write_text(WHOLE_NODE_SACCT.replace("|36498|", "|3042666|"))
+        ttl, summary, _, _ = self.collect(WHOLE_NODE_WATTS)
+        self.assertEqual(summary["energy_basis"], "sampled")
+        self.assertNotIn("rm:slurmAccountingEnergyKWh", ttl)
+        self.assertIn("reports 3042666 J; it is not used, because it would mean an average power of 41117 W, "
+                      "outside the node's IPMI readings during the job (294 to 770 W)", ttl)
+        self.assertNotIn("For comparison", ttl)
 
     def test_whole_node_job_without_power_readings_uses_the_slurm_energy(self):
         ttl, summary, stderr, _ = self.collect(["NA"] * 72)
@@ -307,6 +319,7 @@ class WholeNodeEnergyTests(unittest.TestCase):
         self.assertEqual(summary["energy_joules"], 36498.0)
         self.assertIn("too few IPMI power readings", stderr)
         self.assertIn("Slurm acct_gather_energy/ipmi ConsumedEnergyRaw, 36498 J", ttl)
+        self.assertNotIn("rm:slurmAccountingEnergyKWh", ttl)  # Slurm is the main value here
 
     def test_job_on_a_shared_node_is_an_estimate_and_says_so(self):
         ttl, summary, stderr, _ = self.collect(WHOLE_NODE_WATTS, node_cpus=512)
@@ -314,6 +327,7 @@ class WholeNodeEnergyTests(unittest.TestCase):
         self.assertEqual(summary["energy_basis"], "slurm")
         self.assertIn("NOTE: the job shared its node", stderr)
         self.assertIn("Energy is an estimate", ttl)
+        self.assertNotIn("rm:slurmAccountingEnergyKWh", ttl)
 
 
 class NodeSamplerScriptTests(unittest.TestCase):
