@@ -131,11 +131,18 @@ class AddonTests(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def run_addon(self, now=END + 3600, ttl=None, hist=history):
+    def run_addon(self, now=END + 3600, ttl=None, hist=history, quarters=None):
         args = ["--ttl", str(ttl or self.ttl), "--prom-url", self.prom, "--out-dir", str(self.dir),
                 "--token", "x", "--now", str(now)]
         out, err = io.StringIO(), io.StringIO()
-        with mock.patch.object(addon, "fetch_history", side_effect=lambda token: hist()), \
+
+        def fetch(token, granularity="hourly", start=None, end=None):
+            if granularity == "hourly":
+                return hist()
+            if quarters is None:
+                raise ValueError("no 15-minute data for this account")
+            return quarters()
+        with mock.patch.object(addon, "fetch_history", side_effect=fetch), \
                 mock.patch("sys.stdout", out), mock.patch("sys.stderr", err):
             code = addon.main(args)
         stem = self.ttl.name[:-4]
@@ -178,6 +185,24 @@ class AddonTests(unittest.TestCase):
             self.assertTrue(text.rstrip().endswith("."))
             self.assertIn("@prefix rm:", text)
             self.assertEqual(text.count("<http://example.org/vivo-import/run-metadata/run/yagmur-x>"), 1)
+
+    def test_fifteen_minute_data_is_used_for_carbon(self):
+        def quarters():
+            first = datetime(2026, 10, 20, 12, tzinfo=UTC)
+            return ("https://api.electricitymaps.com/v4/carbon-intensity/past-range?zone=DE",
+                    [dict(datetime=(first + timedelta(minutes=15 * i)).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+                          g_per_kwh=250.0, estimated=False, seconds=900) for i in range(16)])
+        code, _, err, files = self.run_addon(quarters=quarters)
+        self.assertEqual(code, 0, err)
+        add = files["ADD"].read_text()
+        self.assertIn('rm:carbonIntensityTemporalGranularity "15 minutes"', add)
+        self.assertIn("Electricity Maps 15-minute history", add)
+        self.assertIn('rm:carbonIntensityAssumptionKgCO2ePerKWh "0.25"^^xsd:double', add)
+        self.assertIn('rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime', add)
+        self.assertIn('rm:carbonIntensityWindowEnd "2026-10-20T13:15:00Z"^^xsd:dateTime', add)
+        self.assertIn("in the quarter-hours the run used", add)
+        # the hours around the run for the run page still come from the hourly history
+        self.assertIn("2026-10-20T13:00Z 322.0", add)
 
     def test_readings_are_centred_and_reach_the_run_end(self):
         ttl = self.dir / "RANGELAND-1NODE-01-20261020T132500Z.ttl"

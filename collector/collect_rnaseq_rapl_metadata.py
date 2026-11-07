@@ -269,7 +269,8 @@ def build_ttl(summary, rows, inputs, archive_sha, backend_uri=None, run_operator
              ("rm:traceDataFormat", literal("TSV, JSON, plain text, HTML, shell and Python scripts, unified diff, ZIP, and TAR.GZ")),
              ("dcterms:description", label(f"Complete SRR16287545 paired-end RNA-seq and Ensembl 106 Drosophila cDNA reference. Mapped {summary['mapped_fragments']} of {summary['processed_fragments']} fragments. Sequential tasks, two CPUs and 8 GiB per task. Energy method adapted from CRC-FONDA/RAPL_measurement_workflows; workflow implementation nextflow-io/rnaseq-nf. Does not reproduce the original paper experiment. Verified local evidence archive SHA-256: {archive_sha}. No public archive URL assigned."))]
     carbon = require_carbon(summary)
-    carbon_method = ("Sum of measured CPU-package kWh in each covered hour multiplied by that hour's Germany grid intensity. "
+    step = "quarter-hour" if carbon.get("temporal_granularity") == "15 minutes" else "hour"
+    carbon_method = (f"Sum of measured CPU-package kWh in each covered {step} multiplied by that {step}'s Germany grid intensity. "
                      "RAPL boundaries are interpolated; no annual-average or collection-time proxy is used. "
                      f"DRAM is separate: {carbon['dram_kg']:.9f} kg {carbon['basis']}. "
                      "The displayed emissions field covers CPU-package energy only, including other node activity. "
@@ -284,7 +285,7 @@ def build_ttl(summary, rows, inputs, archive_sha, backend_uri=None, run_operator
               ("rm:carbonIntensityWindowEnd", literal(carbon["source_window_end"], "xsd:dateTime")),
               ("rm:carbonIntensityIncludesEstimatedData", literal(carbon["includes_estimates"])),
               ("rm:carbonIntensityEmissionsBasis", literal(carbon["basis"])),
-              ("rm:carbonIntensityTemporalGranularity", literal("hourly")),
+              ("rm:carbonIntensityTemporalGranularity", literal(carbon.get("temporal_granularity", "hourly"))),
               ("rm:carbonCalculationMethod", literal(carbon_method))]
     if backend_uri:
         sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "publisher"))

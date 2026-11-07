@@ -816,7 +816,24 @@ def resolve_carbon_intensity(
     if args.carbon_intensity_source == "electricity-maps-latest":
         return resolve_electricity_maps_latest_intensity(args, token)
 
-    step_seconds = 300
+    # 15-minute values where the account and the zone have them, hourly values otherwise.
+    errors: List[str] = []
+    for granularity, step_seconds in (("15_minutes", 900), ("hourly", 3600)):
+        try:
+            return _electricity_maps_range_intensity(args, token, start, end, granularity, step_seconds)
+        except (RuntimeError, ValueError, KeyError, TypeError, OSError) as exc:
+            errors.append(f"{granularity}: {exc}")
+    raise RuntimeError("Electricity Maps has no carbon intensity for the run's time (" + "; ".join(errors) + ")")
+
+
+def _electricity_maps_range_intensity(
+    args: argparse.Namespace,
+    token: str,
+    start: datetime,
+    end: datetime,
+    granularity: str,
+    step_seconds: int,
+) -> CarbonIntensityInfo:
     start_epoch = int(start.astimezone(timezone.utc).timestamp())
     end_epoch = int(end.astimezone(timezone.utc).timestamp())
     query_start_epoch = (start_epoch // step_seconds) * step_seconds
@@ -833,7 +850,7 @@ def resolve_carbon_intensity(
         "start": api_datetime(query_start),
         "end": api_datetime(query_end),
         "emissionFactorType": "lifecycle",
-        "temporalGranularity": "5_minutes",
+        "temporalGranularity": granularity,
         "flowTraced": "true",
         "disableEstimations": (
             "true"
@@ -846,6 +863,9 @@ def resolve_carbon_intensity(
         params,
         {"auth-token": token},
     )
+    returned = payload.get("temporalGranularity")
+    if returned is not None and returned != granularity:
+        raise RuntimeError(f"Electricity Maps returned {returned} data instead of {granularity}")
     points = electricity_maps_points(payload)
     values: List[float] = []
     includes_estimates = False
@@ -872,12 +892,13 @@ def resolve_carbon_intensity(
             "point even though --electricity-maps-disable-estimations was set."
         )
 
+    label = "15 minutes" if granularity == "15_minutes" else "hourly"
     average_g_per_kwh = sum(values) / len(values)
     return CarbonIntensityInfo(
         kg_per_kwh=average_g_per_kwh / 1000.0,
         source=(
-            "Electricity Maps historical flow-traced lifecycle carbon "
-            "intensity"
+            f"Electricity Maps {'15-minute' if granularity == '15_minutes' else 'hourly'} history "
+            "(flow-traced lifecycle carbon intensity)"
         ),
         source_uri=args.electricity_maps_api_url,
         zone=args.electricity_maps_zone,
@@ -886,7 +907,7 @@ def resolve_carbon_intensity(
         start=api_datetime(query_start),
         end=api_datetime(query_end),
         emissions_basis="lifecycle CO2e",
-        temporal_granularity="5 minutes",
+        temporal_granularity=label,
     )
 
 
@@ -2351,6 +2372,7 @@ NODE_POWER_BUSY_CPUS_WARN = 2.0
 NODE_POWER_MAX_POINTS = 600
 NODE_POWER_HOURS_AROUND = 24
 NODE_POWER_EM_HISTORY = "https://api.electricitymaps.com/v4/carbon-intensity/history"
+NODE_POWER_EM_PAST_RANGE = "https://api.electricitymaps.com/v4/carbon-intensity/past-range"
 NODE_POWER_WHOLE_NODE = "100% of the node (whole node, measured)"
 
 
@@ -2440,16 +2462,27 @@ def _np_literal_value(obj: str) -> str:
     return "".join(out)
 
 
-def _np_grid_history(token: str, zone: str) -> Tuple[str, List[Dict[str, Any]]]:
-    params = {"zone": zone, "temporalGranularity": "hourly", "emissionFactorType": "lifecycle",
+def _np_grid_history(token: str, zone: str, granularity: str = "hourly", start: Optional[float] = None,
+                     end: Optional[float] = None) -> Tuple[str, List[Dict[str, Any]]]:
+    """Grid intensity of the last 24 hours (history), or of [start, end) rounded out to whole intervals
+    (past-range). granularity: "hourly" or "15_minutes"; each point carries its length in seconds."""
+    seconds = 900 if granularity == "15_minutes" else 3600
+    params = {"zone": zone, "temporalGranularity": granularity, "emissionFactorType": "lifecycle",
               "flowTraced": "true"}
-    url = NODE_POWER_EM_HISTORY + "?" + urllib.parse.urlencode(params)
-    payload = http_get_json(NODE_POWER_EM_HISTORY, params, {"auth-token": token})
-    if payload.get("zone") != zone or payload.get("temporalGranularity") != "hourly":
+    endpoint = NODE_POWER_EM_HISTORY
+    if start is not None and end is not None:
+        endpoint = NODE_POWER_EM_PAST_RANGE
+        params["start"] = datetime.fromtimestamp(math.floor(start / seconds) * seconds, timezone.utc).strftime(
+            "%Y-%m-%dT%H:%M:%SZ")
+        params["end"] = datetime.fromtimestamp(math.ceil(end / seconds) * seconds, timezone.utc).strftime(
+            "%Y-%m-%dT%H:%M:%SZ")
+    url = endpoint + "?" + urllib.parse.urlencode(params)
+    payload = http_get_json(endpoint, params, {"auth-token": token})
+    if payload.get("zone") != zone or payload.get("temporalGranularity") != granularity:
         raise ValueError("unexpected Electricity Maps zone or time resolution")
     rows = payload.get("history", payload.get("data"))
     if not isinstance(rows, list):
-        raise ValueError("no hourly Electricity Maps data")
+        raise ValueError("no Electricity Maps data")
     points = []
     for row in rows:
         if row.get("emissionFactorType") != "lifecycle" or row.get("flowTraced") is not True:
@@ -2458,15 +2491,16 @@ def _np_grid_history(token: str, zone: str) -> Tuple[str, List[Dict[str, Any]]]:
         if value is None or isinstance(value, bool):
             continue
         points.append({"begin": datetime.fromisoformat(str(row["datetime"]).replace("Z", "+00:00")).timestamp(),
-                       "g_per_kwh": float(value), "estimated": bool(row.get("isEstimated", False))})
+                       "g_per_kwh": float(value), "estimated": bool(row.get("isEstimated", False)),
+                       "seconds": seconds})
     return url, sorted(points, key=lambda p: p["begin"])
 
 
 def _np_covered(points: List[Dict[str, Any]], start: float, end: float) -> List[Dict[str, Any]]:
-    """The hourly records that cover every instant of the run, cut to the run."""
+    """The records (hours or quarter-hours) that cover every instant of the run, cut to the run."""
     pieces = []
     for point in points:
-        begin, finish = point["begin"], point["begin"] + 3600
+        begin, finish = point["begin"], point["begin"] + point.get("seconds", 3600)
         if finish <= start or begin >= end:
             continue
         pieces.append(dict(point, start=max(begin, start), end=min(finish, end)))
@@ -2481,7 +2515,7 @@ def _np_covered(points: List[Dict[str, Any]], start: float, end: float) -> List[
 
 
 def _np_shares(pieces: List[Dict[str, Any]], readings: List[Tuple[float, float]], start: float) -> List[float]:
-    """Share of the run's energy in each hourly piece, from the power readings (time share if too few)."""
+    """Share of the run's energy in each piece, from the power readings (time share if too few)."""
     points = [(start + o, w) for o, w in readings]
 
     def energy_in(a: float, b: float) -> Optional[float]:
@@ -2717,8 +2751,22 @@ def node_power_apply(
         if not token:
             raise ValueError("no Electricity Maps token")
         zone = getattr(args, "electricity_maps_zone", "DE") or "DE"
-        source_url, points = _np_grid_history(token, zone)
-        pieces = _np_covered(points, start, end)
+        # Hourly history: the hours around the run for the run page (rm:gridCarbonIntensityHours).
+        hour_error: Optional[Exception] = None
+        try:
+            hour_url, points = _np_grid_history(token, zone)
+        except (RuntimeError, ValueError, KeyError, TypeError, OSError, urllib.error.URLError) as exc:
+            hour_url, points, hour_error = "", [], exc
+        # Carbon: 15-minute values of the run's own time where the account has them, else the hourly ones.
+        try:
+            source_url, quarter_points = _np_grid_history(token, zone, "15_minutes", start, end)
+            pieces = _np_covered(quarter_points, start, end)
+            granularity, unit, unit_s = "15 minutes", "quarter-hour", "15-minute"
+        except (RuntimeError, ValueError, KeyError, TypeError, OSError, urllib.error.URLError):
+            if hour_error is not None:
+                raise hour_error
+            source_url, pieces = hour_url, _np_covered(points, start, end)
+            granularity, unit, unit_s = "hourly", "hour", "hourly"
         shares = _np_shares(pieces, readings, start)
         g = sum(s * p["g_per_kwh"] for s, p in zip(shares, pieces))
         intensity = g / 1000
@@ -2731,21 +2779,22 @@ def node_power_apply(
             "rm:carbonIntensityAssumptionKgCO2ePerKWh": ttl_literal(intensity),
             "rm:carbonEmissionKgCO2e": ttl_literal(energy_kwh * intensity),
             "rm:carbonIntensitySource": ttl_literal(
-                f"Electricity Maps hourly history (zone {zone}, lifecycle, flow-traced)"),
+                f"Electricity Maps {unit_s} history (zone {zone}, lifecycle, flow-traced)"),
             "rm:carbonIntensitySourceLink": ttl_literal(source_url, "xsd:anyURI"),
             "rm:carbonIntensityWindowStart": ttl_literal(
                 datetime.fromtimestamp(pieces[0]["begin"], timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "xsd:dateTime"),
             "rm:carbonIntensityWindowEnd": ttl_literal(
-                datetime.fromtimestamp(pieces[-1]["begin"] + 3600, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                datetime.fromtimestamp(pieces[-1]["begin"] + pieces[-1].get("seconds", 3600),
+                                       timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 "xsd:dateTime"),
             "rm:carbonIntensityDataPointCount": ttl_literal(len(pieces), "xsd:integer"),
             "rm:carbonIntensityIncludesEstimatedData": ttl_literal(any(p["estimated"] for p in pieces)),
             "rm:carbonIntensityEmissionsBasis": ttl_literal("lifecycle CO2e"),
-            "rm:carbonIntensityTemporalGranularity": ttl_literal("hourly"),
+            "rm:carbonIntensityTemporalGranularity": ttl_literal(granularity),
             "rm:carbonCalculationMethod": ttl_literal(
-                f"Time-matched: the run's energy {energy_kwh:.6f} kWh x the hourly carbon intensity of the grid "
-                f"(Electricity Maps, zone {zone}, lifecycle, flow-traced) in the hours the run used, weighted by "
-                f"the run's energy in each hour ({detail}) = {g:.1f} g/kWh, so "
+                f"Time-matched: the run's energy {energy_kwh:.6f} kWh x the {unit_s} carbon intensity of the grid "
+                f"(Electricity Maps, zone {zone}, lifecycle, flow-traced) in the {unit}s the run used, weighted by "
+                f"the run's energy in each {unit} ({detail}) = {g:.1f} g/kWh, so "
                 f"{energy_kwh * intensity * 1000:.2f} g CO2e."),
         })
         if len(hours) >= 2:

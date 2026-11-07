@@ -516,14 +516,17 @@ def fetch_carbon_intensity_kg(
       "electricitymap-error:<msg>"      – API reachable but bad data
       "electricitymap-unavailable:<msg>"– network / auth failure
     """
-    start_str = start_utc.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
-    end_str   = end_utc.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    # whole quarter-hours that cover the execution window
+    start_epoch = math.floor(start_utc.astimezone(timezone.utc).timestamp() / 900) * 900
+    end_epoch = max(start_epoch + 900, math.ceil(end_utc.astimezone(timezone.utc).timestamp() / 900) * 900)
+    start_str = datetime.fromtimestamp(start_epoch, timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    end_str = datetime.fromtimestamp(end_epoch, timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
     history_params = {
         "zone": zone,
         "start": start_str,
         "end": end_str,
         "emissionFactorType": "lifecycle",
-        "temporalGranularity": "5_minutes",
+        "temporalGranularity": "15_minutes",
         "flowTraced": "true",
         "disableEstimations": "false",
     }
@@ -548,7 +551,7 @@ def fetch_carbon_intensity_kg(
             avg_kg = sum(intensities) / len(intensities) / 1000.0
             return (
                 avg_kg,
-                "Electricity Maps historical flow-traced lifecycle carbon intensity",
+                "Electricity Maps 15-minute history (flow-traced lifecycle carbon intensity)",
             )
         # got a response but no usable data – fall through to latest
     except urllib.error.HTTPError as exc:

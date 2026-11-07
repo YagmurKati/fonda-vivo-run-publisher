@@ -1,0 +1,7 @@
+# After the upload: carbon granularity of the rangeland runs. Expected: "15 minutes" 100, "hourly" 24 (the other runs).
+# Any run with two values would show up in the second query.
+PREFIX rm: <http://example.org/ontology/run-metadata#>
+SELECT ?granularity (COUNT(DISTINCT ?run) AS ?runs) WHERE {
+  ?run rm:workflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+       rm:carbonIntensityTemporalGranularity ?granularity .
+} GROUP BY ?granularity

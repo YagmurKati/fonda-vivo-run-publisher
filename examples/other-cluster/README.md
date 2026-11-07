@@ -193,14 +193,17 @@ chmod 600 ~/.fonda-vivo/*
 ### 7. Carbon values (optional)
 
 Carbon emission is calculated the same way on every cluster: from the run's
-energy and the German grid's hourly carbon intensity. It needs a free
-[Electricity Maps](https://www.electricitymaps.com/) API token. Run the first
-line on its own and paste the token at the prompt.
+energy and the German grid's carbon intensity during the run: in 15-minute
+steps where the [Electricity Maps](https://www.electricitymaps.com/) account
+of the token has them, hourly otherwise. Run the first line on its own and
+paste the token at the prompt. The last line prints `200` if the account has
+15-minute data.
 
 ```bash
 read -rs -p 'Electricity Maps token: ' t && printf '%s' "$t" > ~/.fonda-vivo/electricity-maps-token; unset t; echo
 chmod 600 ~/.fonda-vivo/electricity-maps-token
 curl -s -o /dev/null -w '%{http_code}\n' -H "auth-token: $(cat ~/.fonda-vivo/electricity-maps-token)" "https://api.electricitymaps.com/v4/carbon-intensity/latest?zone=DE"
+curl -s -o /dev/null -w '%{http_code}\n' -H "auth-token: $(cat ~/.fonda-vivo/electricity-maps-token)" "https://api.electricitymaps.com/v4/carbon-intensity/history?zone=DE&temporalGranularity=15_minutes"
 ```
 
 The last line must print `200`. Without a token, runs are published without

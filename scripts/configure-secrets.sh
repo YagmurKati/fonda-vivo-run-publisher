@@ -45,7 +45,7 @@ printf '%s\n' \
 
 unset email password confirmation email_b64 password_b64
 
-if [[ "$CARBON_SOURCE" == "electricity-maps-latest" ]]; then
+if [[ "$CARBON_SOURCE" == electricity-maps* ]]; then
   printf 'Electricity Maps API token: ' >&2
   IFS= read -r -s token
   printf '\n' >&2

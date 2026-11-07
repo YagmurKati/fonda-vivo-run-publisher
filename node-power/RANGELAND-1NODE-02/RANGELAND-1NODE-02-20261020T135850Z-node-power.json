@@ -1,0 +1,28 @@
+{
+  "run": "<http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00>",
+  "node": "hu-worker-c39",
+  "start_utc": "2026-10-20T13:36:17+00:00",
+  "duration_s": 215,
+  "node_energy_kwh": 0.010473287037037038,
+  "previous_energy_kwh": 5.481666666666666e-06,
+  "idle_w": 121.8,
+  "above_idle_kwh": 0.0032011634990253422,
+  "readings": 9,
+  "quiet_windows": [
+    {
+      "start": 1792502717.0,
+      "end": 1792503317.0,
+      "watts": 121.69473684210527,
+      "busy_cpus": null
+    },
+    {
+      "start": 1792503652.0,
+      "end": 1792504252.0,
+      "watts": 121.83684210526316,
+      "busy_cpus": null
+    }
+  ],
+  "grid_hours": true,
+  "carbon_note": null,
+  "warnings": []
+}

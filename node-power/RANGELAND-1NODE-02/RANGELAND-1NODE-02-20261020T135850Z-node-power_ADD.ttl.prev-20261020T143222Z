@@ -1,0 +1,36 @@
+# Upload SECOND: Site Admin > Add/Remove RDF data > add mixed RDF, format Turtle
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vivo: <http://vivoweb.org/ontology/core#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rm: <http://example.org/ontology/run-metadata#> .
+@prefix ex: <http://example.org/vivo-import/run-metadata/> .
+<http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00>
+  rm:nodeIdlePowerW "121.8"^^xsd:double ;
+  rm:energyAboveIdleKWh "0.0032011634990253422"^^xsd:double ;
+  rm:nodePowerAvgW "175.4"^^xsd:double ;
+  rm:nodePowerMaxW "187.0"^^xsd:double ;
+  rm:nodeConditionsMethod "Idle power: 122 W, the mean power of node hu-worker-c39 (ACPI power meter, read by Kepler as kepler_node_platform_joules_total) in 2 quiet windows of 10 minutes, 60 s before and after the run on 2026-10-20: 15:25-15:35 Berlin time: 121.7 W; 15:40-15:50 Berlin time: 121.8 W. Energy above idle = (node energy 37704 J - 122 W x 215 s) = 11524 J = 0.003201 kWh." ;
+  rm:nodePowerReadings "0.0 122; 30.0 126; 60.0 157; 90.0 187; 120.0 176; 150.0 172; 180.0 186; 210.0 167" ;
+  rm:nodePowerReadingsMethod "Power of the whole node hu-worker-c39 from its ACPI power meter, read by Kepler (kepler_node_platform_joules_total) and stored in Prometheus about every 30 s; each value is the average power over the preceding 75 s, every 30 s: 8 readings. Each entry is the time since the run started (2026-10-20T13:36:17+00:00) in seconds and the node's power in watts." ;
+  rm:energyKWh "0.010473287037037038"^^xsd:double ;
+  rm:energyMeasurementCoverage "100% of the node (whole node, measured)" ;
+  rm:energyMetricSource "kepler_node_platform_joules_total (ACPI power meter of the node, read by Kepler)" ;
+  rm:energyCalculationUsesFallbackEstimate "false"^^xsd:boolean ;
+  rm:energyCalculationMethod "Whole-node energy: the run had node hu-worker-c39 to itself (exclusive (other workloads used 0.29 CPUs on average on the run's node)), so all of the node's energy during the run is the run's energy, as for an exclusive HPC@HU job. Node energy = increase of kepler_node_platform_joules_total (the node's ACPI power meter, read by Kepler) from 2026-10-20T13:36:17+00:00 to 2026-10-20T13:39:52+00:00 = 37704 J = 0.010473 kWh, including the node's idle power; cooling and network are excluded. It replaces the sum of the run's pods' Kepler shares (0.000005 kWh), which misses pods that finished between Kepler readings." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonEmissionKgCO2e "0.0037808566203703705"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps hourly history (zone DE, lifecycle, flow-traced)" ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/history?zone=DE&temporalGranularity=hourly&emissionFactorType=lifecycle&flowTraced=true"^^xsd:anyURI ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:carbonCalculationMethod "Time-matched: the run's energy 0.010473 kWh x the hourly carbon intensity of the German grid (Electricity Maps, lifecycle, flow-traced) in the hours the run used, weighted by the run's energy in each hour (13:00 UTC 361 g/kWh x 100.0%) = 361.0 g/kWh, so 3.78 g CO2e." ;
+  rm:gridCarbonIntensityHours "2026-10-19T15:00Z 375.0; 2026-10-19T16:00Z 379.0; 2026-10-19T17:00Z 369.0; 2026-10-19T18:00Z 359.0; 2026-10-19T19:00Z 344.0; 2026-10-19T20:00Z 350.0; 2026-10-19T21:00Z 356.0; 2026-10-19T22:00Z 368.0; 2026-10-19T23:00Z 379.0; 2026-10-20T00:00Z 386.0; 2026-10-20T01:00Z 389.0; 2026-10-20T02:00Z 390.0; 2026-10-20T03:00Z 396.0; 2026-10-20T04:00Z 391.0; 2026-10-20T05:00Z 383.0; 2026-10-20T06:00Z 375.0; 2026-10-20T07:00Z 353.0; 2026-10-20T08:00Z 341.0; 2026-10-20T09:00Z 321.0; 2026-10-20T10:00Z 309.0; 2026-10-20T11:00Z 315.0; 2026-10-20T12:00Z 330.0; 2026-10-20T13:00Z 361.0*; 2026-10-20T14:00Z 406.0*" ;
+  rm:gridCarbonIntensityHoursMethod "Hourly carbon intensity of the German grid (zone DE) from Electricity Maps (lifecycle CO2e, flow-traced), in grams per kWh, for the 24 hours from 2026-10-19T15:00Z to 2026-10-20T15:00Z (UTC) that its history returned when this record was made. Each entry is the start of an hour and its intensity. Shown on the run page next to the hour or hours the run used." .

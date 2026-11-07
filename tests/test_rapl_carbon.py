@@ -34,6 +34,41 @@ class CarbonTests(unittest.TestCase):
         self.assertAlmostEqual(result["intensity_kg_per_kwh"], .25)
         self.assertNotAlmostEqual(result["intensity_kg_per_kwh"], .2)
 
+    def test_quarter_hours_are_energy_weighted(self):
+        points = [dict(datetime="2026-09-22T07:30:00Z", g_per_kwh=100, seconds=900),
+                  dict(datetime="2026-09-22T07:45:00Z", g_per_kwh=200, seconds=900),
+                  dict(datetime="2026-09-22T08:00:00Z", g_per_kwh=300, seconds=900),
+                  dict(datetime="2026-09-22T08:15:00Z", g_per_kwh=400, seconds=900)]
+        intervals = carbon.covered_intervals(points, self.start, self.end)
+        self.assertEqual(len(intervals), 4)
+        result = carbon.calculate(intervals, lambda a, b: {"package": 900_000, "dram": 0})
+        self.assertAlmostEqual(result["intensity_kg_per_kwh"], .25)
+        with self.assertRaises(ValueError):
+            carbon.covered_intervals(points[:3], self.start, self.end)
+
+    def test_fifteen_minute_data_is_preferred(self):
+        def payload(granularity, seconds, value):
+            first = carbon.stamp("2026-09-22T07:00:00Z")
+            return dict(zone="DE", temporalGranularity=granularity, data=[{
+                "datetime": carbon.iso(first + i * seconds), "carbonIntensity": value,
+                "emissionFactorType": "lifecycle", "flowTraced": True, "isEstimated": False}
+                for i in range(int(7200 / seconds))])
+        calls = []
+
+        def urlopen(request, timeout=None):
+            calls.append(request.full_url)
+            data = payload("15_minutes", 900, 150) if "15_minutes" in request.full_url else payload("hourly", 3600, 999)
+            response = mock.MagicMock()
+            response.__enter__.return_value.read.return_value = json.dumps(data).encode()
+            return response
+        with mock.patch.object(carbon, "api_token", return_value="test-only"), \
+             mock.patch.object(carbon.urllib.request, "urlopen", side_effect=urlopen):
+            result = carbon.fetch_carbon(self.summary, lambda a, b: {"package": 3_600_000 * (b - a) / 3600, "dram": 0})
+        self.assertEqual(result["temporal_granularity"], "15 minutes")
+        self.assertAlmostEqual(result["intensity_kg_per_kwh"], .15)
+        self.assertEqual(len(result["intervals"]), 4)
+        self.assertIn("temporalGranularity=15_minutes", calls[0])
+
     def test_missing_hour_latest_only_and_duplicates_are_rejected(self):
         for points in ([self.points[0]], [self.points[1]], self.points + [self.points[0]],
                        [dict(datetime="2026-09-23T07:00:00Z", g_per_kwh=200)]):

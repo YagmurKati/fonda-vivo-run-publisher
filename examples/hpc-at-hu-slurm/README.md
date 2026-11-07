@@ -27,7 +27,7 @@ Published example (nf-core/rangeland 1.0.0, test profile, with trace archive):
 | GPU requested | `sacct` AllocTRES |
 | Energy | IPMI power of the node, read while the job runs, see below |
 | Energy measurement coverage | the job's share of its node, see below |
-| Carbon emission and intensity | hourly German grid intensity matched to the run time |
+| Carbon emission and intensity | German grid intensity in 15-minute steps (hourly if the token has no 15-minute data), matched to the run time |
 | Execution host, CPU model, CPUs, memory, OS, kernel | recorded on the node at job start |
 | Compute cluster, backend | HPC@HU cluster and Slurm records in VIVO |
 | Run by, language, input data, code link | `~/.fonda-vivo/slurm.env` |

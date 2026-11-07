@@ -27,7 +27,7 @@ class RnaSeqSalmonRs2ProfileTests(unittest.TestCase):
         self.assertIn('RUN_OPERATOR_URI="REPLACE_ME"', env)
         self.assertIn('INCLUDE_CACHED_ORIGIN_METRICS="0"', env)
         self.assertIn('REQUIRE_SUCCEEDED="1"', env)
-        self.assertIn('CARBON_SOURCE="electricity-maps-latest"', env)
+        self.assertIn('CARBON_SOURCE="electricity-maps"', env)
 
     def test_readme_links_run_and_records_runtime_provenance(self) -> None:
         readme = (PROFILE / "README.md").read_text(encoding="utf-8")

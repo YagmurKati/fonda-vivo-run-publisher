@@ -1,0 +1,801 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vivo: <http://vivoweb.org/ontology/core#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rm: <http://example.org/ontology/run-metadata#> .
+@prefix ex: <http://example.org/vivo-import/run-metadata/> .
+
+<http://example.org/vivo-import/run-metadata/engine/nextflow>
+  rdf:type rm:WorkflowEngine ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "Nextflow"@en ;
+  dcterms:title "Nextflow"@en ;
+  rm:hasWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> .
+
+<http://172.28.33.178:8080/vivo/individual/n5703>
+  rm:hasWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> .
+
+<http://example.org/vivo-import/run-metadata/cluster/fonda-cluster>
+  rdf:type rm:ComputeCluster ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "Fonda Cluster"@en ;
+  dcterms:title "Fonda Cluster"@en ;
+  rm:hasRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:hasWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> .
+
+<http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core>
+  rdf:type rm:Workflow ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "Long-term vegetation dynamics in the Mediterranean (nf-core/rangeland)"@en ;
+  dcterms:title "Long-term vegetation dynamics in the Mediterranean (nf-core/rangeland)"@en ;
+  rm:workflowName "Long-term vegetation dynamics in the Mediterranean (nf-core/rangeland)" ;
+  rm:traceTypes "Nextflow trace, execution report, timeline, and execution logs" ;
+  rm:traceDataFormat "TSV, HTML, and plain text" ;
+  rm:workflowEngine <http://example.org/vivo-import/run-metadata/engine/nextflow> ;
+  rm:computeCluster <http://example.org/vivo-import/run-metadata/cluster/fonda-cluster> ;
+  rm:workflowCodeLink "https://github.com/nf-core/rangeland"^^xsd:anyURI ;
+  rm:applicationDomain <http://172.28.33.178:8080/vivo/individual/n5261> ;
+  rm:backend <http://172.28.33.178:8080/vivo/individual/n5703> ;
+  rm:responsibleResearcher <https://fonda.hu-berlin.de/?page_id=2066#david-franz> ;
+  rm:responsibleResearcher <https://fonda.hu-berlin.de/?page_id=2066#FabianLehmann> ;
+  rm:responsibleResearcher <https://fonda.hu-berlin.de/?page_id=2066#FelixKummer> ;
+  rm:responsibleResearcher <https://fonda.hu-berlin.de/?page_id=2066#KasiaLewinska> ;
+  rm:subproject <http://141.20.184.157:8080/vivo/individual/fonda-group-b5-transparent-multi-site-data-analysis-workflows-for-earth-observation> ;
+  rm:language <http://example.org/vivo-import/run-metadata/language/c-cpp> ;
+  rm:language <http://example.org/vivo-import/run-metadata/language/r> ;
+  rm:hasRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:hasWorkflowRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:hasWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-higher-level-force-higher-level> ;
+  rm:hasWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-higher-level-force-mosaic> ;
+  rm:hasWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-higher-level-force-pyramid> ;
+  rm:hasWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-higher-level-higher-level-config> ;
+  rm:hasWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-multiqc> ;
+  rm:hasWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-preprocessing-force-generate-analysis-mask> ;
+  rm:hasWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-preprocessing-force-generate-tile-allow-list> ;
+  rm:hasWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-preprocessing-force-preprocess> ;
+  rm:hasWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-preprocessing-preprocess-config> ;
+  rm:hasWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-untar-dem> ;
+  rm:hasWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-untar-input> ;
+  rm:hasWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-untar-wvdb> .
+
+<https://fonda.hu-berlin.de/?page_id=2066#david-franz>
+  rm:workflows <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> .
+
+<https://fonda.hu-berlin.de/?page_id=2066#FabianLehmann>
+  rm:workflows <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> .
+
+<https://fonda.hu-berlin.de/?page_id=2066#FelixKummer>
+  rm:workflows <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> .
+
+<https://fonda.hu-berlin.de/?page_id=2066#KasiaLewinska>
+  rm:workflows <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> .
+
+<http://141.20.184.157:8080/vivo/individual/fonda-group-b5-transparent-multi-site-data-analysis-workflows-for-earth-observation>
+  rm:hasWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> .
+
+<http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00>
+  rdf:type rm:RunMetadata ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "Long-term vegetation dynamics in the Mediterranean (nf-core/rangeland) · run 2026-10-20 15:36–15:39 CEST"@en ;
+  dcterms:title "Long-term vegetation dynamics in the Mediterranean (nf-core/rangeland) · run 2026-10-20 15:36–15:39 CEST"@en ;
+  rm:workflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+  rm:computeCluster <http://example.org/vivo-import/run-metadata/cluster/fonda-cluster> ;
+  rm:codeVersion "sha256:89f31b1c6c81af03b5404021a5d12014ff3cb4c2651f42c6a0a6d854db97219b" ;
+  rm:runStatus "Succeeded" ;
+  rm:workflowEngine <http://example.org/vivo-import/run-metadata/engine/nextflow> ;
+  prov:startedAtTime "2026-10-20T15:36:17"^^xsd:dateTime ;
+  prov:endedAtTime "2026-10-20T15:39:52"^^xsd:dateTime ;
+  rm:startTime "2026-10-20T15:36:17"^^xsd:dateTime ;
+  rm:endTime "2026-10-20T15:39:52"^^xsd:dateTime ;
+  rm:durationSeconds "215"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock time from the first to last timestamp in the Nextflow debug log, with trace timestamps as a fallback." ;
+  dcterms:created "2026-10-20T16:00:36+02:00"^^xsd:dateTime ;
+  vivo:dateTimeValue <http://example.org/vivo-import/run-metadata/datetime/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:jobName "intergalactic_cantor" ;
+  rm:taskCount "280"^^xsd:integer ;
+  rm:podCount "280"^^xsd:integer ;
+  rm:succeededTaskCount "280"^^xsd:integer ;
+  rm:cachedTaskCount "0"^^xsd:integer ;
+  rm:failedTaskCount "0"^^xsd:integer ;
+  rm:abortedTaskCount "0"^^xsd:integer ;
+  rm:resourceAccountingScope "Pods executed by the current Nextflow execution." ;
+  rm:resourceAccountingStartTime "2026-10-20T15:36:17"^^xsd:dateTime ;
+  rm:resourceAccountingEndTime "2026-10-20T15:39:52"^^xsd:dateTime ;
+  rm:traceTypes "Nextflow trace, execution report, timeline, and execution logs" ;
+  rm:traceDataFormat "TSV, HTML, and plain text" ;
+  rm:backend <http://172.28.33.178:8080/vivo/individual/n5703> ;
+  rm:inputData <http://example.org/vivo-import/run-metadata/dataset/nf-core-test-datasets-rangeland> ;
+  rm:runOperator <https://fonda.hu-berlin.de/?page_id=2066#YagmurKati> ;
+  rm:nextflowSessionId "462d80d9-a55f-47f0-b422-66d30e501f38" ;
+  rm:nextflowVersion "25.04.8" ;
+  rm:gitCommit "7c5cb9593b80d2a3cdc8bcb14137722351644435" ;
+  rm:codeCommitLink "https://github.com/nf-core/rangeland/commit/7c5cb9593b80d2a3cdc8bcb14137722351644435"^^xsd:anyURI ;
+  rm:cpuTimeSeconds "731.5576130000003"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "CPU time is the sum of realtime multiplied by %cpu from the Nextflow trace for 280 of 280 task(s). This covers short-lived pods that may finish between Prometheus scrapes. For comparison, Prometheus container_cpu_usage_seconds_total measured 313.947 seconds across 32 of 280 pod(s)." ;
+  rm:memoryPeakGB "2.9174"^^xsd:double ;
+  rm:memoryAvgGB "0.6721807614418897"^^xsd:double ;
+  rm:memoryCalculationMethod "Memory is approximated from peak_rss in the Nextflow trace for 280 task(s). Each task contributes its peak resident memory over its execution interval; the peak is the maximum concurrent sum and the average is time-weighted." ;
+  rm:energyKWh "5.481666666666666e-06"^^xsd:double ;
+  rm:carbonEmissionKgCO2e "1.9788816666666666e-06"^^xsd:double ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 3 of 280 pod(s). At least one short-lived pod required a counter-range or counter-maximum estimate because a reliable counter increase was unavailable. Idle power is included: Kepler on the FONDA cluster does not report idle energy separately (checked on 2026-10-04). It divides the energy it measures on a node (CPU, memory and, from the node's power meter, the rest of the machine such as fans and power supply) among the pods on that node. The value is therefore not independent of node temperature." ;
+  rm:energyCalculationUsesFallbackEstimate "true"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityZone "DE" ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:energyMeasurementCoverage "1.1% (3 of 280 pods)" ;
+  rm:nodeUse "exclusive (other workloads used 0.29 CPUs on average on the run's node)" ;
+  rm:containerImage "docker.io/davidfrantz/force@sha256:e64d40755a52e4f302d63cd284b45f9eada7b13d1d2cd2bd02449152027e4b65" ;
+  rm:containerImage "quay.io/nf-core/ubuntu@sha256:bd1487129c4e01470664c3f3c9a25ce01f73ff3df75ffa7eb3388d3d4b945369" ;
+  rm:containerImage "quay.io/biocontainers/multiqc@sha256:64fa8caa046020780a7df765cdd27b459f20665578e6f1f240a12d415527adaa" ;
+  rm:containerImage "docker.io/davidfrantz/force:3.7.10" ;
+  rm:executionHost "hu-worker-c39" ;
+  rm:allocatableCpu "32" ;
+  rm:allocatableMemoryGB "269.78021376"^^xsd:double ;
+  rm:architecture "amd64" ;
+  rm:kernelVersion "5.15.0-177-generic" ;
+  rm:kubeletVersion "v1.27.7" ;
+  rm:osImage "Ubuntu 22.04.2 LTS" ;
+  rm:gpuRequested "false"^^xsd:boolean ;
+  rm:gpuMetricsAvailable "false"^^xsd:boolean ;
+  rm:gpuCapableNodeUsed "false"^^xsd:boolean ;
+  rm:gpuUsageStatus "CPU-only workflow run" ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-force-higher-level-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:usesWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-higher-level-force-higher-level> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-force-mosaic-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:usesWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-higher-level-force-mosaic> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-force-pyramid-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:usesWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-higher-level-force-pyramid> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-higher-level-config-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:usesWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-higher-level-higher-level-config> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-multiqc-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:usesWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-multiqc> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-force-generate-analysis-mask-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:usesWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-preprocessing-force-generate-analysis-mask> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-force-generate-tile-allow-list-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:usesWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-preprocessing-force-generate-tile-allow-list> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-force-preprocess-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:usesWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-preprocessing-force-preprocess> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-preprocess-config-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:usesWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-preprocessing-preprocess-config> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-untar-dem-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:usesWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-untar-dem> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-untar-input-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:usesWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-untar-input> ;
+  rm:hasWorkflowProcess <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-untar-wvdb-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:usesWorkflowStage <http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-untar-wvdb> .
+
+<http://example.org/vivo-import/run-metadata/dataset/nf-core-test-datasets-rangeland>
+  rdf:type rm:InputDataset ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "nf-core/test-datasets rangeland minimal test dataset"@en ;
+  dcterms:title "nf-core/test-datasets rangeland minimal test dataset"@en ;
+  dcterms:description "Public nf-core minimal test dataset for the rangeland pipeline (rangeland branch of nf-core/test-datasets): Landsat Collection 2 Level-1 scenes for WRS-2 path/row 181/036, a DEM, a water vapour database, the datacube definition, an area-of-interest vector, and the Hostert 2003 endmember file. Used to exercise the full pipeline; it is not the Mediterranean study input."@en ;
+  rm:storageLocation "https://github.com/nf-core/test-datasets/tree/rangeland" ;
+  rm:accessStatement "Publicly available under the nf-core/test-datasets licence."@en ;
+  rm:usedByWorkflowRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> .
+
+<http://example.org/vivo-import/run-metadata/datetime/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00>
+  rdf:type vivo:DateTimeValue ;
+  vivo:dateTime "2026-10-20T15:36:17"^^xsd:dateTime ;
+  vivo:dateTimePrecision vivo:yearMonthDayTimePrecision .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-force-higher-level-462d80d9-a55f-47f0-b422-66d30e501f38>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "FORCE HIGHER LEVEL · run 2026-10-20 15:36"@en ;
+  dcterms:title "FORCE HIGHER LEVEL · run 2026-10-20 15:36"@en ;
+  rm:jobName "FORCE HIGHER LEVEL" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "1"^^xsd:integer ;
+  rm:podCount "1"^^xsd:integer ;
+  rm:succeededTaskCount "1"^^xsd:integer ;
+  rm:cachedTaskCount "0"^^xsd:integer ;
+  rm:failedTaskCount "0"^^xsd:integer ;
+  rm:abortedTaskCount "0"^^xsd:integer ;
+  prov:startedAtTime "2026-10-20T15:37:55"^^xsd:dateTime ;
+  prov:endedAtTime "2026-10-20T15:38:21"^^xsd:dateTime ;
+  rm:durationSeconds "27"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock time from the earliest task submission to the latest task completion or workflow termination in this stage." ;
+  rm:isWorkflowProcessOf <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:taskName "NFCORE_RANGELAND:RANGELAND:HIGHER_LEVEL:FORCE_HIGHER_LEVEL" ;
+  rm:cpuTimeSeconds "389.12160000000006"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "CPU time is the sum of realtime multiplied by %cpu from the Nextflow trace for 1 of 1 task(s). This covers short-lived pods that may finish between Prometheus scrapes. For comparison, Prometheus container_cpu_usage_seconds_total measured 313.616 seconds across 1 of 1 pod(s)." ;
+  rm:memoryPeakGB "2.9"^^xsd:double ;
+  rm:memoryAvgGB "2.9"^^xsd:double ;
+  rm:memoryCalculationMethod "Memory is approximated from peak_rss in the Nextflow trace for 1 task(s). Each task contributes its peak resident memory over its execution interval; the peak is the maximum concurrent sum and the average is time-weighted." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 0 of 1 pod(s)." ;
+  rm:energyCalculationUsesFallbackEstimate "false"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityZone "DE" ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:parallelismNote "CPU time can exceed wall-clock duration when Nextflow tasks execute concurrently." .
+
+<http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-higher-level-force-higher-level>
+  rdf:type rm:WorkflowStage ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "FORCE HIGHER LEVEL"@en ;
+  dcterms:title "FORCE HIGHER LEVEL"@en ;
+  rm:stageOfWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+  rm:hasStageExecution <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-force-higher-level-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:stageIncludedInRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-force-mosaic-462d80d9-a55f-47f0-b422-66d30e501f38>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "FORCE MOSAIC · run 2026-10-20 15:36"@en ;
+  dcterms:title "FORCE MOSAIC · run 2026-10-20 15:36"@en ;
+  rm:jobName "FORCE MOSAIC" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "80"^^xsd:integer ;
+  rm:podCount "80"^^xsd:integer ;
+  rm:succeededTaskCount "80"^^xsd:integer ;
+  rm:cachedTaskCount "0"^^xsd:integer ;
+  rm:failedTaskCount "0"^^xsd:integer ;
+  rm:abortedTaskCount "0"^^xsd:integer ;
+  prov:startedAtTime "2026-10-20T15:38:26"^^xsd:dateTime ;
+  prov:endedAtTime "2026-10-20T15:39:41"^^xsd:dateTime ;
+  rm:durationSeconds "75"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock time from the earliest task submission to the latest task completion or workflow termination in this stage." ;
+  rm:isWorkflowProcessOf <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:taskName "NFCORE_RANGELAND:RANGELAND:HIGHER_LEVEL:FORCE_MOSAIC" ;
+  rm:cpuTimeSeconds "49.11130099999999"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "CPU time is the sum of realtime multiplied by %cpu from the Nextflow trace for 80 of 80 task(s). This covers short-lived pods that may finish between Prometheus scrapes. For comparison, Prometheus container_cpu_usage_seconds_total measured 0.035039 seconds across 4 of 80 pod(s)." ;
+  rm:memoryPeakGB "0.0372"^^xsd:double ;
+  rm:memoryAvgGB "0.0037513277090090733"^^xsd:double ;
+  rm:memoryCalculationMethod "Memory is approximated from peak_rss in the Nextflow trace for 80 task(s). Each task contributes its peak resident memory over its execution interval; the peak is the maximum concurrent sum and the average is time-weighted." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 0 of 80 pod(s)." ;
+  rm:energyCalculationUsesFallbackEstimate "false"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityZone "DE" ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:parallelismNote "CPU time can exceed wall-clock duration when Nextflow tasks execute concurrently." .
+
+<http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-higher-level-force-mosaic>
+  rdf:type rm:WorkflowStage ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "FORCE MOSAIC"@en ;
+  dcterms:title "FORCE MOSAIC"@en ;
+  rm:stageOfWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+  rm:hasStageExecution <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-force-mosaic-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:stageIncludedInRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-force-pyramid-462d80d9-a55f-47f0-b422-66d30e501f38>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "FORCE PYRAMID · run 2026-10-20 15:36"@en ;
+  dcterms:title "FORCE PYRAMID · run 2026-10-20 15:36"@en ;
+  rm:jobName "FORCE PYRAMID" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "80"^^xsd:integer ;
+  rm:podCount "80"^^xsd:integer ;
+  rm:succeededTaskCount "80"^^xsd:integer ;
+  rm:cachedTaskCount "0"^^xsd:integer ;
+  rm:failedTaskCount "0"^^xsd:integer ;
+  rm:abortedTaskCount "0"^^xsd:integer ;
+  prov:startedAtTime "2026-10-20T15:38:25"^^xsd:dateTime ;
+  prov:endedAtTime "2026-10-20T15:39:43"^^xsd:dateTime ;
+  rm:durationSeconds "78"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock time from the earliest task submission to the latest task completion or workflow termination in this stage." ;
+  rm:isWorkflowProcessOf <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:taskName "NFCORE_RANGELAND:RANGELAND:HIGHER_LEVEL:FORCE_PYRAMID" ;
+  rm:cpuTimeSeconds "62.12199500000001"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "CPU time is the sum of realtime multiplied by %cpu from the Nextflow trace for 80 of 80 task(s). This covers short-lived pods that may finish between Prometheus scrapes. For comparison, Prometheus container_cpu_usage_seconds_total measured 0.213974 seconds across 17 of 80 pod(s)." ;
+  rm:memoryPeakGB "0.5222"^^xsd:double ;
+  rm:memoryAvgGB "0.07893278539407406"^^xsd:double ;
+  rm:memoryCalculationMethod "Memory is approximated from peak_rss in the Nextflow trace for 80 task(s). Each task contributes its peak resident memory over its execution interval; the peak is the maximum concurrent sum and the average is time-weighted." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 0 of 80 pod(s)." ;
+  rm:energyCalculationUsesFallbackEstimate "false"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityZone "DE" ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:parallelismNote "CPU time can exceed wall-clock duration when Nextflow tasks execute concurrently." .
+
+<http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-higher-level-force-pyramid>
+  rdf:type rm:WorkflowStage ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "FORCE PYRAMID"@en ;
+  dcterms:title "FORCE PYRAMID"@en ;
+  rm:stageOfWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+  rm:hasStageExecution <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-force-pyramid-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:stageIncludedInRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-higher-level-config-462d80d9-a55f-47f0-b422-66d30e501f38>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "HIGHER LEVEL CONFIG · run 2026-10-20 15:36"@en ;
+  dcterms:title "HIGHER LEVEL CONFIG · run 2026-10-20 15:36"@en ;
+  rm:jobName "HIGHER LEVEL CONFIG" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "1"^^xsd:integer ;
+  rm:podCount "1"^^xsd:integer ;
+  rm:succeededTaskCount "1"^^xsd:integer ;
+  rm:cachedTaskCount "0"^^xsd:integer ;
+  rm:failedTaskCount "0"^^xsd:integer ;
+  rm:abortedTaskCount "0"^^xsd:integer ;
+  prov:startedAtTime "2026-10-20T15:37:51"^^xsd:dateTime ;
+  prov:endedAtTime "2026-10-20T15:37:53"^^xsd:dateTime ;
+  rm:durationSeconds "2"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock time from the earliest task submission to the latest task completion or workflow termination in this stage." ;
+  rm:isWorkflowProcessOf <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:taskName "NFCORE_RANGELAND:RANGELAND:HIGHER_LEVEL:HIGHER_LEVEL_CONFIG" ;
+  rm:cpuTimeSeconds "0.10578900000000001"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "CPU time is the sum of realtime multiplied by %cpu from the Nextflow trace for 1 of 1 task(s). This covers short-lived pods that may finish between Prometheus scrapes." ;
+  rm:memoryPeakGB "0.0204"^^xsd:double ;
+  rm:memoryAvgGB "0.0204"^^xsd:double ;
+  rm:memoryCalculationMethod "Memory is approximated from peak_rss in the Nextflow trace for 1 task(s). Each task contributes its peak resident memory over its execution interval; the peak is the maximum concurrent sum and the average is time-weighted." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 0 of 1 pod(s)." ;
+  rm:energyCalculationUsesFallbackEstimate "false"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityZone "DE" ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:parallelismNote "CPU time can exceed wall-clock duration when Nextflow tasks execute concurrently." .
+
+<http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-higher-level-higher-level-config>
+  rdf:type rm:WorkflowStage ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "HIGHER LEVEL CONFIG"@en ;
+  dcterms:title "HIGHER LEVEL CONFIG"@en ;
+  rm:stageOfWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+  rm:hasStageExecution <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-higher-level-config-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:stageIncludedInRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-multiqc-462d80d9-a55f-47f0-b422-66d30e501f38>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "MULTIQC · run 2026-10-20 15:36"@en ;
+  dcterms:title "MULTIQC · run 2026-10-20 15:36"@en ;
+  rm:jobName "MULTIQC" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "1"^^xsd:integer ;
+  rm:podCount "1"^^xsd:integer ;
+  rm:succeededTaskCount "1"^^xsd:integer ;
+  rm:cachedTaskCount "0"^^xsd:integer ;
+  rm:failedTaskCount "0"^^xsd:integer ;
+  rm:abortedTaskCount "0"^^xsd:integer ;
+  prov:startedAtTime "2026-10-20T15:38:48"^^xsd:dateTime ;
+  prov:endedAtTime "2026-10-20T15:38:53"^^xsd:dateTime ;
+  rm:durationSeconds "5"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock time from the earliest task submission to the latest task completion or workflow termination in this stage." ;
+  rm:isWorkflowProcessOf <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:taskName "NFCORE_RANGELAND:RANGELAND:MULTIQC" ;
+  rm:cpuTimeSeconds "10.0656"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "CPU time is the sum of realtime multiplied by %cpu from the Nextflow trace for 1 of 1 task(s). This covers short-lived pods that may finish between Prometheus scrapes." ;
+  rm:memoryPeakGB "0.102"^^xsd:double ;
+  rm:memoryAvgGB "0.102"^^xsd:double ;
+  rm:memoryCalculationMethod "Memory is approximated from peak_rss in the Nextflow trace for 1 task(s). Each task contributes its peak resident memory over its execution interval; the peak is the maximum concurrent sum and the average is time-weighted." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 0 of 1 pod(s)." ;
+  rm:energyCalculationUsesFallbackEstimate "false"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityZone "DE" ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:parallelismNote "CPU time can exceed wall-clock duration when Nextflow tasks execute concurrently." .
+
+<http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-multiqc>
+  rdf:type rm:WorkflowStage ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "MULTIQC"@en ;
+  dcterms:title "MULTIQC"@en ;
+  rm:stageOfWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+  rm:hasStageExecution <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-multiqc-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:stageIncludedInRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-force-generate-analysis-mask-462d80d9-a55f-47f0-b422-66d30e501f38>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "FORCE GENERATE ANALYSIS MASK · run 2026-10-20 15:36"@en ;
+  dcterms:title "FORCE GENERATE ANALYSIS MASK · run 2026-10-20 15:36"@en ;
+  rm:jobName "FORCE GENERATE ANALYSIS MASK" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "1"^^xsd:integer ;
+  rm:podCount "1"^^xsd:integer ;
+  rm:succeededTaskCount "1"^^xsd:integer ;
+  rm:cachedTaskCount "0"^^xsd:integer ;
+  rm:failedTaskCount "0"^^xsd:integer ;
+  rm:abortedTaskCount "0"^^xsd:integer ;
+  prov:startedAtTime "2026-10-20T15:36:37"^^xsd:dateTime ;
+  prov:endedAtTime "2026-10-20T15:36:40"^^xsd:dateTime ;
+  rm:durationSeconds "4"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock time from the earliest task submission to the latest task completion or workflow termination in this stage." ;
+  rm:isWorkflowProcessOf <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:taskName "NFCORE_RANGELAND:RANGELAND:PREPROCESSING:FORCE_GENERATE_ANALYSIS_MASK" ;
+  rm:cpuTimeSeconds "18.447"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "CPU time is the sum of realtime multiplied by %cpu from the Nextflow trace for 1 of 1 task(s). This covers short-lived pods that may finish between Prometheus scrapes." ;
+  rm:memoryPeakGB "0.0252"^^xsd:double ;
+  rm:memoryAvgGB "0.0252"^^xsd:double ;
+  rm:memoryCalculationMethod "Memory is approximated from peak_rss in the Nextflow trace for 1 task(s). Each task contributes its peak resident memory over its execution interval; the peak is the maximum concurrent sum and the average is time-weighted." ;
+  rm:energyKWh "2.6733333333333333e-06"^^xsd:double ;
+  rm:carbonEmissionKgCO2e "9.650733333333333e-07"^^xsd:double ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 1 of 1 pod(s). At least one short-lived pod required a counter-range or counter-maximum estimate because a reliable counter increase was unavailable. Idle power is included: Kepler on the FONDA cluster does not report idle energy separately (checked on 2026-10-04). It divides the energy it measures on a node (CPU, memory and, from the node's power meter, the rest of the machine such as fans and power supply) among the pods on that node. The value is therefore not independent of node temperature." ;
+  rm:energyCalculationUsesFallbackEstimate "true"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityZone "DE" ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:parallelismNote "CPU time can exceed wall-clock duration when Nextflow tasks execute concurrently." .
+
+<http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-preprocessing-force-generate-analysis-mask>
+  rdf:type rm:WorkflowStage ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "FORCE GENERATE ANALYSIS MASK"@en ;
+  dcterms:title "FORCE GENERATE ANALYSIS MASK"@en ;
+  rm:stageOfWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+  rm:hasStageExecution <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-force-generate-analysis-mask-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:stageIncludedInRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-force-generate-tile-allow-list-462d80d9-a55f-47f0-b422-66d30e501f38>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "FORCE GENERATE TILE ALLOW LIST · run 2026-10-20 15:36"@en ;
+  dcterms:title "FORCE GENERATE TILE ALLOW LIST · run 2026-10-20 15:36"@en ;
+  rm:jobName "FORCE GENERATE TILE ALLOW LIST" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "1"^^xsd:integer ;
+  rm:podCount "1"^^xsd:integer ;
+  rm:succeededTaskCount "1"^^xsd:integer ;
+  rm:cachedTaskCount "0"^^xsd:integer ;
+  rm:failedTaskCount "0"^^xsd:integer ;
+  rm:abortedTaskCount "0"^^xsd:integer ;
+  prov:startedAtTime "2026-10-20T15:36:37"^^xsd:dateTime ;
+  prov:endedAtTime "2026-10-20T15:36:42"^^xsd:dateTime ;
+  rm:durationSeconds "5"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock time from the earliest task submission to the latest task completion or workflow termination in this stage." ;
+  rm:isWorkflowProcessOf <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:taskName "NFCORE_RANGELAND:RANGELAND:PREPROCESSING:FORCE_GENERATE_TILE_ALLOW_LIST" ;
+  rm:cpuTimeSeconds "32.442800000000005"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "CPU time is the sum of realtime multiplied by %cpu from the Nextflow trace for 1 of 1 task(s). This covers short-lived pods that may finish between Prometheus scrapes." ;
+  rm:memoryPeakGB "0.0281"^^xsd:double ;
+  rm:memoryAvgGB "0.0281"^^xsd:double ;
+  rm:memoryCalculationMethod "Memory is approximated from peak_rss in the Nextflow trace for 1 task(s). Each task contributes its peak resident memory over its execution interval; the peak is the maximum concurrent sum and the average is time-weighted." ;
+  rm:energyKWh "2.4216666666666666e-06"^^xsd:double ;
+  rm:carbonEmissionKgCO2e "8.742216666666667e-07"^^xsd:double ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 1 of 1 pod(s). At least one short-lived pod required a counter-range or counter-maximum estimate because a reliable counter increase was unavailable. Idle power is included: Kepler on the FONDA cluster does not report idle energy separately (checked on 2026-10-04). It divides the energy it measures on a node (CPU, memory and, from the node's power meter, the rest of the machine such as fans and power supply) among the pods on that node. The value is therefore not independent of node temperature." ;
+  rm:energyCalculationUsesFallbackEstimate "true"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityZone "DE" ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:parallelismNote "CPU time can exceed wall-clock duration when Nextflow tasks execute concurrently." .
+
+<http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-preprocessing-force-generate-tile-allow-list>
+  rdf:type rm:WorkflowStage ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "FORCE GENERATE TILE ALLOW LIST"@en ;
+  dcterms:title "FORCE GENERATE TILE ALLOW LIST"@en ;
+  rm:stageOfWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+  rm:hasStageExecution <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-force-generate-tile-allow-list-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:stageIncludedInRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-force-preprocess-462d80d9-a55f-47f0-b422-66d30e501f38>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "FORCE PREPROCESS · run 2026-10-20 15:36"@en ;
+  dcterms:title "FORCE PREPROCESS · run 2026-10-20 15:36"@en ;
+  rm:jobName "FORCE PREPROCESS" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "56"^^xsd:integer ;
+  rm:podCount "56"^^xsd:integer ;
+  rm:succeededTaskCount "56"^^xsd:integer ;
+  rm:cachedTaskCount "0"^^xsd:integer ;
+  rm:failedTaskCount "0"^^xsd:integer ;
+  rm:abortedTaskCount "0"^^xsd:integer ;
+  prov:startedAtTime "2026-10-20T15:36:50"^^xsd:dateTime ;
+  prov:endedAtTime "2026-10-20T15:37:48"^^xsd:dateTime ;
+  rm:durationSeconds "59"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock time from the earliest task submission to the latest task completion or workflow termination in this stage." ;
+  rm:isWorkflowProcessOf <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:taskName "NFCORE_RANGELAND:RANGELAND:PREPROCESSING:FORCE_PREPROCESS" ;
+  rm:cpuTimeSeconds "163.654359"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "CPU time is the sum of realtime multiplied by %cpu from the Nextflow trace for 56 of 56 task(s). This covers short-lived pods that may finish between Prometheus scrapes. For comparison, Prometheus container_cpu_usage_seconds_total measured 0.072863 seconds across 9 of 56 pod(s)." ;
+  rm:memoryPeakGB "2.9037"^^xsd:double ;
+  rm:memoryAvgGB "0.8641263344901547"^^xsd:double ;
+  rm:memoryCalculationMethod "Memory is approximated from peak_rss in the Nextflow trace for 56 task(s). Each task contributes its peak resident memory over its execution interval; the peak is the maximum concurrent sum and the average is time-weighted." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 0 of 56 pod(s)." ;
+  rm:energyCalculationUsesFallbackEstimate "false"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityZone "DE" ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:parallelismNote "CPU time can exceed wall-clock duration when Nextflow tasks execute concurrently." .
+
+<http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-preprocessing-force-preprocess>
+  rdf:type rm:WorkflowStage ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "FORCE PREPROCESS"@en ;
+  dcterms:title "FORCE PREPROCESS"@en ;
+  rm:stageOfWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+  rm:hasStageExecution <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-force-preprocess-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:stageIncludedInRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-preprocess-config-462d80d9-a55f-47f0-b422-66d30e501f38>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "PREPROCESS CONFIG · run 2026-10-20 15:36"@en ;
+  dcterms:title "PREPROCESS CONFIG · run 2026-10-20 15:36"@en ;
+  rm:jobName "PREPROCESS CONFIG" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "56"^^xsd:integer ;
+  rm:podCount "56"^^xsd:integer ;
+  rm:succeededTaskCount "56"^^xsd:integer ;
+  rm:cachedTaskCount "0"^^xsd:integer ;
+  rm:failedTaskCount "0"^^xsd:integer ;
+  rm:abortedTaskCount "0"^^xsd:integer ;
+  prov:startedAtTime "2026-10-20T15:36:45"^^xsd:dateTime ;
+  prov:endedAtTime "2026-10-20T15:39:52"^^xsd:dateTime ;
+  rm:durationSeconds "187"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock time from the earliest task submission to the latest task completion or workflow termination in this stage." ;
+  rm:isWorkflowProcessOf <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:taskName "NFCORE_RANGELAND:RANGELAND:PREPROCESSING:PREPROCESS_CONFIG" ;
+  rm:cpuTimeSeconds "4.574503000000003"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "CPU time is the sum of realtime multiplied by %cpu from the Nextflow trace for 56 of 56 task(s). This covers short-lived pods that may finish between Prometheus scrapes. For comparison, Prometheus container_cpu_usage_seconds_total measured 0.008947 seconds across 1 of 56 pod(s)." ;
+  rm:memoryPeakGB "0.1409"^^xsd:double ;
+  rm:memoryAvgGB "0.014224957832449698"^^xsd:double ;
+  rm:memoryCalculationMethod "Memory is approximated from peak_rss in the Nextflow trace for 56 task(s). Each task contributes its peak resident memory over its execution interval; the peak is the maximum concurrent sum and the average is time-weighted." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 0 of 56 pod(s)." ;
+  rm:energyCalculationUsesFallbackEstimate "false"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityZone "DE" ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:parallelismNote "CPU time can exceed wall-clock duration when Nextflow tasks execute concurrently." .
+
+<http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-preprocessing-preprocess-config>
+  rdf:type rm:WorkflowStage ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "PREPROCESS CONFIG"@en ;
+  dcterms:title "PREPROCESS CONFIG"@en ;
+  rm:stageOfWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+  rm:hasStageExecution <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-preprocess-config-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:stageIncludedInRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-untar-dem-462d80d9-a55f-47f0-b422-66d30e501f38>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "UNTAR DEM · run 2026-10-20 15:36"@en ;
+  dcterms:title "UNTAR DEM · run 2026-10-20 15:36"@en ;
+  rm:jobName "UNTAR DEM" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "1"^^xsd:integer ;
+  rm:podCount "1"^^xsd:integer ;
+  rm:succeededTaskCount "1"^^xsd:integer ;
+  rm:cachedTaskCount "0"^^xsd:integer ;
+  rm:failedTaskCount "0"^^xsd:integer ;
+  rm:abortedTaskCount "0"^^xsd:integer ;
+  prov:startedAtTime "2026-10-20T15:36:37"^^xsd:dateTime ;
+  prov:endedAtTime "2026-10-20T15:36:38"^^xsd:dateTime ;
+  rm:durationSeconds "1"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock time from the earliest task submission to the latest task completion or workflow termination in this stage." ;
+  rm:isWorkflowProcessOf <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:taskName "NFCORE_RANGELAND:RANGELAND:UNTAR_DEM" ;
+  rm:cpuTimeSeconds "0.08344"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "CPU time is the sum of realtime multiplied by %cpu from the Nextflow trace for 1 of 1 task(s). This covers short-lived pods that may finish between Prometheus scrapes." ;
+  rm:memoryPeakGB "0.0047"^^xsd:double ;
+  rm:memoryAvgGB "0.0047"^^xsd:double ;
+  rm:memoryCalculationMethod "Memory is approximated from peak_rss in the Nextflow trace for 1 task(s). Each task contributes its peak resident memory over its execution interval; the peak is the maximum concurrent sum and the average is time-weighted." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 0 of 1 pod(s)." ;
+  rm:energyCalculationUsesFallbackEstimate "false"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityZone "DE" ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:parallelismNote "CPU time can exceed wall-clock duration when Nextflow tasks execute concurrently." .
+
+<http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-untar-dem>
+  rdf:type rm:WorkflowStage ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "UNTAR DEM"@en ;
+  dcterms:title "UNTAR DEM"@en ;
+  rm:stageOfWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+  rm:hasStageExecution <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-untar-dem-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:stageIncludedInRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-untar-input-462d80d9-a55f-47f0-b422-66d30e501f38>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "UNTAR INPUT · run 2026-10-20 15:36"@en ;
+  dcterms:title "UNTAR INPUT · run 2026-10-20 15:36"@en ;
+  rm:jobName "UNTAR INPUT" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "1"^^xsd:integer ;
+  rm:podCount "1"^^xsd:integer ;
+  rm:succeededTaskCount "1"^^xsd:integer ;
+  rm:cachedTaskCount "0"^^xsd:integer ;
+  rm:failedTaskCount "0"^^xsd:integer ;
+  rm:abortedTaskCount "0"^^xsd:integer ;
+  prov:startedAtTime "2026-10-20T15:36:38"^^xsd:dateTime ;
+  prov:endedAtTime "2026-10-20T15:36:42"^^xsd:dateTime ;
+  rm:durationSeconds "4"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock time from the earliest task submission to the latest task completion or workflow termination in this stage." ;
+  rm:isWorkflowProcessOf <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:taskName "NFCORE_RANGELAND:RANGELAND:UNTAR_INPUT" ;
+  rm:cpuTimeSeconds "1.8018"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "CPU time is the sum of realtime multiplied by %cpu from the Nextflow trace for 1 of 1 task(s). This covers short-lived pods that may finish between Prometheus scrapes." ;
+  rm:memoryPeakGB "0.0109"^^xsd:double ;
+  rm:memoryAvgGB "0.0109"^^xsd:double ;
+  rm:memoryCalculationMethod "Memory is approximated from peak_rss in the Nextflow trace for 1 task(s). Each task contributes its peak resident memory over its execution interval; the peak is the maximum concurrent sum and the average is time-weighted." ;
+  rm:energyKWh "3.8666666666666664e-07"^^xsd:double ;
+  rm:carbonEmissionKgCO2e "1.3958666666666665e-07"^^xsd:double ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 1 of 1 pod(s). At least one short-lived pod required a counter-range or counter-maximum estimate because a reliable counter increase was unavailable. Idle power is included: Kepler on the FONDA cluster does not report idle energy separately (checked on 2026-10-04). It divides the energy it measures on a node (CPU, memory and, from the node's power meter, the rest of the machine such as fans and power supply) among the pods on that node. The value is therefore not independent of node temperature." ;
+  rm:energyCalculationUsesFallbackEstimate "true"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityZone "DE" ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:parallelismNote "CPU time can exceed wall-clock duration when Nextflow tasks execute concurrently." .
+
+<http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-untar-input>
+  rdf:type rm:WorkflowStage ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "UNTAR INPUT"@en ;
+  dcterms:title "UNTAR INPUT"@en ;
+  rm:stageOfWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+  rm:hasStageExecution <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-untar-input-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:stageIncludedInRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> .
+
+<http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-untar-wvdb-462d80d9-a55f-47f0-b422-66d30e501f38>
+  rdf:type rm:WorkflowProcessRun ;
+  rdf:type vivo:InformationResource ;
+  rdf:type prov:Entity ;
+  rdfs:label "UNTAR WVDB · run 2026-10-20 15:36"@en ;
+  dcterms:title "UNTAR WVDB · run 2026-10-20 15:36"@en ;
+  rm:jobName "UNTAR WVDB" ;
+  rm:runStatus "Succeeded" ;
+  rm:taskCount "1"^^xsd:integer ;
+  rm:podCount "1"^^xsd:integer ;
+  rm:succeededTaskCount "1"^^xsd:integer ;
+  rm:cachedTaskCount "0"^^xsd:integer ;
+  rm:failedTaskCount "0"^^xsd:integer ;
+  rm:abortedTaskCount "0"^^xsd:integer ;
+  prov:startedAtTime "2026-10-20T15:36:37"^^xsd:dateTime ;
+  prov:endedAtTime "2026-10-20T15:36:38"^^xsd:dateTime ;
+  rm:durationSeconds "1"^^xsd:integer ;
+  rm:durationCalculationMethod "Wall-clock time from the earliest task submission to the latest task completion or workflow termination in this stage." ;
+  rm:isWorkflowProcessOf <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> ;
+  rm:taskName "NFCORE_RANGELAND:RANGELAND:UNTAR_WVDB" ;
+  rm:cpuTimeSeconds "0.027426"^^xsd:double ;
+  rm:cpuTimeCalculationMethod "CPU time is the sum of realtime multiplied by %cpu from the Nextflow trace for 1 of 1 task(s). This covers short-lived pods that may finish between Prometheus scrapes." ;
+  rm:memoryPeakGB "0.0031"^^xsd:double ;
+  rm:memoryAvgGB "0.0031"^^xsd:double ;
+  rm:memoryCalculationMethod "Memory is approximated from peak_rss in the Nextflow trace for 1 task(s). Each task contributes its peak resident memory over its execution interval; the peak is the maximum concurrent sum and the average is time-weighted." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 0 of 1 pod(s)." ;
+  rm:energyCalculationUsesFallbackEstimate "false"^^xsd:boolean ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityZone "DE" ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:parallelismNote "CPU time can exceed wall-clock duration when Nextflow tasks execute concurrently." .
+
+<http://example.org/vivo-import/run-metadata/stage/long-term-vegetation-dynamics-in-the-mediterranean-nf-core/nfcore-rangeland-rangeland-untar-wvdb>
+  rdf:type rm:WorkflowStage ;
+  rdf:type vivo:InformationResource ;
+  rdfs:label "UNTAR WVDB"@en ;
+  dcterms:title "UNTAR WVDB"@en ;
+  rm:stageOfWorkflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+  rm:hasStageExecution <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-untar-wvdb-462d80d9-a55f-47f0-b422-66d30e501f38> ;
+  rm:stageIncludedInRun <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00> .

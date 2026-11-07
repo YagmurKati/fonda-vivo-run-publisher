@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Whole-node energy, idle power and hourly grid carbon for a FONDA Kubernetes run on ONE node.
+"""Whole-node energy, idle power and grid carbon (15-minute, else hourly) for a FONDA Kubernetes run on ONE node.
 
 Add-on to collect_nextflow_run_metadata.py, which stays unchanged. It starts from a run that
 scripts/publish-run.sh has already published (the run's Turtle file in the PVC outbox) and adds
@@ -17,7 +17,8 @@ Only for a run on a single node that was published as exclusive (rm:nodeUse "exc
 Such a run is accounted like an exclusive HPC@HU job: its energy becomes the whole node's
 measured energy during the run, read from Kepler's kepler_node_platform_joules_total (the
 node's ACPI power meter), instead of the sum of its pods' Kepler shares. When Electricity Maps
-covers the run's hours, its carbon becomes time-matched to those hours.
+covers the run's time, its carbon becomes time-matched: to its quarter-hours where the account has
+15-minute data, else to its hours.
 
 Writes, for Site Admin > Add/Remove RDF data (format Turtle):
   RUN-node-power_REMOVE.ttl   the run's current values of every property that is replaced
@@ -64,6 +65,7 @@ def idle_power_method(node, idle_w, window_texts):
 MAX_POINTS = 600
 HOURS_AROUND = 24
 EM_HISTORY = "https://api.electricitymaps.com/v4/carbon-intensity/history"
+EM_PAST_RANGE = "https://api.electricitymaps.com/v4/carbon-intensity/past-range"
 WHOLE_NODE = "100% of the node (whole node, measured)"
 
 
@@ -223,12 +225,19 @@ def power_readings(prom_url, node, start, end, interval):
 
 
 # ---------------------------------------------------------------- grid carbon
-def fetch_history(token):
-    params = dict(zone="DE", temporalGranularity="hourly", emissionFactorType="lifecycle", flowTraced="true")
-    url = EM_HISTORY + "?" + urllib.parse.urlencode(params)
+def fetch_history(token, granularity="hourly", start=None, end=None):
+    """Last 24 hours (history), or [start, end) rounded out to whole intervals (past-range)."""
+    params = dict(zone="DE", temporalGranularity=granularity, emissionFactorType="lifecycle", flowTraced="true")
+    endpoint = EM_HISTORY
+    if start is not None and end is not None:
+        seconds = 900 if granularity == "15_minutes" else 3600
+        endpoint = EM_PAST_RANGE
+        params["start"] = datetime.fromtimestamp(math.floor(start / seconds) * seconds, UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+        params["end"] = datetime.fromtimestamp(math.ceil(end / seconds) * seconds, UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    url = endpoint + "?" + urllib.parse.urlencode(params)
     request = urllib.request.Request(url, headers={"auth-token": token})
     with urllib.request.urlopen(request, timeout=30) as response:
-        return url, electricity_points(json.load(response))
+        return url, electricity_points(json.load(response), granularity)
 
 
 def hour_text(epoch):
@@ -236,7 +245,7 @@ def hour_text(epoch):
 
 
 def energy_shares(intervals, readings, start):
-    """Share of the run's energy in each hourly piece, from the power readings; time share if too few."""
+    """Share of the run's energy in each piece, from the power readings; time share if too few."""
     def energy_in(a, b):
         pts = [(start + o, w) for o, w in readings]
         if len(pts) < 2:
@@ -353,8 +362,22 @@ def build(args):
         token = args.token or api_token(args.namespace)
         if not token:
             raise Stop("no Electricity Maps token (ELECTRICITY_MAPS_API_TOKEN or the cluster secret)")
-        source_url, points = fetch_history(token)
-        intervals = covered_intervals(points, start, end)
+        # hourly history: the hours around the run for the run page (rm:gridCarbonIntensityHours)
+        hour_error = None
+        try:
+            hour_url, points = fetch_history(token)
+        except (ValueError, KeyError, urllib.error.URLError, OSError) as exc:
+            hour_url, points, hour_error = "", [], exc
+        # carbon: 15-minute values of the run's own time where the account has them, else hourly
+        try:
+            source_url, quarter_points = fetch_history(token, "15_minutes", start, end)
+            intervals = covered_intervals(quarter_points, start, end)
+            granularity, unit, unit_s = "15 minutes", "quarter-hour", "15-minute"
+        except (ValueError, KeyError, urllib.error.URLError, OSError):
+            if hour_error is not None:
+                raise hour_error
+            source_url, intervals = hour_url, covered_intervals(points, start, end)
+            granularity, unit, unit_s = "hourly", "hour", "hourly"
         shares = energy_shares(intervals, readings, start)
         g = sum(s * p["g_per_kwh"] for s, p in zip(shares, intervals))
         intensity = g / 1000
@@ -373,7 +396,7 @@ def build(args):
         new.update({
             "rm:carbonIntensityAssumptionKgCO2ePerKWh": [lit(intensity)],
             "rm:carbonEmissionKgCO2e": [lit(energy_kwh * intensity)],
-            "rm:carbonIntensitySource": [lit("Electricity Maps hourly history (zone DE, lifecycle, flow-traced)")],
+            "rm:carbonIntensitySource": [lit(f"Electricity Maps {unit_s} history (zone DE, lifecycle, flow-traced)")],
             "rm:carbonIntensitySourceLink": [lit(source_url, "xsd:anyURI")],
             "rm:carbonIntensityWindowStart": [lit(datetime.fromtimestamp(intervals[0]["source_start"], UTC)
                                                   .strftime("%Y-%m-%dT%H:%M:%SZ"), "xsd:dateTime")],
@@ -382,11 +405,11 @@ def build(args):
             "rm:carbonIntensityDataPointCount": [lit(len(intervals), "xsd:integer")],
             "rm:carbonIntensityIncludesEstimatedData": [lit(estimated)],
             "rm:carbonIntensityEmissionsBasis": [lit("lifecycle CO2e")],
-            "rm:carbonIntensityTemporalGranularity": [lit("hourly")],
+            "rm:carbonIntensityTemporalGranularity": [lit(granularity)],
             "rm:carbonCalculationMethod": [lit(
-                f"Time-matched: the run's energy {energy_kwh:.6f} kWh x the hourly carbon intensity of the German grid "
-                f"(Electricity Maps, lifecycle, flow-traced) in the hours the run used, weighted by the run's energy in "
-                f"each hour ({pieces}) = {g:.1f} g/kWh, so {energy_kwh * intensity * 1000:.2f} g CO2e.")],
+                f"Time-matched: the run's energy {energy_kwh:.6f} kWh x the {unit_s} carbon intensity of the German "
+                f"grid (Electricity Maps, lifecycle, flow-traced) in the {unit}s the run used, weighted by the run's "
+                f"energy in each {unit} ({pieces}) = {g:.1f} g/kWh, so {energy_kwh * intensity * 1000:.2f} g CO2e.")],
         })
         if len(hours) >= 2:
             ordered = sorted(hours)

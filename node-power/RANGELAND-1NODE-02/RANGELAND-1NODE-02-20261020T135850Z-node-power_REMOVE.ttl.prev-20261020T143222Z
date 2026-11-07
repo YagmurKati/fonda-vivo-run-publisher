@@ -1,0 +1,27 @@
+# Upload FIRST: Site Admin > Add/Remove RDF data > remove mixed RDF, format Turtle
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vivo: <http://vivoweb.org/ontology/core#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rm: <http://example.org/ontology/run-metadata#> .
+@prefix ex: <http://example.org/vivo-import/run-metadata/> .
+<http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00>
+  rm:energyKWh "5.481666666666666e-06"^^xsd:double ;
+  rm:energyMeasurementCoverage "1.1% (3 of 280 pods)" ;
+  rm:energyMetricSource "kepler_container_joules_total" ;
+  rm:energyCalculationUsesFallbackEstimate "true"^^xsd:boolean ;
+  rm:energyCalculationMethod "Energy is the sum of per-pod Kepler measurements for 3 of 280 pod(s). At least one short-lived pod required a counter-range or counter-maximum estimate because a reliable counter increase was unavailable. Idle power is included: Kepler on the FONDA cluster does not report idle energy separately (checked on 2026-10-04). It divides the energy it measures on a node (CPU, memory and, from the node's power meter, the rest of the machine such as fans and power supply) among the pods on that node. The value is therefore not independent of node temperature." ;
+  rm:carbonIntensityAssumptionKgCO2ePerKWh "0.361"^^xsd:double ;
+  rm:carbonEmissionKgCO2e "1.9788816666666666e-06"^^xsd:double ;
+  rm:carbonIntensitySource "Electricity Maps latest available flow-traced carbon intensity (collection-time proxy)" ;
+  rm:carbonIntensitySourceLink "https://api.electricitymaps.com/v4/carbon-intensity/latest"^^xsd:anyURI ;
+  rm:carbonIntensityWindowStart "2026-10-20T13:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityWindowEnd "2026-10-20T14:00:00Z"^^xsd:dateTime ;
+  rm:carbonIntensityDataPointCount "1"^^xsd:integer ;
+  rm:carbonIntensityIncludesEstimatedData "true"^^xsd:boolean ;
+  rm:carbonIntensityEmissionsBasis "lifecycle CO2e" ;
+  rm:carbonIntensityTemporalGranularity "hourly" ;
+  rm:carbonCalculationMethod "Carbon emissions are calculated using the emissions factor method: energy consumption (kWh) multiplied by 0.361 kg/kWh (lifecycle CO2e) from Electricity Maps latest available flow-traced carbon intensity (collection-time proxy). The value is the latest value available from the free-tier endpoint when metadata was collected. It is used as a proxy and is not guaranteed to represent the exact workflow execution interval." .

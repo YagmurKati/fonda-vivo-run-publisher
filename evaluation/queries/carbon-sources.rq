@@ -1,9 +1,8 @@
-# Carbon-intensity source and emissions basis of each run with hourly factors. Result format CSV.
+# Carbon-intensity source, time resolution and emissions basis of each run. Result format CSV.
 PREFIX rm: <http://example.org/ontology/run-metadata#>
-SELECT ?run ?src ?basis ?link WHERE {
-  ?run rm:workflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
-       rm:carbonIntensityTemporalGranularity ?g .
-  FILTER(STR(?g) = "hourly")
+SELECT ?run ?granularity ?src ?basis ?link WHERE {
+  ?run rm:workflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> .
+  OPTIONAL { ?run rm:carbonIntensityTemporalGranularity ?granularity }
   OPTIONAL { ?run rm:carbonIntensitySource ?src } OPTIONAL { ?run rm:carbonIntensityEmissionsBasis ?basis }
   OPTIONAL { ?run rm:carbonIntensitySourceLink ?link }
 }

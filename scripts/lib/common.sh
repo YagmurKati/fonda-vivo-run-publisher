@@ -206,10 +206,11 @@ load_config() {
   if grep -q 'REPLACE_ME' "$CONFIG_FILE"; then
     die "Replace every REPLACE_ME value in $CONFIG_FILE"
   fi
-  [[ "$CARBON_SOURCE" == "electricity-maps-latest" ||
+  [[ "$CARBON_SOURCE" == "electricity-maps" ||
+     "$CARBON_SOURCE" == "electricity-maps-latest" ||
      "$CARBON_SOURCE" == "co2map" ||
      "$CARBON_SOURCE" == "fixed" ]] ||
-    die "CARBON_SOURCE must be electricity-maps-latest, co2map, or fixed"
+    die "CARBON_SOURCE must be electricity-maps, electricity-maps-latest, co2map, or fixed"
   [[ "$CO2MAP_DATA_STATUS" == "preliminary" ||
      "$CO2MAP_DATA_STATUS" == "historical" ]] ||
     die "CO2MAP_DATA_STATUS must be preliminary or historical"

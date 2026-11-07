@@ -115,9 +115,9 @@ collection still succeeds. In that case the TTL omits carbon intensity,
 carbon-emission, and carbon-calculation properties; all other available run
 metadata is kept. No invented fallback carbon value is published.
 
-The collector first requests an average for the execution interval. If the
-account cannot access historical data, it requests the latest available value
-as a collection-time proxy.
+The collector first requests the 15-minute values of the execution interval and
+uses their average. If the account cannot access historical data, it requests
+the latest available value as a collection-time proxy.
 
 Confirm the unique, timestamped TTL was created:
 

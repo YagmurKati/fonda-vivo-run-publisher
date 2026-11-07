@@ -34,9 +34,17 @@ def history(zone="DE", rows=None):
     return {"zone": zone, "temporalGranularity": "hourly", "history": rows}
 
 
+def quarter_hours(rows=None):
+    first = datetime(2026, 10, 20, 13, tzinfo=UTC)
+    rows = rows if rows is not None else [
+        {"datetime": (first + timedelta(minutes=15 * i)).strftime("%Y-%m-%dT%H:%M:%S.000Z"), "carbonIntensity": 250,
+         "isEstimated": False, "emissionFactorType": "lifecycle", "flowTraced": True} for i in range(8)]
+    return {"zone": "DE", "temporalGranularity": "15_minutes", "data": rows}
+
+
 class FakeServices:
-    def __init__(self, busy=0.3, em=history):
-        self.busy, self.em, self.calls = busy, em, []
+    def __init__(self, busy=0.3, em=history, quarters=None):
+        self.busy, self.em, self.quarters, self.calls = busy, em, quarters, []
 
     def __call__(self, url, params=None, headers=None):
         self.calls.append((url, dict(params or {})))
@@ -44,6 +52,10 @@ class FakeServices:
             if self.em is None:
                 raise RuntimeError("HTTP 401 returned by Electricity Maps")
             assert headers == {"auth-token": "secret"}
+            if (params or {}).get("temporalGranularity") == "15_minutes":
+                if self.quarters is None:
+                    raise RuntimeError("HTTP 403 returned by Electricity Maps")
+                return self.quarters()
             return self.em()
         query = params["query"]
         assert f'instance="{NODE}"' in query or f'node="{NODE}"' in query, query
@@ -118,6 +130,20 @@ class NodePowerTests(unittest.TestCase):
         # each property once, the host untouched
         self.assertEqual(len([p for p, _ in preds if p == "rm:energyKWh"]), 1)
         self.assertIn(("rm:executionHost", ttl_literal(NODE)), preds)
+
+    def test_fifteen_minute_data_is_used_for_carbon(self):
+        preds = predicates()
+        summary, values, err, services = self.apply(preds, services=FakeServices(quarters=quarter_hours))
+        self.assertTrue(summary["applied"], err)
+        self.assertEqual(values["rm:carbonIntensityTemporalGranularity"], ttl_literal("15 minutes"))
+        self.assertEqual(values["rm:carbonIntensityAssumptionKgCO2ePerKWh"], ttl_literal(0.25))
+        self.assertIn("2026-10-20T13:30:00Z", values["rm:carbonIntensityWindowStart"])
+        self.assertIn("2026-10-20T13:45:00Z", values["rm:carbonIntensityWindowEnd"])
+        self.assertIn("in the quarter-hours the run used", values["rm:carbonCalculationMethod"])
+        self.assertIn("15-minute history", values["rm:carbonIntensitySource"])
+        self.assertIn("2026-10-20T13:00Z 323.0", values["rm:gridCarbonIntensityHours"])
+        quarter_call = [p for u, p in services.calls if p.get("temporalGranularity") == "15_minutes"][0]
+        self.assertEqual((quarter_call["start"], quarter_call["end"]), ("2026-10-20T13:30:00Z", "2026-10-20T13:45:00Z"))
 
     def test_runs_on_several_or_shared_nodes_are_unchanged(self):
         for nodes, use in (((NODE, "hu-worker-c41"), EXCLUSIVE),

@@ -19,7 +19,7 @@ fi
 kubectl -n "$NS" get pvc "$PVC_NAME" >/dev/null
 kubectl -n "$NS" get serviceaccount "$SERVICE_ACCOUNT" >/dev/null
 kubectl -n "$NS" get secret "$VIVO_CREDENTIALS_SECRET" >/dev/null
-if [[ "$CARBON_SOURCE" == "electricity-maps-latest" ]]; then
+if [[ "$CARBON_SOURCE" == electricity-maps* ]]; then
   kubectl -n "$NS" get secret electricity-maps-api-token >/dev/null
 fi
 

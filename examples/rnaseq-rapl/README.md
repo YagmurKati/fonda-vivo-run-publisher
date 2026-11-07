@@ -61,8 +61,9 @@ Collect the metadata and check it without uploading:
 ./scripts/collect-and-publish-rnaseq-rapl.sh "$RUN_DIR" --dry-run
 ```
 
-The collector validates the run, fetches hourly carbon intensity for its execution
-period, and calculates emissions from the measured energy in each hour. It uses
+The collector validates the run, fetches the carbon intensity for its execution
+period in 15-minute steps (hourly if the token's account has no 15-minute data),
+and calculates emissions from the measured energy in each quarter-hour or hour. It uses
 Germany data from Electricity Maps, then CO₂Map if matching data is unavailable.
 The existing `electricity-maps-api-token` namespace Secret is read automatically;
 `ELECTRICITY_MAPS_API_TOKEN` can also supply the token.

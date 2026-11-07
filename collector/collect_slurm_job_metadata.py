@@ -363,8 +363,13 @@ def summarize(job, steps, info, samples, tz):
         namespace="", fraction=fraction)
 
 
+def interval_name(carbon):
+    """'quarter-hour' for 15-minute grid data, 'hour' for hourly data."""
+    return "quarter-hour" if carbon.get("temporal_granularity") == "15 minutes" else "hour"
+
+
 def fetch_carbon_optional(summary):
-    """Time-matched hourly German grid intensity; None if unavailable."""
+    """Time-matched German grid intensity (15-minute, else hourly); None if unavailable."""
     from rapl_carbon import CarbonUnavailable, fetch_carbon
 
     total = summary["energy_joules"]
@@ -565,10 +570,11 @@ def build_ttl(summary, args, tz):
                   ("rm:carbonIntensityWindowEnd", literal(carbon["source_window_end"], "xsd:dateTime")),
                   ("rm:carbonIntensityIncludesEstimatedData", literal(carbon["includes_estimates"])),
                   ("rm:carbonIntensityEmissionsBasis", literal(carbon["basis"])),
-                  ("rm:carbonIntensityTemporalGranularity", literal("hourly")),
+                  ("rm:carbonIntensityTemporalGranularity", literal(carbon.get("temporal_granularity", "hourly"))),
                   ("rm:carbonCalculationMethod", literal(
-                      "Estimated job energy in each covered hour (split by sampled node power) multiplied by that "
-                      "hour's Germany grid intensity. Emissions basis: " + carbon["basis"] + "."))]
+                      f"Estimated job energy in each covered {interval_name(carbon)} (split by sampled node power) "
+                      f"multiplied by that {interval_name(carbon)}'s Germany grid intensity. Emissions basis: "
+                      + carbon["basis"] + "."))]
     if args.run_operator_uri:
         props.append(("rm:runOperator", uri(args.run_operator_uri)))
     if args.backend_uri:

@@ -1,0 +1,56 @@
+16:55:18 series: RANGELAND-1NODE-03 RANGELAND-1NODE-04 RANGELAND-1NODE-05 RANGELAND-1NODE-06 RANGELAND-1NODE-07 RANGELAND-1NODE-08 RANGELAND-1NODE-09 RANGELAND-1NODE-10 RANGELAND-1NODE-11 RANGELAND-1NODE-12 RANGELAND-1NODE-13 RANGELAND-1NODE-14 RANGELAND-1NODE-15 RANGELAND-1NODE-16 RANGELAND-1NODE-17 RANGELAND-1NODE-18 RANGELAND-1NODE-19 RANGELAND-1NODE-20 RANGELAND-1NODE-21 RANGELAND-1NODE-22 RANGELAND-1NODE-23 RANGELAND-1NODE-24 RANGELAND-1NODE-25 RANGELAND-1NODE-26 RANGELAND-1NODE-27 RANGELAND-1NODE-28 RANGELAND-1NODE-29 RANGELAND-1NODE-30 RANGELAND-1NODE-31 RANGELAND-1NODE-32 on hu-worker-c39 hu-worker-c34 hu-worker-c41; log file rangeland-series-20261020-165516.log
+16:55:18 hu-worker-c39: starting RANGELAND-1NODE-03
+16:55:18 hu-worker-c34: starting RANGELAND-1NODE-04
+16:55:18 hu-worker-c41: starting RANGELAND-1NODE-05
+== Checks
+== Checks
+== Checks
+node hu-worker-c34: 32 CPUs, 263559652Ki
+== Other pods on hu-worker-c34 now (DaemonSets such as monitoring and network are normal)
+node hu-worker-c41: 32 CPUs, 263559648Ki
+== Other pods on hu-worker-c41 now (DaemonSets such as monitoring and network are normal)
+node hu-worker-c39: 32 CPUs, 263559640Ki
+== Other pods on hu-worker-c39 now (DaemonSets such as monitoring and network are normal)
+NAMESPACE        NAME                                        READY   STATUS    RESTARTS         AGE    IP              NODE            NOMINATED NODE   READINESS GATES
+airflow-yagmur   airflow-yagmur-triggerer-79d4f55f64-qvsqz   3/3     Running   385 (18d ago)    161d   10.233.69.203   hu-worker-c34   <none>           <none>
+ingress-nginx    ingress-nginx-controller-mdp2v              1/1     Running   596 (162d ago)   456d   10.0.0.34       hu-worker-c34   <none>           <none>
+lens-metrics     node-exporter-gpwln                         1/1     Running   7 (162d ago)     456d   10.233.69.201   hu-worker-c34   <none>           <none>
+NAMESPACE       NAME                                        READY   STATUS    RESTARTS        AGE    IP              NODE            NOMINATED NODE   READINESS GATES
+airflow-dev     provgram-benchmark                          1/1     Running   0               35d    10.233.111.85   hu-worker-c41   <none>           <none>
+ingress-nginx   ingress-nginx-controller-pqr9d              1/1     Running   10 (162d ago)   456d   10.0.0.41       hu-worker-c41   <none>           <none>
+lens-metrics    node-exporter-s88cp                         1/1     Running   4 (162d ago)    456d   10.233.111.73   hu-worker-c41   <none>           <none>
+NAMESPACE       NAME                                        READY   STATUS    RESTARTS         AGE    IP              NODE            NOMINATED NODE   READINESS GATES
+default         yagmur-rangeland-driver                     1/1     Running   0                82d    10.233.77.68    hu-worker-c39   <none>           <none>
+ftschirpke      proto-pod                                   1/1     Running   0                145d   10.233.77.116   hu-worker-c39   <none>           <none>
+ingress-nginx   ingress-nginx-controller-xcj4z              1/1     Running   481 (162d ago)   456d   10.0.0.39       hu-worker-c39   <none>           <none>
+lens-metrics    node-exporter-s2wzk                         1/1     Running   6 (162d ago)     456d   10.233.77.86    hu-worker-c39   <none>           <none>
+configmap/rangeland-1node-04 created
+configmap/rangeland-1node-05 created
+configmap/rangeland-1node-03 created
+job.batch/rangeland-1node-04 created
+
+Started. When it has finished, wait 12 minutes, then publish (scripts/publish-run.sh RANGELAND-1NODE-04) and run
+scripts/add-node-power.sh RANGELAND-1NODE-04 for the idle-vs-work, power-over-time and grid-carbon charts.
+Follow it with:
+  kubectl -n yagmur logs -f job/rangeland-1node-04
+  kubectl -n yagmur get pods -l fonda.hu-berlin.de/run-id=RANGELAND-1NODE-04 -o wide      # every pod must show NODE hu-worker-c34
+job.batch/rangeland-1node-03 created
+job.batch/rangeland-1node-05 created
+
+Started. When it has finished, wait 12 minutes, then publish (scripts/publish-run.sh RANGELAND-1NODE-03) and run
+scripts/add-node-power.sh RANGELAND-1NODE-03 for the idle-vs-work, power-over-time and grid-carbon charts.
+Follow it with:
+  kubectl -n yagmur logs -f job/rangeland-1node-03
+  kubectl -n yagmur get pods -l fonda.hu-berlin.de/run-id=RANGELAND-1NODE-03 -o wide      # every pod must show NODE hu-worker-c39
+
+Started. When it has finished, wait 12 minutes, then publish (scripts/publish-run.sh RANGELAND-1NODE-05) and run
+scripts/add-node-power.sh RANGELAND-1NODE-05 for the idle-vs-work, power-over-time and grid-carbon charts.
+Follow it with:
+  kubectl -n yagmur logs -f job/rangeland-1node-05
+  kubectl -n yagmur get pods -l fonda.hu-berlin.de/run-id=RANGELAND-1NODE-05 -o wide      # every pod must show NODE hu-worker-c41
+16:59:20 hu-worker-c41: RANGELAND-1NODE-05 SUCCEEDED
+16:59:20 hu-worker-c41: quiet gap of 12 minutes before RANGELAND-1NODE-08
+16:59:20 hu-worker-c39: RANGELAND-1NODE-03 SUCCEEDED
+16:59:20 hu-worker-c39: quiet gap of 12 minutes before RANGELAND-1NODE-06
+17:00:00 hu-worker-c34: RANGELAND-1NODE-04 SUCCEEDED
+17:00:00 hu-worker-c34: quiet gap of 12 minutes before RANGELAND-1NODE-07

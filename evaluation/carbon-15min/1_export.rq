@@ -1,0 +1,25 @@
+# Export the current values of all nf-core/rangeland runs and their steps that the carbon recalculation needs.
+# VIVO: Site Admin > SPARQL Query. Paste this query, choose the format "N-Triples", run it and save the
+# result as export.nt. Keep this file: it is the state before the change.
+PREFIX rm: <http://example.org/ontology/run-metadata#>
+CONSTRUCT { ?run ?p ?o . ?step rm:carbonEmissionKgCO2e ?c . }
+WHERE {
+  GRAPH <http://vitro.mannlib.cornell.edu/default/vitro-kb-2> {
+    {
+      ?run rm:workflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+           ?p ?o .
+      FILTER(?p IN (rm:startTime, rm:endTime, rm:energyKWh, rm:nodePowerReadings, rm:nodePowerReadingsMethod,
+                    rm:hasWorkflowProcess, rm:carbonEmissionKgCO2e, rm:carbonIntensityAssumptionKgCO2ePerKWh,
+                    rm:carbonIntensitySource, rm:carbonIntensitySourceLink, rm:carbonIntensityWindowStart,
+                    rm:carbonIntensityWindowEnd, rm:carbonIntensityDataPointCount,
+                    rm:carbonIntensityIncludesEstimatedData, rm:carbonIntensityTemporalGranularity,
+                    rm:carbonCalculationMethod))
+    }
+    UNION
+    {
+      ?run rm:workflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
+           rm:hasWorkflowProcess ?step .
+      ?step rm:carbonEmissionKgCO2e ?c .
+    }
+  }
+}

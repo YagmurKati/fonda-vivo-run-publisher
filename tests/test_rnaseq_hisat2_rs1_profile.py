@@ -31,7 +31,7 @@ class RnaSeqHisat2Rs1ProfileTests(unittest.TestCase):
         self.assertIn('INCLUDE_CACHED_ORIGIN_METRICS="0"', env)
         self.assertIn('REQUIRE_SUCCEEDED="1"', env)
         self.assertIn('INPUT_METADATA_FILE="config/input_datasets.json"', env)
-        self.assertIn('CARBON_SOURCE="electricity-maps-latest"', env)
+        self.assertIn('CARBON_SOURCE="electricity-maps"', env)
 
     def test_profile_uses_reproduction_evidence_layout(self) -> None:
         env = (PROFILE / "publisher.env.example").read_text(encoding="utf-8")

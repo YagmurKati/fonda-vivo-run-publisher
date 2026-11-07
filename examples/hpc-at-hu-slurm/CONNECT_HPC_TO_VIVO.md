@@ -90,9 +90,13 @@ Run the first line on its own and paste the token at the prompt.
 ```bash
 read -rs -p 'Electricity Maps token: ' t && printf '%s' "$t" > ~/.fonda-vivo/electricity-maps-token; unset t; echo
 curl -s -o /dev/null -w '%{http_code}\n' -H "auth-token: $(cat ~/.fonda-vivo/electricity-maps-token)" "https://api.electricitymaps.com/v4/carbon-intensity/latest?zone=DE"
+curl -s -o /dev/null -w '%{http_code}\n' -H "auth-token: $(cat ~/.fonda-vivo/electricity-maps-token)" "https://api.electricitymaps.com/v4/carbon-intensity/history?zone=DE&temporalGranularity=15_minutes"
 ```
 
-The second line must print `200`. `401` means the token is wrong.
+The second line must print `200`. `401` means the token is wrong. The third line
+prints `200` if the token's account has 15-minute data: carbon is then matched to
+the quarter-hours of each run, otherwise to its hours. To change the token, run
+the first line again.
 
 Without a token, runs are published without carbon values when no other
 time-matched grid data is available.

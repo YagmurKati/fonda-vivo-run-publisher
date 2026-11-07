@@ -12,6 +12,12 @@ import urllib.request
 UTC = timezone.utc
 
 
+# Time resolutions of the grid data, tried in this order: 15-minute values where the account and the zone
+# offer them, hourly values otherwise.
+GRANULARITY_SECONDS = {"15_minutes": 900, "hourly": 3600}
+GRANULARITY_LABEL = {"15_minutes": "15 minutes", "hourly": "hourly"}
+
+
 class CarbonUnavailable(ValueError):
     def __init__(self, message, attempts):
         super().__init__(message)
@@ -30,11 +36,11 @@ def iso(value):
 
 
 def covered_intervals(points, start, end):
-    """Require contiguous hourly records covering every instant of the run."""
+    """Require contiguous records (15 minutes or hourly) covering every instant of the run."""
     selected = []
     for point in points:
         begin = stamp(point["datetime"])
-        finish = begin + 3600
+        finish = begin + point.get("seconds", 3600)
         if finish <= start or begin >= end:
             continue
         value = point["g_per_kwh"]
@@ -83,18 +89,20 @@ def calculate(intervals, energy_between):
                 includes_estimates=any(point["estimated"] for point in intervals))
 
 
-def electricity_points(payload):
-    if payload.get("zone") != "DE" or payload.get("temporalGranularity") != "hourly":
+def electricity_points(payload, granularity=None):
+    resolution = payload.get("temporalGranularity")
+    if payload.get("zone") != "DE" or resolution not in GRANULARITY_SECONDS or \
+            (granularity is not None and resolution != granularity):
         raise ValueError("Unexpected Electricity Maps zone or time resolution")
     rows = payload.get("history", payload.get("data"))
     if not isinstance(rows, list):
-        raise ValueError("No hourly Electricity Maps data")
+        raise ValueError("No Electricity Maps data")
     result = []
     for row in rows:
         if row.get("zone", "DE") != "DE" or row.get("emissionFactorType") != "lifecycle" or row.get("flowTraced") is not True:
             raise ValueError("Unexpected Electricity Maps emissions basis")
         result.append(dict(datetime=row["datetime"], g_per_kwh=row.get("carbonIntensity", row.get("value")),
-                           estimated=row.get("isEstimated", False)))
+                           estimated=row.get("isEstimated", False), seconds=GRANULARITY_SECONDS[resolution]))
     return result
 
 
@@ -104,7 +112,7 @@ def co2map_points(payload):
     series = [v for k, v in payload.items() if k.startswith("Consumption-based Intensity")]
     if len(series) != 1 or not isinstance(series[0], list):
         raise ValueError("No hourly CO2Map data")
-    return [dict(datetime=row[0], g_per_kwh=row[1], estimated=True) for row in series[0]]
+    return [dict(datetime=row[0], g_per_kwh=row[1], estimated=True, seconds=3600) for row in series[0]]
 
 
 def api_token(namespace):
@@ -128,12 +136,17 @@ def fetch_carbon(summary, energy_between):
     attempts = []
     sources = []
     if token:
-        parameters = dict(zone="DE", temporalGranularity="hourly", emissionFactorType="lifecycle", flowTraced="true")
-        sources.append(("Electricity Maps", "https://api.electricitymaps.com/v4/carbon-intensity/history",
-                        parameters, {"auth-token": token}, electricity_points, "lifecycle CO2e"))
-        parameters = dict(parameters, start=iso(math.floor(start / 3600) * 3600), end=iso(math.ceil(end / 3600) * 3600))
-        sources.append(("Electricity Maps", "https://api.electricitymaps.com/v4/carbon-intensity/past-range",
-                        parameters, {"auth-token": token}, electricity_points, "lifecycle CO2e"))
+        for granularity, seconds in GRANULARITY_SECONDS.items():
+            def parse_em(payload, granularity=granularity):
+                return electricity_points(payload, granularity)
+            parameters = dict(zone="DE", temporalGranularity=granularity, emissionFactorType="lifecycle",
+                              flowTraced="true")
+            sources.append(("Electricity Maps", "https://api.electricitymaps.com/v4/carbon-intensity/history",
+                            parameters, {"auth-token": token}, parse_em, "lifecycle CO2e"))
+            parameters = dict(parameters, start=iso(math.floor(start / seconds) * seconds),
+                              end=iso(math.ceil(end / seconds) * seconds))
+            sources.append(("Electricity Maps", "https://api.electricitymaps.com/v4/carbon-intensity/past-range",
+                            parameters, {"auth-token": token}, parse_em, "lifecycle CO2e"))
     for status in ("Preliminary", "Historical"):
         sources.append(("CO2Map.de", "https://api.co2map.de/ConsumptionIntensity" + status + "/",
                         dict(state="DE", country="DE", start=datetime.fromtimestamp(start, UTC).date().isoformat(),
@@ -150,8 +163,9 @@ def fetch_carbon(summary, energy_between):
             intervals = covered_intervals(parse(payload), start, end)
             result = calculate(intervals, energy_between)
             if not math.isclose(result["package_kwh"], summary["energy_kwh"], rel_tol=1e-8, abs_tol=1e-12):
-                raise ValueError("Hourly energy does not sum to the measured run energy")
-            result.update(source=name, source_url=url, basis=basis, zone="DE", temporal_granularity="hourly",
+                raise ValueError("Interval energy does not sum to the measured run energy")
+            granularity = GRANULARITY_LABEL.get(parameters.get("temporalGranularity"), "hourly")
+            result.update(source=name, source_url=url, basis=basis, zone="DE", temporal_granularity=granularity,
                           retrieved_at_utc=attempt["retrieved_at_utc"], attempts=attempts)
             return result
         except urllib.error.HTTPError as exc:
