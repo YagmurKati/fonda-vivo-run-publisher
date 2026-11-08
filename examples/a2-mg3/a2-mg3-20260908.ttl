@@ -68,7 +68,7 @@
 <http://example.org/vivo-import/run-metadata/run/yagmur-metagenomic-read-mapping-across-computational-architectures-a2-mg3-20260908-2026-09-08t06-34-48-00-00>
   rdf:type rm:RunMetadata ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "Metagenomic read mapping across computational architectures · run 2026-09-08 08:34–09:27 CEST"@en ;
   dcterms:title "Metagenomic read mapping across computational architectures · run 2026-09-08 08:34–09:27 CEST"@en ;
   rm:workflow <http://example.org/vivo-import/run-metadata/workflow/metagenomic-read-mapping-computational-architectures> ;
@@ -167,7 +167,7 @@
 <http://example.org/vivo-import/run-metadata/process/metagenomic-read-mapping-across-computational-architectures-kubernetes-attempt-1-a2-mg3-20260908>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "MG-3 Kubernetes attempt 20260908"@en ;
   dcterms:title "MG-3 Kubernetes attempt 20260908"@en ;
   rm:jobName "MG-3 Kubernetes attempt 20260908" ;
@@ -210,7 +210,7 @@
 <http://example.org/vivo-import/run-metadata/process/metagenomic-read-mapping-across-computational-architectures-kubernetes-attempt-2-a2-mg3-20260908>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "MG-3 Kubernetes attempt 2"@en ;
   dcterms:title "MG-3 Kubernetes attempt 2"@en ;
   rm:jobName "MG-3 Kubernetes attempt 2" ;
@@ -253,7 +253,7 @@
 <http://example.org/vivo-import/run-metadata/process/metagenomic-read-mapping-across-computational-architectures-kubernetes-attempt-3-a2-mg3-20260908>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "MG-3 Kubernetes attempt 3"@en ;
   dcterms:title "MG-3 Kubernetes attempt 3"@en ;
   rm:jobName "MG-3 Kubernetes attempt 3" ;
@@ -296,7 +296,7 @@
 <http://example.org/vivo-import/run-metadata/process/metagenomic-read-mapping-across-computational-architectures-kubernetes-attempt-4-a2-mg3-20260908>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "MG-3 Kubernetes attempt 4"@en ;
   dcterms:title "MG-3 Kubernetes attempt 4"@en ;
   rm:jobName "MG-3 Kubernetes attempt 4" ;
@@ -339,7 +339,7 @@
 <http://example.org/vivo-import/run-metadata/process/metagenomic-read-mapping-across-computational-architectures-kubernetes-attempt-5-a2-mg3-20260908>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "MG-3 Kubernetes attempt 5"@en ;
   dcterms:title "MG-3 Kubernetes attempt 5"@en ;
   rm:jobName "MG-3 Kubernetes attempt 5" ;
@@ -382,7 +382,7 @@
 <http://example.org/vivo-import/run-metadata/process/metagenomic-read-mapping-across-computational-architectures-kubernetes-attempt-6-a2-mg3-20260908>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "MG-3 Kubernetes attempt 6"@en ;
   dcterms:title "MG-3 Kubernetes attempt 6"@en ;
   rm:jobName "MG-3 Kubernetes attempt 6" ;
@@ -425,7 +425,7 @@
 <http://example.org/vivo-import/run-metadata/process/metagenomic-read-mapping-across-computational-architectures-kubernetes-attempt-7-a2-mg3-20260908>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "MG-3 Kubernetes attempt 7"@en ;
   dcterms:title "MG-3 Kubernetes attempt 7"@en ;
   rm:jobName "MG-3 Kubernetes attempt 7" ;

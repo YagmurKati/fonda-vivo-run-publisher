@@ -65,7 +65,7 @@
 <http://example.org/vivo-import/run-metadata/run/default-long-term-vegetation-dynamics-in-the-mediterranean-force2nxf-e5295c77-62e8-4773-afc5-706750fb1a33-2026-08-25t18-25-43-637000-00-00>
   rdf:type rm:RunMetadata ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "Long-term vegetation dynamics in the Mediterranean (FORCE2NXF) · run 2026-08-25 20:25–21:04 CEST"@en ;
   dcterms:title "Long-term vegetation dynamics in the Mediterranean (FORCE2NXF) · run 2026-08-25 20:25–21:04 CEST"@en ;
   rm:workflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-force2nxf> ;
@@ -181,7 +181,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-force2nxf-higherlevel-processhigherlevel-e5295c77-62e8-4773-afc5-706750fb1a33>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "HigherLevel / processHigherLevel"@en ;
   dcterms:title "HigherLevel / processHigherLevel"@en ;
   rm:jobName "HigherLevel / processHigherLevel" ;
@@ -222,7 +222,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-force2nxf-higherlevel-processmosaic-e5295c77-62e8-4773-afc5-706750fb1a33>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "HigherLevel / processMosaic"@en ;
   dcterms:title "HigherLevel / processMosaic"@en ;
   rm:jobName "HigherLevel / processMosaic" ;
@@ -263,7 +263,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-force2nxf-higherlevel-processpyramid-e5295c77-62e8-4773-afc5-706750fb1a33>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "HigherLevel / processPyramid"@en ;
   dcterms:title "HigherLevel / processPyramid"@en ;
   rm:jobName "HigherLevel / processPyramid" ;
@@ -304,7 +304,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-force2nxf-preprocessing-generateanalysismask-e5295c77-62e8-4773-afc5-706750fb1a33>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "Preprocessing / generateAnalysisMask"@en ;
   dcterms:title "Preprocessing / generateAnalysisMask"@en ;
   rm:jobName "Preprocessing / generateAnalysisMask" ;
@@ -342,7 +342,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-force2nxf-preprocessing-generatetileallowlist-e5295c77-62e8-4773-afc5-706750fb1a33>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "Preprocessing / generateTileAllowList"@en ;
   dcterms:title "Preprocessing / generateTileAllowList"@en ;
   rm:jobName "Preprocessing / generateTileAllowList" ;
@@ -380,7 +380,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-force2nxf-preprocessing-mergeboa-e5295c77-62e8-4773-afc5-706750fb1a33>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "Preprocessing / mergeBOA"@en ;
   dcterms:title "Preprocessing / mergeBOA"@en ;
   rm:jobName "Preprocessing / mergeBOA" ;
@@ -421,7 +421,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-force2nxf-preprocessing-mergeqai-e5295c77-62e8-4773-afc5-706750fb1a33>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "Preprocessing / mergeQAI"@en ;
   dcterms:title "Preprocessing / mergeQAI"@en ;
   rm:jobName "Preprocessing / mergeQAI" ;
@@ -462,7 +462,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-force2nxf-preprocessing-preprocess-e5295c77-62e8-4773-afc5-706750fb1a33>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "Preprocessing / preprocess"@en ;
   dcterms:title "Preprocessing / preprocess"@en ;
   rm:jobName "Preprocessing / preprocess" ;

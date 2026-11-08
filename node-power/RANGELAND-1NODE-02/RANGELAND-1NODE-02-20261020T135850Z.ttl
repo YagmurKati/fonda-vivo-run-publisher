@@ -80,7 +80,7 @@
 <http://example.org/vivo-import/run-metadata/run/yagmur-long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-462d80d9-a55f-47f0-b422-66d30e501f38-2026-10-20t13-36-17-987000-00-00>
   rdf:type rm:RunMetadata ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "Long-term vegetation dynamics in the Mediterranean (nf-core/rangeland) · run 2026-10-20 15:36–15:39 CEST"@en ;
   dcterms:title "Long-term vegetation dynamics in the Mediterranean (nf-core/rangeland) · run 2026-10-20 15:36–15:39 CEST"@en ;
   rm:workflow <http://example.org/vivo-import/run-metadata/workflow/long-term-vegetation-dynamics-in-the-mediterranean-nf-core> ;
@@ -197,7 +197,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-force-higher-level-462d80d9-a55f-47f0-b422-66d30e501f38>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "FORCE HIGHER LEVEL · run 2026-10-20 15:36"@en ;
   dcterms:title "FORCE HIGHER LEVEL · run 2026-10-20 15:36"@en ;
   rm:jobName "FORCE HIGHER LEVEL" ;
@@ -247,7 +247,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-force-mosaic-462d80d9-a55f-47f0-b422-66d30e501f38>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "FORCE MOSAIC · run 2026-10-20 15:36"@en ;
   dcterms:title "FORCE MOSAIC · run 2026-10-20 15:36"@en ;
   rm:jobName "FORCE MOSAIC" ;
@@ -297,7 +297,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-force-pyramid-462d80d9-a55f-47f0-b422-66d30e501f38>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "FORCE PYRAMID · run 2026-10-20 15:36"@en ;
   dcterms:title "FORCE PYRAMID · run 2026-10-20 15:36"@en ;
   rm:jobName "FORCE PYRAMID" ;
@@ -347,7 +347,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-higher-level-higher-level-config-462d80d9-a55f-47f0-b422-66d30e501f38>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "HIGHER LEVEL CONFIG · run 2026-10-20 15:36"@en ;
   dcterms:title "HIGHER LEVEL CONFIG · run 2026-10-20 15:36"@en ;
   rm:jobName "HIGHER LEVEL CONFIG" ;
@@ -397,7 +397,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-multiqc-462d80d9-a55f-47f0-b422-66d30e501f38>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "MULTIQC · run 2026-10-20 15:36"@en ;
   dcterms:title "MULTIQC · run 2026-10-20 15:36"@en ;
   rm:jobName "MULTIQC" ;
@@ -447,7 +447,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-force-generate-analysis-mask-462d80d9-a55f-47f0-b422-66d30e501f38>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "FORCE GENERATE ANALYSIS MASK · run 2026-10-20 15:36"@en ;
   dcterms:title "FORCE GENERATE ANALYSIS MASK · run 2026-10-20 15:36"@en ;
   rm:jobName "FORCE GENERATE ANALYSIS MASK" ;
@@ -499,7 +499,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-force-generate-tile-allow-list-462d80d9-a55f-47f0-b422-66d30e501f38>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "FORCE GENERATE TILE ALLOW LIST · run 2026-10-20 15:36"@en ;
   dcterms:title "FORCE GENERATE TILE ALLOW LIST · run 2026-10-20 15:36"@en ;
   rm:jobName "FORCE GENERATE TILE ALLOW LIST" ;
@@ -551,7 +551,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-force-preprocess-462d80d9-a55f-47f0-b422-66d30e501f38>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "FORCE PREPROCESS · run 2026-10-20 15:36"@en ;
   dcterms:title "FORCE PREPROCESS · run 2026-10-20 15:36"@en ;
   rm:jobName "FORCE PREPROCESS" ;
@@ -601,7 +601,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-preprocessing-preprocess-config-462d80d9-a55f-47f0-b422-66d30e501f38>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "PREPROCESS CONFIG · run 2026-10-20 15:36"@en ;
   dcterms:title "PREPROCESS CONFIG · run 2026-10-20 15:36"@en ;
   rm:jobName "PREPROCESS CONFIG" ;
@@ -651,7 +651,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-untar-dem-462d80d9-a55f-47f0-b422-66d30e501f38>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "UNTAR DEM · run 2026-10-20 15:36"@en ;
   dcterms:title "UNTAR DEM · run 2026-10-20 15:36"@en ;
   rm:jobName "UNTAR DEM" ;
@@ -701,7 +701,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-untar-input-462d80d9-a55f-47f0-b422-66d30e501f38>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "UNTAR INPUT · run 2026-10-20 15:36"@en ;
   dcterms:title "UNTAR INPUT · run 2026-10-20 15:36"@en ;
   rm:jobName "UNTAR INPUT" ;
@@ -753,7 +753,7 @@
 <http://example.org/vivo-import/run-metadata/process/long-term-vegetation-dynamics-in-the-mediterranean-nf-core-rangeland-nfcore-rangeland-rangeland-untar-wvdb-462d80d9-a55f-47f0-b422-66d30e501f38>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "UNTAR WVDB · run 2026-10-20 15:36"@en ;
   dcterms:title "UNTAR WVDB · run 2026-10-20 15:36"@en ;
   rm:jobName "UNTAR WVDB" ;

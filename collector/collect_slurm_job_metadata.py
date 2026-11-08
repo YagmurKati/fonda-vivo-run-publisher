@@ -483,7 +483,7 @@ def build_ttl(summary, args, tz):
               f"about every {interval_text(s['sample_interval_actual_seconds'])} s, covering {s['sample_coverage']:.0%} of the job) = {s['cpu_share']:.4f}. "
               f"Job energy = {s['node_energy_joules']:.0f} J x {s['cpu_share']:.4f} = {s['energy_joules']:.0f} J, "
               f"converted to kilowatt-hours (1 kWh = 3,600,000 J): {s['energy_kwh']:.6f} kWh. " + scope)
-    props = [("rdf:type", "rm:RunMetadata"), ("rdfs:label", label(title)), ("dcterms:title", label(title)),
+    props = [("rdf:type", "rm:RunMetadata"), ("rdf:type", "prov:Activity"), ("rdfs:label", label(title)), ("dcterms:title", label(title)),
              ("rm:workflow", uri(args.workflow_uri)), ("rm:computeCluster", uri(args.cluster_uri)),
              ("vivo:dateTimeValue", uri(date)), ("rm:runStatus", literal(s["status"])),
              ("rm:startTime", local(s["start_utc"])), ("rm:endTime", local(s["end_utc"])),
@@ -561,7 +561,7 @@ def build_ttl(summary, args, tz):
             props.append(("rm:hasWorkflowProcess", uri(proc_uri)))
             failed = proc["status"].get("FAILED", 0) + proc["status"].get("ABORTED", 0)
             predicates = [("rdf:type", "rm:WorkflowProcessRun"), ("rdf:type", "vivo:InformationResource"),
-                          ("rdf:type", "prov:Entity"), ("rdfs:label", label(proc["name"])),
+                          ("rdf:type", "prov:Activity"), ("rdfs:label", label(proc["name"])),
                           ("dcterms:title", label(proc["name"])), ("rm:taskName", literal(proc["name"])),
                           ("rm:isWorkflowProcessOf", uri(run)),
                           ("rm:runStatus", literal("Failed" if failed else "Succeeded")),

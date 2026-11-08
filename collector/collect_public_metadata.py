@@ -320,7 +320,7 @@ def main() -> None:
         f"{run_uri}",
         "  rdf:type rm:RunMetadata ;",
         "  rdf:type vivo:InformationResource ;",
-        "  rdf:type prov:Entity ;",
+        "  rdf:type prov:Activity ;",
         f"  rdfs:label {ttl_literal(metadata_title)}@en ;",
         f"  dcterms:title {ttl_literal(metadata_title)}@en ;",
         f"  rm:describesSoftwareExecution {software_uri} ;",
