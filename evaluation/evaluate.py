@@ -4,7 +4,7 @@
 from the two CSV exports in data/ (made with the queries in queries/).
 
 Selection: runs of the nf-core/rangeland test profile that had one node to themselves:
-  Fonda (Kubernetes):  rm:nodeUse starts with "exclusive" and one execution host;
+  FONDA (Kubernetes):  rm:nodeUse starts with "exclusive" and one execution host;
   HPC@HU (Slurm):      energy source is the IPMI power of the whole node and one execution host.
 Checks:
   completeness: the run fields below are present;
@@ -34,7 +34,7 @@ steps = {r["run"]: r for r in csv.DictReader(open(steps_csv, newline="")) if r.g
 cluster = lambda r: r["cluster"].rsplit("/", 1)[-1]
 
 groups = {
-    "Fonda (Kubernetes)": [r for r in runs if cluster(r) == "fonda-cluster"
+    "FONDA (Kubernetes)": [r for r in runs if cluster(r) == "fonda-cluster"
                            and r["nodeUse"].startswith("exclusive") and r["hosts"] == "1"],
     "HPC@HU (Slurm)": [r for r in runs if cluster(r) == "hpc-hu-cluster"
                        and r["source"].startswith("IPMI power") and r["hosts"] == "1"],
