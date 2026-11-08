@@ -244,7 +244,7 @@ def build_ttl(summary, rows, inputs, archive_sha, backend_uri=None, run_operator
     method = (f"Wrap-corrected RAPL microjoule deltas, linearly interpolated at workflow boundaries. "
               f"CPU package: {summary['rapl']['package']['energy_joules']:.6f} J / 3600000 = kWh. "
               f"DRAM: {summary['rapl']['dram']['energy_joules']:.6f} J, reported separately and excluded from kWh. " + SCOPE)
-    props = [("rdf:type", "rm:RunMetadata"), ("rdfs:label", label(title)), ("dcterms:title", label(title)),
+    props = [("rdf:type", "rm:RunMetadata"), ("rdf:type", "prov:Activity"), ("rdfs:label", label(title)), ("dcterms:title", label(title)),
              ("rm:workflow", uri(WORKFLOW)), ("rm:workflowEngine", uri(BASE + "engine/nextflow")),
              ("rm:computeCluster", uri(BASE + "cluster/fonda-cluster")), ("vivo:dateTimeValue", uri(date)),
              ("rm:runStatus", literal("Succeeded")), ("rm:taskCount", literal(4)), ("rm:succeededTaskCount", literal(4)),
@@ -306,7 +306,7 @@ def build_ttl(summary, rows, inputs, archive_sha, backend_uri=None, run_operator
     for row in rows:
         process = BASE + "process/" + key + "-" + row["process"].split(":")[-1].lower()
         props.append(("rm:hasWorkflowProcess", uri(process)))
-        resource(process, [("rdf:type", "rm:WorkflowProcessRun"), ("rdfs:label", label(row["process"])),
+        resource(process, [("rdf:type", "rm:WorkflowProcessRun"), ("rdf:type", "prov:Activity"), ("rdfs:label", label(row["process"])),
                  ("rm:taskName", literal(row["process"])), ("rm:isWorkflowProcessOf", uri(run)),
                  ("rm:runStatus", literal("Succeeded")), ("rm:taskCount", literal(1)),
                  ("rm:cpuTimeSeconds", literal(cpu_seconds(row))), ("rm:cpuTimeCalculationMethod", literal(CPU_METHOD)),

@@ -64,7 +64,7 @@
 <http://example.org/vivo-import/run-metadata/run/yagmur-rna-seq-analysis-workflow-hisat2-rs1-c0ece5b9-63ab-41ac-a0f5-1980d02b79dc-2026-09-01t11-38-23-240000-00-00>
   rdf:type rm:RunMetadata ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "RNA-seq analysis workflow (Hisat2, RS1) · run 2026-09-01 13:38–23:06 CEST"@en ;
   dcterms:title "RNA-seq analysis workflow (Hisat2, RS1) · run 2026-09-01 13:38–23:06 CEST"@en ;
   rm:workflow <http://example.org/vivo-import/run-metadata/workflow/rna-seq-analysis-hisat2-rs1> ;
@@ -244,7 +244,7 @@
 <http://example.org/vivo-import/run-metadata/process/rna-seq-analysis-workflow-hisat2-rs1-check-strandness-c0ece5b9-63ab-41ac-a0f5-1980d02b79dc>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "CHECK STRANDNESS"@en ;
   dcterms:title "CHECK STRANDNESS"@en ;
   rm:jobName "CHECK STRANDNESS" ;
@@ -287,7 +287,7 @@
 <http://example.org/vivo-import/run-metadata/process/rna-seq-analysis-workflow-hisat2-rs1-cufflinks-c0ece5b9-63ab-41ac-a0f5-1980d02b79dc>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "CUFFLINKS"@en ;
   dcterms:title "CUFFLINKS"@en ;
   rm:jobName "CUFFLINKS" ;
@@ -330,7 +330,7 @@
 <http://example.org/vivo-import/run-metadata/process/rna-seq-analysis-workflow-hisat2-rs1-extract-exons-c0ece5b9-63ab-41ac-a0f5-1980d02b79dc>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "EXTRACT EXONS"@en ;
   dcterms:title "EXTRACT EXONS"@en ;
   rm:jobName "EXTRACT EXONS" ;
@@ -370,7 +370,7 @@
 <http://example.org/vivo-import/run-metadata/process/rna-seq-analysis-workflow-hisat2-rs1-extract-splice-sites-c0ece5b9-63ab-41ac-a0f5-1980d02b79dc>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "EXTRACT SPLICE SITES"@en ;
   dcterms:title "EXTRACT SPLICE SITES"@en ;
   rm:jobName "EXTRACT SPLICE SITES" ;
@@ -410,7 +410,7 @@
 <http://example.org/vivo-import/run-metadata/process/rna-seq-analysis-workflow-hisat2-rs1-fastp-c0ece5b9-63ab-41ac-a0f5-1980d02b79dc>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "FASTP"@en ;
   dcterms:title "FASTP"@en ;
   rm:jobName "FASTP" ;
@@ -453,7 +453,7 @@
 <http://example.org/vivo-import/run-metadata/process/rna-seq-analysis-workflow-hisat2-rs1-hisat2-align-c0ece5b9-63ab-41ac-a0f5-1980d02b79dc>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "HISAT2 ALIGN"@en ;
   dcterms:title "HISAT2 ALIGN"@en ;
   rm:jobName "HISAT2 ALIGN" ;
@@ -496,7 +496,7 @@
 <http://example.org/vivo-import/run-metadata/process/rna-seq-analysis-workflow-hisat2-rs1-hisat2-index-reference-c0ece5b9-63ab-41ac-a0f5-1980d02b79dc>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "HISAT2 INDEX REFERENCE"@en ;
   dcterms:title "HISAT2 INDEX REFERENCE"@en ;
   rm:jobName "HISAT2 INDEX REFERENCE" ;
@@ -539,7 +539,7 @@
 <http://example.org/vivo-import/run-metadata/process/rna-seq-analysis-workflow-hisat2-rs1-samtools-c0ece5b9-63ab-41ac-a0f5-1980d02b79dc>
   rdf:type rm:WorkflowProcessRun ;
   rdf:type vivo:InformationResource ;
-  rdf:type prov:Entity ;
+  rdf:type prov:Activity ;
   rdfs:label "SAMTOOLS"@en ;
   dcterms:title "SAMTOOLS"@en ;
   rm:jobName "SAMTOOLS" ;

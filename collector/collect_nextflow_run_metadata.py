@@ -3183,7 +3183,7 @@ def build_ttl(
     run_predicates: List[Tuple[str, str]] = [
         ("rdf:type", "rm:RunMetadata"),
         ("rdf:type", "vivo:InformationResource"),
-        ("rdf:type", "prov:Entity"),
+        ("rdf:type", "prov:Activity"),  # an execution: prov:startedAtTime/endedAtTime have domain prov:Activity
         ("rdfs:label", ttl_label(run_title)),
         ("dcterms:title", ttl_label(run_title)),
         ("rm:workflow", ttl_uri(workflow_uri)),
@@ -3502,7 +3502,7 @@ def build_ttl(
         predicates: List[Tuple[str, str]] = [
             ("rdf:type", "rm:WorkflowProcessRun"),
             ("rdf:type", "vivo:InformationResource"),
-            ("rdf:type", "prov:Entity"),
+            ("rdf:type", "prov:Activity"),
             ("rdfs:label", ttl_label(stage["run_label"])),
             ("dcterms:title", ttl_label(stage["run_label"])),
             ("rm:jobName", ttl_literal(stage["label"])),

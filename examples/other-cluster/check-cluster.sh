@@ -157,7 +157,7 @@ slurm_test_job() {
   fi
   if command -v squeue >/dev/null 2>&1; then
     printf 'jobs on this node that you can see (number only, this test job included): %s\n' \
-      "$(squeue -h -w "$slurm_node" -o %i 2>/dev/null | sort -u | wc -l)"
+      "$(squeue -h -w "$slurm_node" -o %i 2>/dev/null | sort -u | wc -l | xargs)"
   fi
 
   printf '\n-- readings when the test job is %s seconds old\n' "$VIVO_CHECK_SECONDS"
