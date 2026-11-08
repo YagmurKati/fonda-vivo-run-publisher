@@ -1,0 +1,10 @@
+# FONDA 2026-11-08: read only. All records of the extension (everything typed with an rm: class), for a
+# reasoner check of the data together with the ontology and PROV-O.
+# SPARQL Query page, format N-Triples, save as records.nt and send it.
+PREFIX rm: <http://example.org/ontology/run-metadata#>
+CONSTRUCT { ?s ?p ?o }
+WHERE {
+  ?s a ?c .
+  FILTER(STRSTARTS(STR(?c), STR(rm:)))
+  ?s ?p ?o .
+}
