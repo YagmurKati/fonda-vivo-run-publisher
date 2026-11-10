@@ -101,7 +101,7 @@ class SlurmCollectorTests(unittest.TestCase):
         self.assertIn("rm:language <http://example.org/vivo-import/run-metadata/language/shell>", ttl)
         self.assertIn("rm:inputData <http://example.org/vivo-import/run-metadata/input-dataset/test>", ttl)
         self.assertIn('rm:workflowCodeLink "https://github.com/nf-core/rangeland"^^xsd:anyURI', ttl)
-        self.assertIn('rm:nextflowVersion "24.10.5"', ttl)
+        self.assertIn('rm:workflowEngineVersion "24.10.5"', ttl)
         self.assertIn("rm:workflowEngine <http://example.org/vivo-import/run-metadata/engine/nextflow>", ttl)
         self.assertIn('rm:containerImage "docker.io/davidfrantz/force:3.7.10"', ttl)
         self.assertIn('rm:codeVersion "1.0.0"', ttl)
