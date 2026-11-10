@@ -3130,6 +3130,9 @@ def build_ttl(
         workflow_predicates.append(
             ("rm:describesSoftwareExecution", ttl_uri(publication_uri))
         )
+        workflow_predicates.append(
+            ("rm:usedInPublication", ttl_uri(publication_uri))
+        )
     if args.backend_uri:
         workflow_predicates.append(("rm:backend", ttl_uri(args.backend_uri)))
     # NOTE 2026-07-30: rm:responsibleResearcher is an OBJECT property in VIVO
@@ -3472,11 +3475,13 @@ def build_ttl(
             )
         add_resource(lines, ttl_uri(dataset.uri), dataset_predicates)
 
+    # A publication links to the workflow, not to the run: rm:hasWorkflowRun is the
+    # inverse of rm:workflow, so a publication holding a run would become that run's workflow.
     for publication_uri in publication_uris:
         add_resource(
             lines,
             ttl_uri(publication_uri),
-            [("rm:hasWorkflowRun", ttl_uri(run_uri))],
+            [("rm:usesWorkflow", ttl_uri(workflow_uri))],
         )
 
     add_resource(
