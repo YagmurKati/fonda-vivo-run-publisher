@@ -539,7 +539,7 @@ def build_ttl(summary, args, tz):
     if nf_log:
         props.append(("rm:workflowEngine", uri(BASE + "engine/nextflow")))
         if nf_log["version"]:
-            props.append(("rm:nextflowVersion", literal(nf_log["version"])))
+            props.append(("rm:workflowEngineVersion", literal(nf_log["version"])))
         if nf_log["session"]:
             props.append(("rm:nextflowSessionId", literal(nf_log["session"])))
         props += [("rm:containerImage", literal(image)) for image in nf_log["images"]]
