@@ -1750,11 +1750,23 @@ def collect_prometheus_node_info(
         if value is not None:
             allocatable[resource] = value
 
+    # Node labels as kube-state-metrics exports them (label_<name with _>), if it exports any.
+    labels: Dict[str, str] = {}
+    try:
+        label_result = prom_query(prom_url, f'kube_node_labels{{node="{node}"}}')
+    except Exception:
+        label_result = []
+    if isinstance(label_result, list):
+        for series in label_result:
+            for key, value in series.get("metric", {}).items():
+                if key.startswith("label_"):
+                    labels.setdefault(key, value)
+
     return {
         "name": node_name,
         "node_info": node_info,
         "allocatable": allocatable,
-        "labels": {},
+        "labels": labels,
         "metadata_sources": ["prometheus"],
     }
 
@@ -1843,6 +1855,66 @@ def collect_node_info(
                 )
         result.append(record)
     return result
+
+
+# FONDA 2026-11-20: GPU of the execution nodes, from the label that Node Feature Discovery sets on a node
+# with an NVIDIA PCI device (vendor 10de). It is found without NVIDIA drivers.
+GPU_NODE_LABEL = "feature.node.kubernetes.io/pci-10de.present"
+GPU_NODE_LABEL_PROMETHEUS = "label_feature_node_kubernetes_io_pci_10de_present"
+NFD_LABEL_PREFIXES = ("feature.node.kubernetes.io/", "label_feature_node_kubernetes_io_")
+
+
+def node_has_nvidia_gpu(node: Dict[str, Any]) -> Optional[bool]:
+    """True/False from the node's labels; None when the labels do not tell (no labels, or no
+    Node Feature Discovery labels at all, so a missing GPU label means nothing)."""
+    labels = node.get("labels") or {}
+    for key in (GPU_NODE_LABEL, GPU_NODE_LABEL_PROMETHEUS):
+        if key in labels:
+            return str(labels[key]).lower() == "true"
+    if any(str(key).startswith(NFD_LABEL_PREFIXES) for key in labels):
+        return False
+    return None
+
+
+def gpu_node_predicates(
+    node_names: Sequence[str],
+    node_infos: Sequence[Dict[str, Any]],
+    whole_node_energy: bool,
+    checked: Optional[str] = None,
+) -> Tuple[List[Tuple[str, str]], Dict[str, Any]]:
+    """rm:gpuCapableNodeUsed and rm:gpuUsageStatus of a CPU-only run, from its nodes' GPU labels.
+    The flag is left out when a node's GPU cannot be read."""
+    checked = checked or datetime.now(BERLIN_TZ).strftime("%Y-%m-%d")
+    by_name = {str(item.get("name")): item for item in node_infos}
+    nodes = unique(node_names)
+    gpu = {node: node_has_nvidia_gpu(by_name.get(node, {})) for node in nodes}
+    summary: Dict[str, Any] = {"gpu_by_node": gpu}
+    if any(value is True for value in gpu.values()):
+        flag: Optional[bool] = True
+        if whole_node_energy and len(nodes) == 1:
+            status = ("CPU-only workflow run. The node has an NVIDIA GPU that the run did not use; its idle power "
+                      "is part of the node energy (GPU found from the node's hardware label pci-10de, checked "
+                      f"{checked}).")
+        else:
+            status = ("CPU-only workflow run. At least one node used by the run has an NVIDIA GPU that the run did "
+                      f"not use (GPU found from the nodes' hardware label pci-10de, checked {checked}).")
+    elif nodes and all(value is False for value in gpu.values()):
+        flag = False
+        status = ("CPU-only workflow run. No node used by the run has an NVIDIA GPU (checked from the nodes' "
+                  f"hardware label pci-10de, {checked}).")
+    else:
+        flag = None
+        unknown = ", ".join(node for node, value in gpu.items() if value is None) or "the execution nodes"
+        status = ("CPU-only workflow run. Whether the nodes used have a GPU is unknown: the collector could not "
+                  f"read the hardware labels of {unknown}.")
+        print(f"WARNING: GPU of {unknown} unknown (no node labels); rm:gpuCapableNodeUsed left out.",
+              file=sys.stderr)
+    summary["gpu_capable_node_used"] = flag
+    predicates: List[Tuple[str, str]] = []
+    if flag is not None:
+        predicates.append(("rm:gpuCapableNodeUsed", ttl_literal(flag)))
+    predicates.append(("rm:gpuUsageStatus", ttl_literal(status)))
+    return predicates, summary
 
 
 def source_files(path: Path) -> List[Path]:
@@ -2374,6 +2446,9 @@ NODE_POWER_HOURS_AROUND = 24
 NODE_POWER_EM_HISTORY = "https://api.electricitymaps.com/v4/carbon-intensity/history"
 NODE_POWER_EM_PAST_RANGE = "https://api.electricitymaps.com/v4/carbon-intensity/past-range"
 NODE_POWER_WHOLE_NODE = "100% of the node (whole node, measured)"
+# FONDA 2026-11-20: result of the IPMI comparison, added to the energy method of every whole-node run.
+NODE_POWER_METER_CHECK = (" Check: on hu-worker-c39, Kepler's ACPI node power agreed with the node's IPMI reading "
+                          "within 1% over one rangeland run and 25 minutes idle (2026-11-14).")
 
 
 def _np_result(data: Dict[str, Any], query: str) -> Any:
@@ -2732,7 +2807,8 @@ def node_power_apply(
             f"{end_utc} = {energy_j:.0f} J = {energy_kwh:.6f} kWh, including the node's idle power; cooling and "
             "network are excluded."
             + (f" It replaces the sum of the run's pods' Kepler shares ({old_energy_kwh:.6f} kWh), which misses "
-               "pods that finished between Kepler readings." if old_energy_kwh is not None else "")),
+               "pods that finished between Kepler readings." if old_energy_kwh is not None else "")
+            + NODE_POWER_METER_CHECK),
     }
     if max_w is not None:
         new["rm:nodePowerMaxW"] = ttl_literal(round(max_w, 1))
@@ -3409,8 +3485,6 @@ def build_ttl(
         [
             ("rm:gpuRequested", ttl_literal(False)),
             ("rm:gpuMetricsAvailable", ttl_literal(False)),
-            ("rm:gpuCapableNodeUsed", ttl_literal(False)),
-            ("rm:gpuUsageStatus", ttl_literal("CPU-only workflow run")),
         ]
     )
     for stage in stage_records:
@@ -3423,6 +3497,10 @@ def build_ttl(
     # FONDA 2026-10-20: a run that had one node to itself gets the whole node's measured energy, its idle
     # power, power readings and hourly grid carbon (node_power_apply).
     node_power = node_power_apply(args, run_predicates, node_names, node_use, run_start, run_end)
+    # FONDA 2026-11-20: GPU flag and status from the nodes' pci-10de label (was always false).
+    gpu_predicates, gpu_summary = gpu_node_predicates(
+        node_names, node_infos, bool(node_power.get("applied")))
+    run_predicates.extend(gpu_predicates)
     add_resource(lines, ttl_uri(run_uri), run_predicates)
 
     for dataset in input_datasets:
@@ -3637,6 +3715,7 @@ def build_ttl(
     missing_hardware = missing_node_metadata(expected_nodes, node_infos)
     audit = {
         "node_power": node_power,
+        "gpu_nodes": gpu_summary,
         "workflow_name": args.workflow_name,
         "workflow_uri": workflow_uri,
         "run_uri": run_uri,

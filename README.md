@@ -194,6 +194,12 @@ fields are still missing, the script lists them and asks you to type
 `PUBLISH` before it sends the incomplete record. For a reviewed run without
 this question, set `ALLOW_INCOMPLETE_NODE_METADATA=1`.
 
+**GPU of the nodes.** A run's GPU flag (`rm:gpuCapableNodeUsed`) is true when
+one of its nodes has the label `feature.node.kubernetes.io/pci-10de.present=true`
+(an NVIDIA GPU, found without NVIDIA drivers). Without access to Node objects,
+the label is read from `kube_node_labels` in Prometheus, if it is there. If a
+node's labels cannot be read, the flag is left out and the GPU status says so.
+
 **Publishing again.** The same run ID is refused a second time unless
 `FORCE_REPUBLISH=1` is set. Then the run is collected again and replaces its
 record in VIVO (the run, its date node and its workflow processes), so values
